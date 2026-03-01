@@ -1118,13 +1118,20 @@ function generateEmailHTML(forPreview = false) {
       const confirmBaseURL = 'https://duemler90431.github.io/westend-tool/confirm.html';
       const confirmParams = new URLSearchParams({
         lang: emailLang,
+        anrede: document.getElementById('anrede').value || '',
         name: nachname,
         vorname: vorname || '',
         email: document.getElementById('email').value || '',
+        firma: document.getElementById('firma').value || '',
+        telefon: document.getElementById('telefon').value || '',
         anreise: anreise,
         abreise: abreise,
         zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => z.anzahl + 'x ' + z.kategorie).join(', '),
-        gesamt: total.toFixed(2)
+        gesamt: total.toFixed(2),
+        r_name: document.getElementById('rechnung_name')?.value || '',
+        r_strasse: document.getElementById('rechnung_strasse')?.value || '',
+        r_plzort: document.getElementById('rechnung_plzort')?.value || '',
+        r_zusatz: document.getElementById('rechnung_zusatz')?.value || ''
       });
       const confirmURL = confirmBaseURL + '?' + confirmParams.toString();
       return `

@@ -15,6 +15,7 @@
   .hotel-sub { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
   .container { max-width: 560px; width: 100%; margin: 32px auto; padding: 0 16px; }
   .card { background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); overflow: hidden; }
+  .card + .card { margin-top: 16px; }
   .card-header { background: linear-gradient(135deg, #f8f6f0, #f0ede4); padding: 20px 28px; border-bottom: 1px solid #e5e7eb; }
   .card-header h2 { font-size: 18px; color: var(--navy); }
   .card-header p { font-size: 12px; color: #6b7280; margin-top: 4px; }
@@ -22,11 +23,18 @@
   .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
   .detail-row:last-child { border-bottom: none; }
   .detail-label { color: #6b7280; }
-  .detail-value { font-weight: 600; color: var(--navy); text-align: right; }
+  .detail-value { font-weight: 600; color: var(--navy); text-align: right; max-width: 60%; word-break: break-word; }
   .total-row { background: #f8f6f0; margin: 16px -28px -24px; padding: 16px 28px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; }
   .total-row .amount { color: var(--gold); font-size: 18px; }
+  .section-label { font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; padding: 14px 0 4px; }
 
-  .agb-section { margin-top: 24px; padding: 20px 28px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); }
+  .remark-section { margin-top: 16px; }
+  .remark-section label { display: block; font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px; }
+  .remark-section textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1f2937; resize: vertical; transition: border-color 0.2s; }
+  .remark-section textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,152,58,0.1); }
+  .remark-section .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+
+  .agb-section { margin-top: 16px; padding: 20px 28px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); }
   .agb-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .agb-check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
   .agb-check label { font-size: 13px; color: #374151; line-height: 1.5; cursor: pointer; }
@@ -64,6 +72,8 @@
       <p id="pageSubtitle">Bitte prüfen Sie die Details und bestätigen Sie Ihre Buchung.</p>
     </div>
     <div class="card-body">
+      <!-- Gastinformation -->
+      <div class="section-label" id="lbl_section_guest">Gastinformation</div>
       <div class="detail-row">
         <span class="detail-label" id="lbl_name">Name</span>
         <span class="detail-value" id="val_name">–</span>
@@ -72,6 +82,17 @@
         <span class="detail-label" id="lbl_email">E-Mail</span>
         <span class="detail-value" id="val_email">–</span>
       </div>
+      <div class="detail-row" id="row_firma" style="display:none;">
+        <span class="detail-label" id="lbl_firma">Firma</span>
+        <span class="detail-value" id="val_firma">–</span>
+      </div>
+      <div class="detail-row" id="row_telefon" style="display:none;">
+        <span class="detail-label" id="lbl_telefon">Telefon</span>
+        <span class="detail-value" id="val_telefon">–</span>
+      </div>
+
+      <!-- Aufenthalt -->
+      <div class="section-label" id="lbl_section_stay">Aufenthalt</div>
       <div class="detail-row">
         <span class="detail-label" id="lbl_checkin">Anreise</span>
         <span class="detail-value" id="val_anreise">–</span>
@@ -84,9 +105,43 @@
         <span class="detail-label" id="lbl_rooms">Zimmer</span>
         <span class="detail-value" id="val_zimmer">–</span>
       </div>
+
+      <!-- Rechnungsadresse (nur wenn vorhanden) -->
+      <div id="rechnungSection" style="display:none;">
+        <div class="section-label" id="lbl_section_billing">Rechnungsadresse</div>
+        <div class="detail-row" id="row_r_name">
+          <span class="detail-label" id="lbl_r_name">Name / Firma</span>
+          <span class="detail-value" id="val_r_name">–</span>
+        </div>
+        <div class="detail-row" id="row_r_zusatz" style="display:none;">
+          <span class="detail-label" id="lbl_r_zusatz">Zusatz</span>
+          <span class="detail-value" id="val_r_zusatz">–</span>
+        </div>
+        <div class="detail-row" id="row_r_strasse">
+          <span class="detail-label" id="lbl_r_strasse">Straße</span>
+          <span class="detail-value" id="val_r_strasse">–</span>
+        </div>
+        <div class="detail-row" id="row_r_plzort">
+          <span class="detail-label" id="lbl_r_plzort">PLZ / Ort</span>
+          <span class="detail-value" id="val_r_plzort">–</span>
+        </div>
+      </div>
+
+      <!-- Gesamtbetrag -->
       <div class="total-row">
         <span id="lbl_total">Gesamtbetrag</span>
         <span class="amount" id="val_gesamt">–</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bemerkungen Textarea -->
+  <div class="card" id="remarkCard">
+    <div class="card-body">
+      <div class="remark-section">
+        <label for="remarkInput" id="lbl_remark">Bemerkungen</label>
+        <textarea id="remarkInput" placeholder="z.B. Zimmerwünsche, späte Anreise, Parkplatz benötigt..."></textarea>
+        <div class="hint" id="remarkHint">Optional – Ihre Bemerkungen werden mit der Bestätigung übermittelt.</div>
       </div>
     </div>
   </div>
@@ -126,13 +181,13 @@
     <div class="error-title" id="errorTitle">Fehler</div>
     <div class="success-text" id="errorText">
       Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter
-      <a href="/cdn-cgi/l/email-protection#472e292128072f2833222b30223433222923692322" style="color:#c9983a;font-weight:600;"><span class="__cf_email__" data-cfemail="e881868e87a880879c8d849f8d9b9c8d868cc68c8d">[email&#160;protected]</span></a>
+      <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a>
       oder +49 911 93986-0.
     </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const params = new URLSearchParams(window.location.search);
 const lang = params.get('lang') || 'de';
 
@@ -140,7 +195,15 @@ const texts = {
   de: {
     pageTitle: 'Angebotsbestätigung',
     pageSubtitle: 'Bitte prüfen Sie die Details und bestätigen Sie Ihre Buchung.',
-    name: 'Name', email: 'E-Mail', checkin: 'Anreise', checkout: 'Abreise', rooms: 'Zimmer', total: 'Gesamtbetrag',
+    sectionGuest: 'Gastinformation',
+    sectionStay: 'Aufenthalt',
+    sectionBilling: 'Rechnungsadresse',
+    name: 'Name', email: 'E-Mail', firma: 'Firma', telefon: 'Telefon',
+    checkin: 'Anreise', checkout: 'Abreise', rooms: 'Zimmer', total: 'Gesamtbetrag',
+    r_name: 'Name / Firma', r_zusatz: 'Zusatz', r_strasse: 'Straße', r_plzort: 'PLZ / Ort',
+    remarkLabel: 'Bemerkungen',
+    remarkPlaceholder: 'z.B. Zimmerwünsche, späte Anreise, Parkplatz benötigt...',
+    remarkHint: 'Optional – Ihre Bemerkungen werden mit der Bestätigung übermittelt.',
     agb: 'Ich akzeptiere die <a href="AGB_LINK" target="_blank">Allgemeinen Geschäftsbedingungen</a> des westendhotel nürnberg und möchte das Angebot verbindlich annehmen.',
     confirmBtn: '✅ Angebot verbindlich bestätigen',
     loading: 'Buchung wird bestätigt...',
@@ -150,12 +213,24 @@ const texts = {
     errorText: 'Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a> oder +49 911 93986-0.',
     emailSubject: 'Angebotsannahme',
     emailBody: 'hat das Angebot angenommen',
-    emailDetails: 'Buchungsdetails'
+    emailDetails: 'Buchungsdetails',
+    emailGuest: 'Gastinformation',
+    emailBilling: 'Rechnungsadresse',
+    emailRemark: 'Bemerkungen des Gastes',
+    emailAgbNote: 'AGB wurden akzeptiert. Bitte Buchungsbestätigung an den Gast senden.'
   },
   en: {
     pageTitle: 'Quotation Confirmation',
     pageSubtitle: 'Please review the details and confirm your booking.',
-    name: 'Name', email: 'Email', checkin: 'Check-in', checkout: 'Check-out', rooms: 'Rooms', total: 'Total Amount',
+    sectionGuest: 'Guest Information',
+    sectionStay: 'Stay',
+    sectionBilling: 'Billing Address',
+    name: 'Name', email: 'Email', firma: 'Company', telefon: 'Phone',
+    checkin: 'Check-in', checkout: 'Check-out', rooms: 'Rooms', total: 'Total Amount',
+    r_name: 'Name / Company', r_zusatz: 'Reference', r_strasse: 'Street', r_plzort: 'Postal Code / City',
+    remarkLabel: 'Remarks',
+    remarkPlaceholder: 'e.g. room preferences, late arrival, parking needed...',
+    remarkHint: 'Optional – your remarks will be included with the confirmation.',
     agb: 'I accept the <a href="AGB_LINK" target="_blank">General Terms and Conditions</a> of the westendhotel nürnberg and wish to confirm this quotation.',
     confirmBtn: '✅ Confirm Booking',
     loading: 'Confirming your booking...',
@@ -165,13 +240,15 @@ const texts = {
     errorText: 'Unfortunately, the confirmation could not be sent. Please contact us directly at <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a> or +49 911 93986-0.',
     emailSubject: 'Quotation Accepted',
     emailBody: 'has accepted the quotation',
-    emailDetails: 'Booking details'
+    emailDetails: 'Booking details',
+    emailGuest: 'Guest Information',
+    emailBilling: 'Billing Address',
+    emailRemark: 'Guest Remarks',
+    emailAgbNote: 'T&Cs were accepted. Please send booking confirmation to the guest.'
   }
 };
 
 const t = texts[lang] || texts.de;
-
-// AGB PDF link – hosted on GitHub Pages alongside the tool
 const agbURL = 'https://duemler90431.github.io/westend-tool/AGB_westendhotel2025.pdf';
 
 function formatDateDE(str) {
@@ -183,12 +260,24 @@ function formatDateDE(str) {
 // Apply translations
 document.getElementById('pageTitle').textContent = t.pageTitle;
 document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+document.getElementById('lbl_section_guest').textContent = t.sectionGuest;
+document.getElementById('lbl_section_stay').textContent = t.sectionStay;
 document.getElementById('lbl_name').textContent = t.name;
 document.getElementById('lbl_email').textContent = t.email;
+document.getElementById('lbl_firma').textContent = t.firma;
+document.getElementById('lbl_telefon').textContent = t.telefon;
 document.getElementById('lbl_checkin').textContent = t.checkin;
 document.getElementById('lbl_checkout').textContent = t.checkout;
 document.getElementById('lbl_rooms').textContent = t.rooms;
 document.getElementById('lbl_total').textContent = t.total;
+document.getElementById('lbl_section_billing').textContent = t.sectionBilling;
+document.getElementById('lbl_r_name').textContent = t.r_name;
+document.getElementById('lbl_r_zusatz').textContent = t.r_zusatz;
+document.getElementById('lbl_r_strasse').textContent = t.r_strasse;
+document.getElementById('lbl_r_plzort').textContent = t.r_plzort;
+document.getElementById('lbl_remark').textContent = t.remarkLabel;
+document.getElementById('remarkInput').placeholder = t.remarkPlaceholder;
+document.getElementById('remarkHint').textContent = t.remarkHint;
 document.getElementById('agbLabel').innerHTML = t.agb.replace('AGB_LINK', agbURL);
 document.getElementById('confirmBtnText').textContent = t.confirmBtn;
 document.getElementById('loadingText').textContent = t.loading;
@@ -200,18 +289,50 @@ document.getElementById('errorText').innerHTML = t.errorText;
 // Fill data from URL params
 const name = params.get('name') || '–';
 const vorname = params.get('vorname') || '';
+const anrede = params.get('anrede') || '';
 const email = params.get('email') || '–';
+const firma = params.get('firma') || '';
+const telefon = params.get('telefon') || '';
 const anreise = params.get('anreise') || '';
 const abreise = params.get('abreise') || '';
 const zimmer = params.get('zimmer') || '–';
 const gesamt = params.get('gesamt') || '–';
+const r_name = params.get('r_name') || '';
+const r_zusatz = params.get('r_zusatz') || '';
+const r_strasse = params.get('r_strasse') || '';
+const r_plzort = params.get('r_plzort') || '';
 
-document.getElementById('val_name').textContent = vorname ? `${vorname} ${name}` : name;
+// Display guest info
+const fullDisplayName = vorname ? `${anrede ? anrede + ' ' : ''}${vorname} ${name}` : `${anrede ? anrede + ' ' : ''}${name}`;
+document.getElementById('val_name').textContent = fullDisplayName;
 document.getElementById('val_email').textContent = email;
+
+if (firma) {
+  document.getElementById('row_firma').style.display = 'flex';
+  document.getElementById('val_firma').textContent = firma;
+}
+if (telefon) {
+  document.getElementById('row_telefon').style.display = 'flex';
+  document.getElementById('val_telefon').textContent = telefon;
+}
+
+// Display stay
 document.getElementById('val_anreise').textContent = formatDateDE(anreise);
 document.getElementById('val_abreise').textContent = formatDateDE(abreise);
 document.getElementById('val_zimmer').textContent = zimmer;
 document.getElementById('val_gesamt').textContent = gesamt !== '–' ? `€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}` : '–';
+
+// Display billing address (only if at least r_name is present)
+if (r_name) {
+  document.getElementById('rechnungSection').style.display = 'block';
+  document.getElementById('val_r_name').textContent = r_name;
+  if (r_zusatz) {
+    document.getElementById('row_r_zusatz').style.display = 'flex';
+    document.getElementById('val_r_zusatz').textContent = r_zusatz;
+  }
+  document.getElementById('val_r_strasse').textContent = r_strasse || '–';
+  document.getElementById('val_r_plzort').textContent = r_plzort || '–';
+}
 
 function toggleConfirmBtn() {
   const cb = document.getElementById('agbCheckbox');
@@ -224,13 +345,54 @@ async function confirmBooking() {
   const btn = document.getElementById('confirmBtn');
   if (btn.disabled) return;
 
+  const remarkText = document.getElementById('remarkInput').value.trim();
+
   // Show loading
   document.getElementById('summaryCard').style.display = 'block';
+  document.getElementById('remarkCard').style.display = 'none';
   document.getElementById('agbSection').style.display = 'none';
   document.getElementById('loadingState').style.display = 'block';
 
-  // Send confirmation email to hotel
+  // Build confirmation email HTML
   const fullName = vorname ? `${vorname} ${name}` : name;
+
+  // Guest info rows
+  let guestRows = `
+    <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.name}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${fullDisplayName}</td></tr>
+    <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.email}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${email}</td></tr>`;
+  if (firma) guestRows += `
+    <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.firma}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${firma}</td></tr>`;
+  if (telefon) guestRows += `
+    <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.telefon}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${telefon}</td></tr>`;
+
+  // Billing rows
+  let billingBlock = '';
+  if (r_name) {
+    let billingRows = `
+      <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.r_name}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${r_name}</td></tr>`;
+    if (r_zusatz) billingRows += `
+      <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.r_zusatz}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${r_zusatz}</td></tr>`;
+    if (r_strasse) billingRows += `
+      <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.r_strasse}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${r_strasse}</td></tr>`;
+    if (r_plzort) billingRows += `
+      <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.r_plzort}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${r_plzort}</td></tr>`;
+    billingBlock = `
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;margin-top:16px;">
+        <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailBilling}</th></tr>
+        ${billingRows}
+      </table>`;
+  }
+
+  // Remark block
+  let remarkBlock = '';
+  if (remarkText) {
+    remarkBlock = `
+      <div style="margin-top:16px;padding:12px 16px;background:#fef9ee;border-left:3px solid #c9983a;border-radius:4px;">
+        <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.emailRemark}</div>
+        <p style="font-size:13px;color:#374151;line-height:1.5;margin:0;">${remarkText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>
+      </div>`;
+  }
+
   const confirmHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">
     <div style="background:white;max-width:560px;margin:0 auto;border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
       <div style="background:#16a34a;padding:20px 28px;text-align:center;">
@@ -239,29 +401,39 @@ async function confirmBooking() {
       <div style="padding:24px 28px;">
         <p style="font-size:14px;margin-bottom:16px;"><strong>${fullName}</strong> (${email}) ${t.emailBody}.</p>
         <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
+          <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailGuest}</th></tr>
+          ${guestRows}
+        </table>
+        <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;margin-top:16px;">
           <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailDetails}</th></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.checkin}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${formatDateDE(anreise)}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.checkout}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${formatDateDE(abreise)}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.rooms}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${zimmer}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;color:#6b7280;">${t.total}</td><td style="padding:8px 12px;font-size:14px;font-weight:bold;color:#c9983a;">€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}</td></tr>
         </table>
-        <p style="font-size:12px;color:#6b7280;margin-top:16px;">AGB wurden akzeptiert. Bitte Buchungsbestätigung an den Gast senden.</p>
+        ${billingBlock}
+        ${remarkBlock}
+        <p style="font-size:12px;color:#6b7280;margin-top:16px;">${t.emailAgbNote}</p>
       </div>
     </div>
   </body></html>`;
 
-  // Try to send via Brevo using a key stored in the URL or fallback to mailto
   try {
-    // Get Brevo key from localStorage (shared with main tool on same domain)
     let brevoKey = '';
     try { brevoKey = localStorage.getItem('westend_brevo_key') || ''; } catch(e) {}
 
     if (!brevoKey) {
-      // Fallback: open mailto link
+      // Fallback: mailto
       const mailSubject = encodeURIComponent(`${t.emailSubject}: ${fullName} – ${formatDateDE(anreise)} bis ${formatDateDE(abreise)}`);
-      const mailBody = encodeURIComponent(`${fullName} (${email}) ${t.emailBody}.\n\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n\nAGB akzeptiert.`);
+      let mailBodyText = `${fullName} (${email}) ${t.emailBody}.\n\n`;
+      if (firma) mailBodyText += `${t.firma}: ${firma}\n`;
+      if (telefon) mailBodyText += `${t.telefon}: ${telefon}\n`;
+      mailBodyText += `\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n`;
+      if (r_name) mailBodyText += `\n${t.emailBilling}:\n${r_name}\n${r_zusatz ? r_zusatz + '\n' : ''}${r_strasse}\n${r_plzort}\n`;
+      if (remarkText) mailBodyText += `\n${t.emailRemark}:\n${remarkText}\n`;
+      mailBodyText += `\nAGB akzeptiert.`;
+      const mailBody = encodeURIComponent(mailBodyText);
       window.location.href = `mailto:info@hotelwestend.de?subject=${mailSubject}&body=${mailBody}`;
-      // Show success anyway
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('summaryCard').style.display = 'none';
       document.getElementById('successCard').style.display = 'block';
