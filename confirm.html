@@ -126,13 +126,13 @@
     <div class="error-title" id="errorTitle">Fehler</div>
     <div class="success-text" id="errorText">
       Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter
-      <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a>
+      <a href="/cdn-cgi/l/email-protection#472e292128072f2833222b30223433222923692322" style="color:#c9983a;font-weight:600;"><span class="__cf_email__" data-cfemail="e881868e87a880879c8d849f8d9b9c8d868cc68c8d">[email&#160;protected]</span></a>
       oder +49 911 93986-0.
     </div>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const params = new URLSearchParams(window.location.search);
 const lang = params.get('lang') || 'de';
 
@@ -288,10 +288,11 @@ async function confirmBooking() {
     } else {
       document.getElementById('errorCard').style.display = 'block';
     }
-  } catch (e) {
+  } catch(e) {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('summaryCard').style.display = 'none';
     document.getElementById('errorCard').style.display = 'block';
+    console.error('Confirmation error:', e);
   }
 }
 </script>

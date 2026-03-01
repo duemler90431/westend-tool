@@ -671,6 +671,8 @@ const I18N = {
     footerRezeption: 'Rezeption: 15:00–20:00 Uhr · Digitaler Check-In & Handytüröffnung außerhalb der Rezeptionszeiten · Kostenfreie Parkplätze · Kostenfreies WLAN',
     acceptButton: 'Angebot akzeptieren',
     acceptHint: 'Sie können dieses Angebot direkt online annehmen:',
+    subjectAngebot: 'Ihr Angebot – westendhotel nürnberg',
+    subjectBestaetigung: 'Ihre Buchungsbestätigung – westendhotel nürnberg',
   },
   en: {
     typeLabel: { angebot: 'QUOTATION', bestaetigung: 'BOOKING CONFIRMATION' },
@@ -714,6 +716,8 @@ const I18N = {
     footerRezeption: 'Reception: 3:00–8:00 PM · Digital Check-In & Mobile Door Access outside reception hours · Free Parking · Free WiFi',
     acceptButton: 'Accept Offer',
     acceptHint: 'You can accept this offer directly online:',
+    subjectAngebot: 'Your Quotation – westendhotel nürnberg',
+    subjectBestaetigung: 'Your Booking Confirmation – westendhotel nürnberg',
   }
 };
 
@@ -1002,9 +1006,10 @@ function generateEmailHTML(forPreview = false) {
   const zimmer = getZimmerData();
   const total = calcTotal(zimmer, nights);
   const storno = getSelectedStorno();
-  const stornoText = STORNO_TEXTS[storno];
+  const stornoText = STORNO_TEXTS[emailLang][storno];
 
-  const typeLabel = emailType === 'angebot' ? 'ANGEBOT' : 'BUCHUNGSBESTÄTIGUNG';
+  const t = I18N[emailLang];
+  const typeLabel = t.typeLabel[emailType];
   const typeColor = emailType === 'angebot' ? '#c9983a' : '#1a7a4a';
   const vorname_str = vorname ? ` ${vorname}` : '';
 
@@ -1013,39 +1018,37 @@ function generateEmailHTML(forPreview = false) {
     const rowNights = z.nights || nights;
     const subtotal = z.anzahl * z.preisNacht * rowNights;
     const dateInfo = z.hasCustomDates
-      ? `<br><span style="font-size:11px;color:#9ca3af;">${formatDateDE(z.anreise)} – ${formatDateDE(z.abreise)} (${rowNights} Nacht${rowNights!==1?'e':''})</span>`
+      ? `<br><span style="font-size:11px;color:#9ca3af;">${formatDateDE(z.anreise)} – ${formatDateDE(z.abreise)} (${rowNights} ${rowNights!==1 ? t.naechte : t.nacht})</span>`
       : '';
     return `
       <tr>
         <td>${z.anzahl}x ${z.kategorie}${dateInfo}</td>
-        <td>${z.personen} Pers./Zi.</td>
-        <td>${formatEuro(z.preisNacht)}/Nacht</td>
+        <td>${z.personen} ${t.persZi}</td>
+        <td>${formatEuro(z.preisNacht)}/${t.nacht}</td>
         <td><strong>${formatEuro(subtotal)}</strong></td>
       </tr>`;
   }).join('');
 
   const frühstückHinweis = verpflegung === 'inkl. Frühstück'
-    ? `<p style="font-size:12px;color:#4b5563;margin:8px 0 0;">Verpflegung: <strong>inkl. Frühstück (€ 15,00 / Pers. / Nacht)</strong></p>` : '';
+    ? `<p style="font-size:12px;color:#4b5563;margin:8px 0 0;">${t.verpflegung}: <strong>${t.fruehstueck} (${t.fruehstueckPreis})</strong></p>` : '';
 
   const angebotBox = emailType === 'angebot' && gueltig ? `
     <div style="background:#f0f9ff;border-left:3px solid #0284c7;padding:10px 14px;margin:12px 0;border-radius:0 6px 6px 0;font-size:12px;color:#0369a1;">
-      ⏰ Dieses Angebot ist gültig bis <strong>${formatDateDE(gueltig)}</strong>. Bitte teilen Sie uns Ihre Entscheidung bis zu diesem Datum mit.
+      ${t.angebotGueltig(formatDateDE(gueltig))}
     </div>` : '';
 
   const hinweisBox = hinweise ? `
     <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:12px 14px;margin:12px 0;font-size:12px;color:#4b5563;">
-      <strong style="color:#374151;">Besondere Wünsche / Hinweise:</strong><br>${hinweise.replace(/\n/g,'<br>')}
+      <strong style="color:#374151;">${t.hinweiseLabel}</strong><br>${hinweise.replace(/\n/g,'<br>')}
     </div>` : '';
 
   const bemerkungenBox = bemerkungen ? `
     <div style="background:#f0fff4;border-left:3px solid #16a34a;padding:12px 14px;margin:14px 0;border-radius:0 6px 6px 0;">
-      <div style="font-size:11px;font-weight:bold;color:#16a34a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">📋 Bemerkungen</div>
+      <div style="font-size:11px;font-weight:bold;color:#16a34a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.bemerkungenLabel}</div>
       <p style="font-size:12px;color:#374151;line-height:1.6;">${bemerkungen.replace(/\n/g,'<br>')}</p>
     </div>` : '';
 
-  const introText = emailType === 'angebot'
-    ? `vielen Dank für Ihr Interesse am westendhotel nürnberg. Wir freuen uns, Ihnen folgendes Angebot für Ihren Aufenthalt unterbreiten zu dürfen:`
-    : `vielen Dank für Ihre Buchung beim westendhotel nürnberg. Wir freuen uns auf Ihren Besuch und bestätigen hiermit Ihre Reservierung:`;
+  const introText = t.intro[emailType];
 
   return `
 <div class="email-inner">
@@ -1057,7 +1060,7 @@ function generateEmailHTML(forPreview = false) {
     ${typeLabel}
   </div>
   <div class="email-content">
-    <p class="greeting">${anrede} ${nachname},</p>
+    <p class="greeting">${t.greeting(anrede, nachname)}</p>
     ${firma ? `<p style="font-size:12px;color:#6b7280;margin-bottom:10px;">${firma}</p>` : ''}
     ${(() => {
       const rname = document.getElementById('rechnung_name')?.value;
@@ -1066,7 +1069,7 @@ function generateEmailHTML(forPreview = false) {
       const rplzort = document.getElementById('rechnung_plzort')?.value;
       if (!rname && !rstrasse) return '';
       return `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin:0 0 14px;font-size:12px;color:#374151;">
-        <div style="font-size:10px;font-weight:bold;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Rechnungsadresse</div>
+        <div style="font-size:10px;font-weight:bold;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.rechnungsadresse}</div>
         ${rname ? `<div>${rname}</div>` : ''}
         ${rzusatz ? `<div style="color:#6b7280;">${rzusatz}</div>` : ''}
         ${rstrasse ? `<div>${rstrasse}</div>` : ''}
@@ -1076,18 +1079,18 @@ function generateEmailHTML(forPreview = false) {
     <p class="intro-text">${introText}</p>
 
     <table class="booking-table">
-      <tr><th colspan="2">📅 Aufenthalt</th></tr>
-      <tr><td>Anreise</td><td><strong>${formatDateDE(anreise)}</strong> (ab 15:00 Uhr)</td></tr>
-      <tr><td>Abreise</td><td><strong>${formatDateDE(abreise)}</strong> (bis 11:00 Uhr)</td></tr>
-      <tr><td>Aufenthaltsdauer</td><td><strong>${nights} Nacht${nights!==1?'e':''}</strong></td></tr>
+      <tr><th colspan="2">${t.aufenthalt}</th></tr>
+      <tr><td>${t.anreise}</td><td><strong>${formatDateDE(anreise)}</strong> ${t.anreiseZeit}</td></tr>
+      <tr><td>${t.abreise}</td><td><strong>${formatDateDE(abreise)}</strong> ${t.abreiseZeit}</td></tr>
+      <tr><td>${t.aufenthaltsdauer}</td><td><strong>${nights} ${nights!==1 ? t.naechte : t.nacht}</strong></td></tr>
     </table>
 
-    <p style="font-size:12px;font-weight:600;color:#3a3a3a;margin:14px 0 6px;">🛏️ Zimmerkonfiguration</p>
+    <p style="font-size:12px;font-weight:600;color:#3a3a3a;margin:14px 0 6px;">${t.zimmerConfig}</p>
     <table class="zimmer-detail-table">
       <tr>
-        <th>Kategorie</th><th>Belegung</th><th>Preis/Nacht</th><th>Gesamt</th>
+        <th>${t.kategorie}</th><th>${t.belegung}</th><th>${t.preisNacht}</th><th>${t.gesamt}</th>
       </tr>
-      ${zimmerRows || '<tr><td colspan="4" style="color:#9ca3af;text-align:center;">Keine Zimmer konfiguriert</td></tr>'}
+      ${zimmerRows || `<tr><td colspan="4" style="color:#9ca3af;text-align:center;">${t.keineZimmer}</td></tr>`}
     </table>
     ${frühstückHinweis}
 
@@ -1096,35 +1099,56 @@ function generateEmailHTML(forPreview = false) {
         const rn = z.nights || nights;
         return `
       <div class="price-row">
-        <span>${z.anzahl}x ${z.kategorie} × ${rn} Nacht${rn!==1?'e':''}</span>
+        <span>${z.anzahl}x ${z.kategorie} × ${rn} ${rn!==1 ? t.naechte : t.nacht}</span>
         <span>${formatEuro(z.anzahl * z.preisNacht * rn)}</span>
       </div>`;}).join('')}
       ${verpflegung === 'inkl. Frühstück' ? `
       <div class="price-row">
-        <span>Frühstück (${zimmer.reduce((s,z)=>s+z.anzahl*z.personen,0)} Pers. × ${nights} Nacht${nights!==1?'e':''})</span>
+        <span>${t.fruehstueckLabel} (${zimmer.reduce((s,z)=>s+z.anzahl*z.personen,0)} Pers. × ${nights} ${nights!==1 ? t.naechte : t.nacht})</span>
         <span>${formatEuro(calcFruehstueckTotal(zimmer, nights))}</span>
       </div>` : ''}
       <div class="price-row total">
-        <span>Gesamtbetrag</span>
+        <span>${t.gesamtbetrag}</span>
         <span>${formatEuro(total)}</span>
       </div>
     </div>
 
     ${angebotBox}
+    ${emailType === 'angebot' ? (() => {
+      const confirmBaseURL = 'https://duemler90431.github.io/westend-tool/confirm.html';
+      const confirmParams = new URLSearchParams({
+        lang: emailLang,
+        name: nachname,
+        vorname: vorname || '',
+        email: document.getElementById('email').value || '',
+        anreise: anreise,
+        abreise: abreise,
+        zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => z.anzahl + 'x ' + z.kategorie).join(', '),
+        gesamt: total.toFixed(2)
+      });
+      const confirmURL = confirmBaseURL + '?' + confirmParams.toString();
+      return `
+    <div style="text-align:center;margin:18px 0;">
+      <p style="font-size:12px;color:#4b5563;margin-bottom:10px;">${t.acceptHint}</p>
+      <a href="${confirmURL}"
+         style="display:inline-block;background:#16a34a;color:#ffffff;padding:12px 32px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold;letter-spacing:0.5px;"
+         target="_blank">
+        ✓ ${t.acceptButton}
+      </a>
+    </div>`;
+    })() : ''}
     ${hinweisBox}
     ${bemerkungenBox}
     <div class="storno-box" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;">
-      <div class="storno-heading" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Stornobedingungen</div>
+      <div class="storno-heading" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.stornoLabel}</div>
       <p style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:13px;color:#4b5563;line-height:1.7;margin:0;">${stornoText}</p>
     </div>
 
     <p style="font-size:13px;color:#4b5563;line-height:1.7;margin-top:16px;">
-      ${emailType==='angebot'
-        ? 'Für Rückfragen und zur Bestätigung des Angebots stehen wir Ihnen gerne zur Verfügung. Wir freuen uns, Sie bald bei uns begrüßen zu dürfen!'
-        : 'Wir freuen uns auf Ihren Besuch! Bei Fragen stehen wir Ihnen jederzeit gerne zur Verfügung.'}
+      ${emailType==='angebot' ? t.closingAngebot : t.closingBestaetigung}
     </p>
     <p style="font-size:13px;color:#4b5563;margin-top:12px;">
-      Mit freundlichen Grüßen,<br>
+      ${t.gruss}<br>
       <strong style="color:#3a3a3a;">${mitarbeiter}</strong><br>
       <span style="font-size:12px;color:#9ca3af;">westendhotel nürnberg</span>
     </p>
@@ -1134,7 +1158,7 @@ function generateEmailHTML(forPreview = false) {
       <strong>westendhotel nürnberg</strong><br>
       Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
       Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de" style="color:#c9983a;">info@hotelwestend.de</a> · www.hotelwestend.de<br>
-      <span style="font-size:10px;margin-top:4px;display:block;">Rezeption: 15:00–20:00 Uhr · Digitaler Check-In & Handytüröffnung außerhalb der Rezeptionszeiten · Kostenfreie Parkplätze · Kostenfreies WLAN</span>
+      <span style="font-size:10px;margin-top:4px;display:block;">${t.footerRezeption}</span>
     </p>
   </div>
 </div>`;
@@ -1157,9 +1181,8 @@ async function sendEmail() {
     return;
   }
 
-  const subject = emailType === 'angebot'
-    ? `Ihr Angebot – westendhotel nürnberg`
-    : `Ihre Buchungsbestätigung – westendhotel nürnberg`;
+  const t = I18N[emailLang];
+  const subject = emailType === 'angebot' ? t.subjectAngebot : t.subjectBestaetigung;
 
   const htmlBody = `<!DOCTYPE html><html><head><meta charset="UTF-8">
     <style>
