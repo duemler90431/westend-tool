@@ -324,6 +324,21 @@
   .form-wrapper { }
   .form-wrapper.show-angebot .angebot-validity-field { display: block; }
 
+  /* ── Language Toggle ── */
+  .lang-toggle {
+    display: flex; align-items: center; gap: 0;
+    background: rgba(255,255,255,0.08); border-radius: 20px;
+    overflow: hidden; border: 1.5px solid rgba(255,255,255,0.2);
+  }
+  .lang-btn {
+    padding: 6px 14px; font-size: 11px; font-weight: 700;
+    cursor: pointer; border: none; background: transparent;
+    color: rgba(255,255,255,0.5); letter-spacing: 0.5px;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .lang-btn.active { background: var(--gold); color: var(--navy); }
+
   @media (max-width: 900px) {
     .main-container { grid-template-columns: 1fr; }
     .preview-panel { position: static; }
@@ -342,6 +357,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="langDE" onclick="setLang('de')">DE</button>
+        <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
+      </div>
       <button class="btn-type angebot active" onclick="setType('angebot')">📋 Angebot</button>
       <button class="btn-type bestaetigung" onclick="setType('bestaetigung')">✅ Bestätigung</button>
     </div>
@@ -606,15 +625,111 @@
 <script>
 // ─── State ────────────────────────────────────────────────────────────────────
 let emailType = 'angebot';
+let emailLang = 'de';
 let zimmerRows = [];
 let brevoKey = ''; // Wird vom Nutzer eingegeben und im Browser gespeichert
 
 const KATEGORIEN = ['BASIC ROOM', 'MORE ROOM', 'Studio mit Kitchenette'];
+
+// ─── i18n Texts ──────────────────────────────────────────────────────────────
+const I18N = {
+  de: {
+    typeLabel: { angebot: 'ANGEBOT', bestaetigung: 'BUCHUNGSBESTÄTIGUNG' },
+    greeting: (anrede, nachname) => `${anrede} ${nachname},`,
+    intro: {
+      angebot: 'vielen Dank für Ihr Interesse am westendhotel nürnberg. Wir freuen uns, Ihnen folgendes Angebot für Ihren Aufenthalt unterbreiten zu dürfen:',
+      bestaetigung: 'vielen Dank für Ihre Buchung beim westendhotel nürnberg. Wir freuen uns auf Ihren Besuch und bestätigen hiermit Ihre Reservierung:',
+    },
+    aufenthalt: '📅 Aufenthalt',
+    anreise: 'Anreise',
+    abreise: 'Abreise',
+    anreiseZeit: '(ab 15:00 Uhr)',
+    abreiseZeit: '(bis 11:00 Uhr)',
+    aufenthaltsdauer: 'Aufenthaltsdauer',
+    nacht: 'Nacht',
+    naechte: 'Nächte',
+    zimmerConfig: '🛏️ Zimmerkonfiguration',
+    kategorie: 'Kategorie',
+    belegung: 'Belegung',
+    preisNacht: 'Preis/Nacht',
+    gesamt: 'Gesamt',
+    persZi: 'Pers./Zi.',
+    keineZimmer: 'Keine Zimmer konfiguriert',
+    verpflegung: 'Verpflegung',
+    fruehstueck: 'inkl. Frühstück',
+    fruehstueckPreis: '€ 15,00 / Pers. / Nacht',
+    fruehstueckLabel: 'Frühstück',
+    gesamtbetrag: 'Gesamtbetrag',
+    rechnungsadresse: 'Rechnungsadresse',
+    angebotGueltig: (datum) => `⏰ Dieses Angebot ist gültig bis <strong>${datum}</strong>. Bitte teilen Sie uns Ihre Entscheidung bis zu diesem Datum mit.`,
+    hinweiseLabel: 'Besondere Wünsche / Hinweise:',
+    bemerkungenLabel: '📋 Bemerkungen',
+    stornoLabel: 'Stornobedingungen',
+    closingAngebot: 'Für Rückfragen und zur Bestätigung des Angebots stehen wir Ihnen gerne zur Verfügung. Wir freuen uns, Sie bald bei uns begrüßen zu dürfen!',
+    closingBestaetigung: 'Wir freuen uns auf Ihren Besuch! Bei Fragen stehen wir Ihnen jederzeit gerne zur Verfügung.',
+    gruss: 'Mit freundlichen Grüßen,',
+    footerRezeption: 'Rezeption: 15:00–20:00 Uhr · Digitaler Check-In & Handytüröffnung außerhalb der Rezeptionszeiten · Kostenfreie Parkplätze · Kostenfreies WLAN',
+    acceptButton: 'Angebot akzeptieren',
+    acceptHint: 'Sie können dieses Angebot direkt online annehmen:',
+  },
+  en: {
+    typeLabel: { angebot: 'QUOTATION', bestaetigung: 'BOOKING CONFIRMATION' },
+    greeting: (anrede, nachname) => {
+      if (anrede.includes('Herr')) return `Dear Mr. ${nachname},`;
+      if (anrede.includes('Frau')) return `Dear Ms. ${nachname},`;
+      return `Dear Sir or Madam,`;
+    },
+    intro: {
+      angebot: 'Thank you for your interest in westendhotel nürnberg. We are pleased to present you with the following offer for your stay:',
+      bestaetigung: 'Thank you for your reservation at westendhotel nürnberg. We are looking forward to your visit and hereby confirm your booking:',
+    },
+    aufenthalt: '📅 Stay Details',
+    anreise: 'Check-in',
+    abreise: 'Check-out',
+    anreiseZeit: '(from 3:00 PM)',
+    abreiseZeit: '(until 11:00 AM)',
+    aufenthaltsdauer: 'Duration of stay',
+    nacht: 'night',
+    naechte: 'nights',
+    zimmerConfig: '🛏️ Room Configuration',
+    kategorie: 'Category',
+    belegung: 'Occupancy',
+    preisNacht: 'Rate/Night',
+    gesamt: 'Total',
+    persZi: 'pers./room',
+    keineZimmer: 'No rooms configured',
+    verpflegung: 'Meal plan',
+    fruehstueck: 'incl. breakfast',
+    fruehstueckPreis: '€ 15.00 / pers. / night',
+    fruehstueckLabel: 'Breakfast',
+    gesamtbetrag: 'Total Amount',
+    rechnungsadresse: 'Billing Address',
+    angebotGueltig: (datum) => `⏰ This offer is valid until <strong>${datum}</strong>. Please let us know your decision by this date.`,
+    hinweiseLabel: 'Special requests / Notes:',
+    bemerkungenLabel: '📋 Remarks',
+    stornoLabel: 'Cancellation Policy',
+    closingAngebot: 'For any questions or to confirm this offer, please do not hesitate to contact us. We look forward to welcoming you soon!',
+    closingBestaetigung: 'We look forward to your visit! Should you have any questions, please feel free to contact us at any time.',
+    gruss: 'Kind regards,',
+    footerRezeption: 'Reception: 3:00–8:00 PM · Digital Check-In & Mobile Door Access outside reception hours · Free Parking · Free WiFi',
+    acceptButton: 'Accept Offer',
+    acceptHint: 'You can accept this offer directly online:',
+  }
+};
+
 const STORNO_TEXTS = {
-  regulaer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise (18:00 Uhr). Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
-  messe: 'Eine kostenfreie Stornierung ist bis 42 Tage vor Anreise möglich. Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
-  gruppe: 'Kostenlose Stornierung bis 14 Tage vor Anreise. Danach wird 100% des Gesamtbetrags berechnet.',
-  flexibel: 'Sonderpreis – keine Stornierung möglich. Der Gesamtbetrag wird bei Buchungsbestätigung belastet.',
+  de: {
+    regulaer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise (18:00 Uhr). Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    messe: 'Eine kostenfreie Stornierung ist bis 42 Tage vor Anreise möglich. Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    gruppe: 'Kostenlose Stornierung bis 14 Tage vor Anreise. Danach wird 100% des Gesamtbetrags berechnet.',
+    flexibel: 'Sonderpreis – keine Stornierung möglich. Der Gesamtbetrag wird bei Buchungsbestätigung belastet.',
+  },
+  en: {
+    regulaer: 'Free cancellation up to 48 hours before arrival (6:00 PM). In case of cancellation or no-show, the full stay will be charged.',
+    messe: 'Free cancellation up to 42 days before arrival. In case of cancellation or no-show, the full stay will be charged.',
+    gruppe: 'Free cancellation up to 14 days before arrival. After this date, 100% of the total amount will be charged.',
+    flexibel: 'Special rate – no cancellation possible. The total amount will be charged upon booking confirmation.',
+  }
 };
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -694,6 +809,14 @@ function setType(type) {
   document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
   document.querySelector(`.btn-type.${type}`).classList.add('active');
   document.getElementById('gueltig-feld').style.display = type === 'angebot' ? 'block' : 'none';
+  updatePreview();
+}
+
+// ─── Language Toggle ──────────────────────────────────────────────────────────
+function setLang(lang) {
+  emailLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(lang === 'de' ? 'langDE' : 'langEN').classList.add('active');
   updatePreview();
 }
 
