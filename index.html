@@ -1131,7 +1131,8 @@ function generateEmailHTML(forPreview = false) {
         r_name: document.getElementById('rechnung_name')?.value || '',
         r_strasse: document.getElementById('rechnung_strasse')?.value || '',
         r_plzort: document.getElementById('rechnung_plzort')?.value || '',
-        r_zusatz: document.getElementById('rechnung_zusatz')?.value || ''
+        r_zusatz: document.getElementById('rechnung_zusatz')?.value || '',
+        storno: storno
       });
       const confirmURL = confirmBaseURL + '?' + confirmParams.toString();
       return `
