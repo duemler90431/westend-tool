@@ -136,6 +136,13 @@
         <span id="lbl_total">Gesamtbetrag</span>
         <span class="amount" id="val_gesamt">–</span>
       </div>
+
+      <!-- Stornobedingungen -->
+      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#fff8f0;border-left:3px solid #c9983a;">
+        <div style="font-size:10px;font-weight:700;color:#c9983a;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;" id="lbl_storno">Stornobedingungen</div>
+        <div style="font-size:12px;font-weight:600;color:#3a3a3a;margin-bottom:4px;" id="val_storno_title">–</div>
+        <div style="font-size:12px;color:#4b5563;line-height:1.5;" id="val_storno_text">–</div>
+      </div>
     </div>
   </div>
 
@@ -185,15 +192,35 @@
     <div class="error-title" id="errorTitle">Fehler</div>
     <div class="success-text" id="errorText">
       Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter
-      <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a>
+      <a href="/cdn-cgi/l/email-protection#375e595158775f5843525b40524443525953195352" style="color:#c9983a;font-weight:600;"><span class="__cf_email__" data-cfemail="fa93949c95ba92958e9f968d9f898e9f949ed49e9f">[email&#160;protected]</span></a>
       oder +49 911 93986-0.
     </div>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const params = new URLSearchParams(window.location.search);
 const lang = params.get('lang') || 'de';
+
+const STORNO_TEXTS = {
+  de: {
+    regulaer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise (18:00 Uhr). Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    messe: 'Eine kostenfreie Stornierung ist bis 42 Tage vor Anreise möglich. Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    gruppe: 'Kostenlose Stornierung bis 14 Tage vor Anreise. Danach wird 100% des Gesamtbetrags berechnet.',
+    flexibel: 'Sonderpreis – keine Stornierung möglich. Der Gesamtbetrag wird bei Buchungsbestätigung belastet.'
+  },
+  en: {
+    regulaer: 'Free cancellation up to 48 hours before arrival (6:00 PM). In case of cancellation or no-show, the full stay will be charged.',
+    messe: 'Free cancellation up to 42 days before arrival. In case of cancellation or no-show, the full stay will be charged.',
+    gruppe: 'Free cancellation up to 14 days before arrival. After this date, 100% of the total amount will be charged.',
+    flexibel: 'Special rate – no cancellation possible. The total amount will be charged upon booking confirmation.'
+  }
+};
+
+const STORNO_TITLES = {
+  de: { regulaer: 'Regulär', messe: 'Messe / Sonderveranstaltung', gruppe: 'Gruppe (ab 4 Zimmer)', flexibel: 'NON-CLX (nicht erstattungsfähig)' },
+  en: { regulaer: 'Standard', messe: 'Trade Fair / Special Event', gruppe: 'Group (4+ rooms)', flexibel: 'NON-CLX (non-refundable)' }
+};
 
 const texts = {
   de: {
@@ -221,7 +248,8 @@ const texts = {
     emailGuest: 'Gastinformation',
     emailBilling: 'Rechnungsadresse',
     emailRemark: 'Bemerkungen des Gastes',
-    emailAgbNote: 'AGB wurden akzeptiert. Bitte Buchungsbestätigung an den Gast senden.'
+    emailAgbNote: 'AGB wurden akzeptiert. Bitte Buchungsbestätigung an den Gast senden.',
+    stornoLabel: 'Stornobedingungen'
   },
   en: {
     pageTitle: 'Quotation Confirmation',
@@ -248,7 +276,8 @@ const texts = {
     emailGuest: 'Guest Information',
     emailBilling: 'Billing Address',
     emailRemark: 'Guest Remarks',
-    emailAgbNote: 'T&Cs were accepted. Please send booking confirmation to the guest.'
+    emailAgbNote: 'T&Cs were accepted. Please send booking confirmation to the guest.',
+    stornoLabel: 'Cancellation Policy'
   }
 };
 
@@ -305,6 +334,9 @@ const r_name = params.get('r_name') || '';
 const r_zusatz = params.get('r_zusatz') || '';
 const r_strasse = params.get('r_strasse') || '';
 const r_plzort = params.get('r_plzort') || '';
+const storno = params.get('storno') || 'regulaer';
+const stornoTitle = (STORNO_TITLES[lang] || STORNO_TITLES.de)[storno] || '';
+const stornoText = (STORNO_TEXTS[lang] || STORNO_TEXTS.de)[storno] || '';
 
 // Display guest info
 const fullDisplayName = vorname ? `${anrede ? anrede + ' ' : ''}${vorname} ${name}` : `${anrede ? anrede + ' ' : ''}${name}`;
@@ -336,6 +368,15 @@ if (r_name) {
   }
   document.getElementById('val_r_strasse').textContent = r_strasse || '–';
   document.getElementById('val_r_plzort').textContent = r_plzort || '–';
+}
+
+// Display storno
+document.getElementById('lbl_storno').textContent = t.stornoLabel;
+if (stornoTitle && stornoText) {
+  document.getElementById('val_storno_title').textContent = stornoTitle;
+  document.getElementById('val_storno_text').textContent = stornoText;
+} else {
+  document.getElementById('stornoSection').style.display = 'none';
 }
 
 function toggleConfirmBtn() {
@@ -417,6 +458,11 @@ async function confirmBooking() {
         </table>
         ${billingBlock}
         ${remarkBlock}
+        <div style="margin-top:16px;padding:12px 16px;background:#fff8f0;border-left:3px solid #c9983a;border-radius:4px;">
+          <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.stornoLabel}</div>
+          <p style="font-size:12px;font-weight:600;color:#3a3a3a;margin:0 0 4px 0;">${stornoTitle}</p>
+          <p style="font-size:12px;color:#4b5563;line-height:1.5;margin:0;">${stornoText}</p>
+        </div>
         <p style="font-size:12px;color:#6b7280;margin-top:16px;">${t.emailAgbNote}</p>
       </div>
     </div>
@@ -443,6 +489,7 @@ async function confirmBooking() {
       mailBodyText += `\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n`;
       if (r_name) mailBodyText += `\n${t.emailBilling}:\n${r_name}\n${r_zusatz ? r_zusatz + '\n' : ''}${r_strasse}\n${r_plzort}\n`;
       if (remarkText) mailBodyText += `\n${t.emailRemark}:\n${remarkText}\n`;
+      mailBodyText += `\n${t.stornoLabel}: ${stornoTitle}\n${stornoText}\n`;
       mailBodyText += `\nAGB akzeptiert.`;
       const mailBody = encodeURIComponent(mailBodyText);
       window.location.href = `mailto:info@hotelwestend.de?subject=${mailSubject}&body=${mailBody}`;
@@ -473,12 +520,4 @@ async function confirmBooking() {
       document.getElementById('errorCard').style.display = 'block';
     }
   } catch(e) {
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('summaryCard').style.display = 'none';
-    document.getElementById('errorCard').style.display = 'block';
-    console.error('Confirmation error:', e);
-  }
-}
-</script>
-</body>
-</html>
+    document.getElementById('load
