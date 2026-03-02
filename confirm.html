@@ -27,32 +27,26 @@
   .total-row { background: #f8f6f0; margin: 16px -28px -24px; padding: 16px 28px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; }
   .total-row .amount { color: var(--gold); font-size: 18px; }
   .section-label { font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; padding: 14px 0 4px; }
-
   .remark-section { margin-top: 16px; }
   .remark-section label { display: block; font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px; }
   .remark-section textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1f2937; resize: vertical; transition: border-color 0.2s; }
   .remark-section textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,152,58,0.1); }
   .remark-section .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-
   .agb-section { margin-top: 16px; padding: 20px 28px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); }
   .agb-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .agb-check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
   .agb-check label { font-size: 13px; color: #374151; line-height: 1.5; cursor: pointer; }
   .agb-check a { color: var(--gold); font-weight: 600; }
-
   .btn-confirm { display: block; width: 100%; margin-top: 20px; padding: 16px; background: #d1d5db; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: not-allowed; transition: all 0.3s; font-family: 'DM Sans', sans-serif; }
   .btn-confirm.enabled { background: var(--green); cursor: pointer; box-shadow: 0 4px 16px rgba(22,163,74,0.3); }
   .btn-confirm.enabled:hover { background: #15803d; transform: translateY(-1px); }
-
   .success-card { display: none; text-align: center; padding: 40px 28px; }
   .success-icon { font-size: 56px; margin-bottom: 16px; }
   .success-title { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
   .success-text { font-size: 13px; color: #6b7280; line-height: 1.6; }
-
   .error-card { display: none; text-align: center; padding: 40px 28px; }
   .error-icon { font-size: 56px; margin-bottom: 16px; }
   .error-title { font-size: 20px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
-
   .loading { display: none; text-align: center; padding: 40px; }
   .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -65,14 +59,12 @@
 </header>
 
 <div class="container">
-  <!-- Booking Summary -->
   <div class="card" id="summaryCard">
     <div class="card-header">
       <h2 id="pageTitle">Angebotsbestätigung</h2>
       <p id="pageSubtitle">Bitte prüfen Sie die Details und bestätigen Sie Ihre Buchung.</p>
     </div>
     <div class="card-body">
-      <!-- Gastinformation -->
       <div class="section-label" id="lbl_section_guest">Gastinformation</div>
       <div class="detail-row">
         <span class="detail-label" id="lbl_name">Name</span>
@@ -90,8 +82,6 @@
         <span class="detail-label" id="lbl_telefon">Telefon</span>
         <span class="detail-value" id="val_telefon">–</span>
       </div>
-
-      <!-- Aufenthalt -->
       <div class="section-label" id="lbl_section_stay">Aufenthalt</div>
       <div class="detail-row">
         <span class="detail-label" id="lbl_checkin">Anreise</span>
@@ -105,8 +95,6 @@
         <span class="detail-label" id="lbl_rooms">Zimmer</span>
         <span class="detail-value" id="val_zimmer">–</span>
       </div>
-
-      <!-- Rechnungsadresse (nur wenn vorhanden) -->
       <div id="rechnungSection" style="display:none;">
         <div class="section-label" id="lbl_section_billing">Rechnungsadresse</div>
         <div class="detail-row" id="row_r_name">
@@ -126,16 +114,19 @@
           <span class="detail-value" id="val_r_plzort">–</span>
         </div>
       </div>
-
-      <!-- Gesamtbetrag -->
       <div class="total-row">
         <span id="lbl_total">Gesamtbetrag</span>
         <span class="amount" id="val_gesamt">–</span>
       </div>
+      <!-- STORNO SECTION -->
+      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#fff8f0;border-left:3px solid #c9983a;">
+        <div style="font-size:10px;font-weight:700;color:#c9983a;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
+        <div style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:2px;" id="val_storno_title">–</div>
+        <div style="font-size:12px;color:#4b5563;line-height:1.5;" id="val_storno_text">–</div>
+      </div>
     </div>
   </div>
 
-  <!-- Bemerkungen Textarea -->
   <div class="card" id="remarkCard">
     <div class="card-body">
       <div class="remark-section">
@@ -146,7 +137,6 @@
     </div>
   </div>
 
-  <!-- AGB Checkbox + Confirm Button -->
   <div class="agb-section" id="agbSection">
     <div class="agb-check">
       <input type="checkbox" id="agbCheckbox" onchange="toggleConfirmBtn()">
@@ -159,13 +149,11 @@
     </button>
   </div>
 
-  <!-- Loading -->
   <div class="loading" id="loadingState">
     <div class="spinner"></div>
     <p id="loadingText" style="color:#6b7280;font-size:13px;">Buchung wird bestätigt...</p>
   </div>
 
-  <!-- Success -->
   <div class="card success-card" id="successCard">
     <div class="success-icon">🎉</div>
     <div class="success-title" id="successTitle">Vielen Dank!</div>
@@ -175,7 +163,6 @@
     </div>
   </div>
 
-  <!-- Error -->
   <div class="card error-card" id="errorCard">
     <div class="error-icon">⚠️</div>
     <div class="error-title" id="errorTitle">Fehler</div>
@@ -189,7 +176,58 @@
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const lang = params.get('lang') || 'de';
+
+// Decode data: try new Base64 format first, fall back to legacy URL params
+let data = {};
+const dParam = params.get('d');
+if (dParam) {
+  try {
+    data = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(dParam)))));
+  } catch(e) {
+    try { data = JSON.parse(atob(decodeURIComponent(dParam))); } catch(e2) {}
+  }
+} else {
+  data = {
+    lang: params.get('lang') || 'de',
+    anrede: params.get('anrede') || '',
+    name: params.get('name') || '',
+    vorname: params.get('vorname') || '',
+    email: params.get('email') || '',
+    firma: params.get('firma') || '',
+    telefon: params.get('telefon') || '',
+    anreise: params.get('anreise') || '',
+    abreise: params.get('abreise') || '',
+    zimmer: params.get('zimmer') || '',
+    gesamt: params.get('gesamt') || '',
+    r_name: params.get('r_name') || '',
+    r_strasse: params.get('r_strasse') || '',
+    r_plzort: params.get('r_plzort') || '',
+    r_zusatz: params.get('r_zusatz') || '',
+    storno: params.get('storno') || 'regulaer'
+  };
+}
+
+const lang = data.lang || 'de';
+
+const STORNO_TEXTS = {
+  de: {
+    regulaer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise (18:00 Uhr). Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    messe: 'Eine kostenfreie Stornierung ist bis 42 Tage vor Anreise möglich. Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
+    gruppe: 'Kostenlose Stornierung bis 14 Tage vor Anreise. Danach wird 100% des Gesamtbetrags berechnet.',
+    flexibel: 'Sonderpreis – keine Stornierung möglich. Der Gesamtbetrag wird bei Buchungsbestätigung belastet.'
+  },
+  en: {
+    regulaer: 'Free cancellation up to 48 hours before arrival (6:00 PM). In case of cancellation or no-show, the full stay will be charged.',
+    messe: 'Free cancellation up to 42 days before arrival. In case of cancellation or no-show, the full stay will be charged.',
+    gruppe: 'Free cancellation up to 14 days before arrival. After this date, 100% of the total amount will be charged.',
+    flexibel: 'Special rate – no cancellation possible. The total amount will be charged upon booking confirmation.'
+  }
+};
+
+const STORNO_TITLES = {
+  de: { regulaer: 'Regulär', messe: 'Messe / Sonderveranstaltung', gruppe: 'Gruppe (ab 4 Zimmer)', flexibel: 'NON-CLX (nicht erstattungsfähig)' },
+  en: { regulaer: 'Standard', messe: 'Trade Fair / Special Event', gruppe: 'Group (4+ rooms)', flexibel: 'NON-CLX (non-refundable)' }
+};
 
 const texts = {
   de: {
@@ -202,6 +240,7 @@ const texts = {
     checkin: 'Anreise', checkout: 'Abreise', rooms: 'Zimmer', total: 'Gesamtbetrag',
     r_name: 'Name / Firma', r_zusatz: 'Zusatz', r_strasse: 'Straße', r_plzort: 'PLZ / Ort',
     remarkLabel: 'Bemerkungen',
+    stornoLabel: 'Stornobedingungen',
     remarkPlaceholder: 'z.B. Zimmerwünsche, späte Anreise, Parkplatz benötigt...',
     remarkHint: 'Optional – Ihre Bemerkungen werden mit der Bestätigung übermittelt.',
     agb: 'Ich akzeptiere die <a href="AGB_LINK" target="_blank">Allgemeinen Geschäftsbedingungen</a> des westendhotel nürnberg und möchte das Angebot verbindlich annehmen.',
@@ -229,6 +268,7 @@ const texts = {
     checkin: 'Check-in', checkout: 'Check-out', rooms: 'Rooms', total: 'Total Amount',
     r_name: 'Name / Company', r_zusatz: 'Reference', r_strasse: 'Street', r_plzort: 'Postal Code / City',
     remarkLabel: 'Remarks',
+    stornoLabel: 'Cancellation Policy',
     remarkPlaceholder: 'e.g. room preferences, late arrival, parking needed...',
     remarkHint: 'Optional – your remarks will be included with the confirmation.',
     agb: 'I accept the <a href="AGB_LINK" target="_blank">General Terms and Conditions</a> of the westendhotel nürnberg and wish to confirm this quotation.',
@@ -286,21 +326,24 @@ document.getElementById('successText').innerHTML = t.successText;
 document.getElementById('errorTitle').textContent = t.errorTitle;
 document.getElementById('errorText').innerHTML = t.errorText;
 
-// Fill data from URL params
-const name = params.get('name') || '–';
-const vorname = params.get('vorname') || '';
-const anrede = params.get('anrede') || '';
-const email = params.get('email') || '–';
-const firma = params.get('firma') || '';
-const telefon = params.get('telefon') || '';
-const anreise = params.get('anreise') || '';
-const abreise = params.get('abreise') || '';
-const zimmer = params.get('zimmer') || '–';
-const gesamt = params.get('gesamt') || '–';
-const r_name = params.get('r_name') || '';
-const r_zusatz = params.get('r_zusatz') || '';
-const r_strasse = params.get('r_strasse') || '';
-const r_plzort = params.get('r_plzort') || '';
+// Fill data
+const name = data.name || '–';
+const vorname = data.vorname || '';
+const anrede = data.anrede || '';
+const email = data.email || '–';
+const firma = data.firma || '';
+const telefon = data.telefon || '';
+const anreise = data.anreise || '';
+const abreise = data.abreise || '';
+const zimmer = data.zimmer || '–';
+const gesamt = data.gesamt || '–';
+const r_name = data.r_name || '';
+const r_zusatz = data.r_zusatz || '';
+const r_strasse = data.r_strasse || '';
+const r_plzort = data.r_plzort || '';
+const storno = data.storno || 'regulaer';
+const stornoTitle = (STORNO_TITLES[lang] || STORNO_TITLES.de)[storno] || '';
+const stornoText = (STORNO_TEXTS[lang] || STORNO_TEXTS.de)[storno] || '';
 
 // Display guest info
 const fullDisplayName = vorname ? `${anrede ? anrede + ' ' : ''}${vorname} ${name}` : `${anrede ? anrede + ' ' : ''}${name}`;
@@ -322,7 +365,12 @@ document.getElementById('val_abreise').textContent = formatDateDE(abreise);
 document.getElementById('val_zimmer').textContent = zimmer;
 document.getElementById('val_gesamt').textContent = gesamt !== '–' ? `€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}` : '–';
 
-// Display billing address (only if at least r_name is present)
+// Display storno
+document.getElementById('lbl_storno').textContent = t.stornoLabel;
+document.getElementById('val_storno_title').textContent = stornoTitle;
+document.getElementById('val_storno_text').textContent = stornoText;
+
+// Display billing address
 if (r_name) {
   document.getElementById('rechnungSection').style.display = 'block';
   document.getElementById('val_r_name').textContent = r_name;
@@ -347,16 +395,13 @@ async function confirmBooking() {
 
   const remarkText = document.getElementById('remarkInput').value.trim();
 
-  // Show loading
   document.getElementById('summaryCard').style.display = 'block';
   document.getElementById('remarkCard').style.display = 'none';
   document.getElementById('agbSection').style.display = 'none';
   document.getElementById('loadingState').style.display = 'block';
 
-  // Build confirmation email HTML
   const fullName = vorname ? `${vorname} ${name}` : name;
 
-  // Guest info rows
   let guestRows = `
     <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.name}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${fullDisplayName}</td></tr>
     <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.email}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${email}</td></tr>`;
@@ -365,7 +410,6 @@ async function confirmBooking() {
   if (telefon) guestRows += `
     <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.telefon}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${telefon}</td></tr>`;
 
-  // Billing rows
   let billingBlock = '';
   if (r_name) {
     let billingRows = `
@@ -383,7 +427,6 @@ async function confirmBooking() {
       </table>`;
   }
 
-  // Remark block
   let remarkBlock = '';
   if (remarkText) {
     remarkBlock = `
@@ -392,6 +435,14 @@ async function confirmBooking() {
         <p style="font-size:13px;color:#374151;line-height:1.5;margin:0;">${remarkText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>
       </div>`;
   }
+
+  // Storno block for email
+  const stornoBlock = `
+      <div style="margin-top:16px;padding:12px 16px;background:#fff8f0;border-left:3px solid #c9983a;border-radius:0 6px 6px 0;">
+        <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.stornoLabel}</div>
+        <p style="font-size:12px;font-weight:600;color:#1f2937;margin:0 0 2px;">${stornoTitle}</p>
+        <p style="font-size:12px;color:#4b5563;margin:0;line-height:1.5;">${stornoText}</p>
+      </div>`;
 
   const confirmHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">
     <div style="background:white;max-width:560px;margin:0 auto;border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
@@ -413,6 +464,7 @@ async function confirmBooking() {
         </table>
         ${billingBlock}
         ${remarkBlock}
+        ${stornoBlock}
         <p style="font-size:12px;color:#6b7280;margin-top:16px;">${t.emailAgbNote}</p>
       </div>
     </div>
@@ -423,7 +475,6 @@ async function confirmBooking() {
     try { brevoKey = localStorage.getItem('westend_brevo_key') || ''; } catch(e) {}
 
     if (!brevoKey) {
-      // Fallback: mailto
       const mailSubject = encodeURIComponent(`${t.emailSubject}: ${fullName} – ${formatDateDE(anreise)} bis ${formatDateDE(abreise)}`);
       let mailBodyText = `${fullName} (${email}) ${t.emailBody}.\n\n`;
       if (firma) mailBodyText += `${t.firma}: ${firma}\n`;
@@ -431,6 +482,7 @@ async function confirmBooking() {
       mailBodyText += `\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n`;
       if (r_name) mailBodyText += `\n${t.emailBilling}:\n${r_name}\n${r_zusatz ? r_zusatz + '\n' : ''}${r_strasse}\n${r_plzort}\n`;
       if (remarkText) mailBodyText += `\n${t.emailRemark}:\n${remarkText}\n`;
+      mailBodyText += `\n${t.stornoLabel}: ${stornoTitle}\n${stornoText}\n`;
       mailBodyText += `\nAGB akzeptiert.`;
       const mailBody = encodeURIComponent(mailBodyText);
       window.location.href = `mailto:info@hotelwestend.de?subject=${mailSubject}&body=${mailBody}`;
