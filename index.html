@@ -1223,6 +1223,12 @@ async function sendEmail() {
     ...(ccList.length ? { cc: ccList } : {}),
     subject,
     htmlContent: htmlBody,
+    headers: {
+      "X-Mailin-custom": "disable_tracking"
+    },
+    params: {
+      DISABLE_CLICK_TRACKING: true
+    }
   };
 
   try {
@@ -1318,3 +1324,4 @@ function showUrlParamBanner(von, betreff) {
 </script>
 </body>
 </html>
+
