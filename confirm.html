@@ -200,7 +200,39 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const params = new URLSearchParams(window.location.search);
-const lang = params.get('lang') || 'de';
+
+// Decode data: try new Base64 format first, fall back to legacy URL params
+let data = {};
+const dParam = params.get('d');
+if (dParam) {
+  try {
+    data = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(dParam)))));
+  } catch(e) {
+    try { data = JSON.parse(atob(decodeURIComponent(dParam))); } catch(e2) {}
+  }
+} else {
+  // Legacy fallback: read individual URL params
+  data = {
+    lang: params.get('lang') || 'de',
+    anrede: params.get('anrede') || '',
+    name: params.get('name') || '',
+    vorname: params.get('vorname') || '',
+    email: params.get('email') || '',
+    firma: params.get('firma') || '',
+    telefon: params.get('telefon') || '',
+    anreise: params.get('anreise') || '',
+    abreise: params.get('abreise') || '',
+    zimmer: params.get('zimmer') || '',
+    gesamt: params.get('gesamt') || '',
+    r_name: params.get('r_name') || '',
+    r_strasse: params.get('r_strasse') || '',
+    r_plzort: params.get('r_plzort') || '',
+    r_zusatz: params.get('r_zusatz') || '',
+    storno: params.get('storno') || 'regulaer'
+  };
+}
+
+const lang = data.lang || 'de';
 
 const STORNO_TEXTS = {
   de: {
@@ -319,21 +351,22 @@ document.getElementById('successText').innerHTML = t.successText;
 document.getElementById('errorTitle').textContent = t.errorTitle;
 document.getElementById('errorText').innerHTML = t.errorText;
 
-// Fill data from URL params
-const name = params.get('name') || '–';
-const vorname = params.get('vorname') || '';
-const anrede = params.get('anrede') || '';
-const email = params.get('email') || '–';
-const firma = params.get('firma') || '';
-const telefon = params.get('telefon') || '';
-const anreise = params.get('anreise') || '';
-const abreise = params.get('abreise') || '';
-const zimmer = params.get('zimmer') || '–';
-const gesamt = params.get('gesamt') || '–';
-const r_name = params.get('r_name') || '';
-const r_zusatz = params.get('r_zusatz') || '';
-const r_strasse = params.get('r_strasse') || '';
-const r_plzort = params.get('r_plzort') || '';
+// Fill data from decoded object
+const name = data.name || '–';
+const vorname = data.vorname || '';
+const anrede = data.anrede || '';
+const email = data.email || '–';
+const firma = data.firma || '';
+const telefon = data.telefon || '';
+const anreise = data.anreise || '';
+const abreise = data.abreise || '';
+const zimmer = data.zimmer || '–';
+const gesamt = data.gesamt || '–';
+const r_name = data.r_name || '';
+const r_zusatz = data.r_zusatz || '';
+const r_strasse = data.r_strasse || '';
+const r_plzort = data.r_plzort || '';
+const storno = data.storno || 'regulaer';
 const storno = params.get('storno') || 'regulaer';
 const stornoTitle = (STORNO_TITLES[lang] || STORNO_TITLES.de)[storno] || '';
 const stornoText = (STORNO_TEXTS[lang] || STORNO_TEXTS.de)[storno] || '';
