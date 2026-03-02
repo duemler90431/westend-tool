@@ -132,12 +132,6 @@
         <span id="lbl_total">Gesamtbetrag</span>
         <span class="amount" id="val_gesamt">–</span>
       </div>
-      <!-- Stornobedingungen -->
-      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#fff8f0;border-left:3px solid #c9983a;">
-        <div style="font-size:10px;font-weight:700;color:#c9983a;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
-        <div style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:2px;" id="val_storno_title">–</div>
-        <div style="font-size:12px;color:#4b5563;line-height:1.5;" id="val_storno_text">–</div>
-      </div>
     </div>
   </div>
 
@@ -195,59 +189,7 @@
 
 <script>
 const params = new URLSearchParams(window.location.search);
-
-// Decode data: try new Base64 format first, fall back to legacy URL params
-let data = {};
-const dParam = params.get('d');
-if (dParam) {
-  try {
-    data = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(dParam)))));
-  } catch(e) {
-    try { data = JSON.parse(atob(decodeURIComponent(dParam))); } catch(e2) {}
-  }
-} else {
-  // Legacy fallback: read individual URL params
-  data = {
-    lang: params.get('lang') || 'de',
-    anrede: params.get('anrede') || '',
-    name: params.get('name') || '',
-    vorname: params.get('vorname') || '',
-    email: params.get('email') || '',
-    firma: params.get('firma') || '',
-    telefon: params.get('telefon') || '',
-    anreise: params.get('anreise') || '',
-    abreise: params.get('abreise') || '',
-    zimmer: params.get('zimmer') || '',
-    gesamt: params.get('gesamt') || '',
-    r_name: params.get('r_name') || '',
-    r_strasse: params.get('r_strasse') || '',
-    r_plzort: params.get('r_plzort') || '',
-    r_zusatz: params.get('r_zusatz') || '',
-    storno: params.get('storno') || 'regulaer'
-  };
-}
-
-const lang = data.lang || 'de';
-
-const STORNO_TEXTS = {
-  de: {
-    regulaer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise (18:00 Uhr). Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
-    messe: 'Eine kostenfreie Stornierung ist bis 42 Tage vor Anreise möglich. Bei Stornierung oder Nichterscheinen wird der gesamte Aufenthalt in Rechnung gestellt.',
-    gruppe: 'Kostenlose Stornierung bis 14 Tage vor Anreise. Danach wird 100% des Gesamtbetrags berechnet.',
-    flexibel: 'Sonderpreis – keine Stornierung möglich. Der Gesamtbetrag wird bei Buchungsbestätigung belastet.'
-  },
-  en: {
-    regulaer: 'Free cancellation up to 48 hours before arrival (6:00 PM). In case of cancellation or no-show, the full stay will be charged.',
-    messe: 'Free cancellation up to 42 days before arrival. In case of cancellation or no-show, the full stay will be charged.',
-    gruppe: 'Free cancellation up to 14 days before arrival. After this date, 100% of the total amount will be charged.',
-    flexibel: 'Special rate – no cancellation possible. The total amount will be charged upon booking confirmation.'
-  }
-};
-
-const STORNO_TITLES = {
-  de: { regulaer: 'Regulär', messe: 'Messe / Sonderveranstaltung', gruppe: 'Gruppe (ab 4 Zimmer)', flexibel: 'NON-CLX (nicht erstattungsfähig)' },
-  en: { regulaer: 'Standard', messe: 'Trade Fair / Special Event', gruppe: 'Group (4+ rooms)', flexibel: 'NON-CLX (non-refundable)' }
-};
+const lang = params.get('lang') || 'de';
 
 const texts = {
   de: {
@@ -260,7 +202,6 @@ const texts = {
     checkin: 'Anreise', checkout: 'Abreise', rooms: 'Zimmer', total: 'Gesamtbetrag',
     r_name: 'Name / Firma', r_zusatz: 'Zusatz', r_strasse: 'Straße', r_plzort: 'PLZ / Ort',
     remarkLabel: 'Bemerkungen',
-    stornoLabel: 'Stornobedingungen',
     remarkPlaceholder: 'z.B. Zimmerwünsche, späte Anreise, Parkplatz benötigt...',
     remarkHint: 'Optional – Ihre Bemerkungen werden mit der Bestätigung übermittelt.',
     agb: 'Ich akzeptiere die <a href="AGB_LINK" target="_blank">Allgemeinen Geschäftsbedingungen</a> des westendhotel nürnberg und möchte das Angebot verbindlich annehmen.',
@@ -288,8 +229,7 @@ const texts = {
     checkin: 'Check-in', checkout: 'Check-out', rooms: 'Rooms', total: 'Total Amount',
     r_name: 'Name / Company', r_zusatz: 'Reference', r_strasse: 'Street', r_plzort: 'Postal Code / City',
     remarkLabel: 'Remarks',
-    stornoLabel: 'Cancellation Policy',
-    remarkPlaceholder: 'e.g. room preferences, late arrival, parking needed...',, late arrival, parking needed...',
+    remarkPlaceholder: 'e.g. room preferences, late arrival, parking needed...',
     remarkHint: 'Optional – your remarks will be included with the confirmation.',
     agb: 'I accept the <a href="AGB_LINK" target="_blank">General Terms and Conditions</a> of the westendhotel nürnberg and wish to confirm this quotation.',
     confirmBtn: '✅ Confirm Booking',
@@ -347,24 +287,20 @@ document.getElementById('errorTitle').textContent = t.errorTitle;
 document.getElementById('errorText').innerHTML = t.errorText;
 
 // Fill data from URL params
-// Fill data from decoded object
-const name = data.name || '–';
-const vorname = data.vorname || '';
-const anrede = data.anrede || '';
-const email = data.email || '–';
-const firma = data.firma || '';
-const telefon = data.telefon || '';
-const anreise = data.anreise || '';
-const abreise = data.abreise || '';
-const zimmer = data.zimmer || '–';
-const gesamt = data.gesamt || '–';
-const r_name = data.r_name || '';
-const r_zusatz = data.r_zusatz || '';
-const r_strasse = data.r_strasse || '';
-const r_plzort = data.r_plzort || '';
-const storno = data.storno || 'regulaer';
-const stornoTitle = (STORNO_TITLES[lang] || STORNO_TITLES.de)[storno] || '';
-const stornoText = (STORNO_TEXTS[lang] || STORNO_TEXTS.de)[storno] || '';
+const name = params.get('name') || '–';
+const vorname = params.get('vorname') || '';
+const anrede = params.get('anrede') || '';
+const email = params.get('email') || '–';
+const firma = params.get('firma') || '';
+const telefon = params.get('telefon') || '';
+const anreise = params.get('anreise') || '';
+const abreise = params.get('abreise') || '';
+const zimmer = params.get('zimmer') || '–';
+const gesamt = params.get('gesamt') || '–';
+const r_name = params.get('r_name') || '';
+const r_zusatz = params.get('r_zusatz') || '';
+const r_strasse = params.get('r_strasse') || '';
+const r_plzort = params.get('r_plzort') || '';
 
 // Display guest info
 const fullDisplayName = vorname ? `${anrede ? anrede + ' ' : ''}${vorname} ${name}` : `${anrede ? anrede + ' ' : ''}${name}`;
@@ -385,11 +321,6 @@ document.getElementById('val_anreise').textContent = formatDateDE(anreise);
 document.getElementById('val_abreise').textContent = formatDateDE(abreise);
 document.getElementById('val_zimmer').textContent = zimmer;
 document.getElementById('val_gesamt').textContent = gesamt !== '–' ? `€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}` : '–';
-
-// Storno display
-document.getElementById('lbl_storno').textContent = t.stornoLabel;
-document.getElementById('val_storno_title').textContent = stornoTitle;
-document.getElementById('val_storno_text').textContent = stornoText;
 
 // Display billing address (only if at least r_name is present)
 if (r_name) {
@@ -482,11 +413,6 @@ async function confirmBooking() {
         </table>
         ${billingBlock}
         ${remarkBlock}
-        <div style="margin-top:16px;padding:12px 16px;background:#fff8f0;border-left:3px solid #c9983a;border-radius:0 6px 6px 0;">
-          <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.stornoLabel}</div>
-          <p style="font-size:12px;font-weight:600;color:#1f2937;margin:0 0 2px;">${stornoTitle}</p>
-          <p style="font-size:12px;color:#4b5563;margin:0;line-height:1.5;">${stornoText}</p>
-        </div>
         <p style="font-size:12px;color:#6b7280;margin-top:16px;">${t.emailAgbNote}</p>
       </div>
     </div>
@@ -505,7 +431,6 @@ async function confirmBooking() {
       mailBodyText += `\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n`;
       if (r_name) mailBodyText += `\n${t.emailBilling}:\n${r_name}\n${r_zusatz ? r_zusatz + '\n' : ''}${r_strasse}\n${r_plzort}\n`;
       if (remarkText) mailBodyText += `\n${t.emailRemark}:\n${remarkText}\n`;
-      mailBodyText += `\n${t.stornoLabel}: ${stornoTitle}\n${stornoText}\n`;
       mailBodyText += `\nAGB akzeptiert.`;
       const mailBody = encodeURIComponent(mailBodyText);
       window.location.href = `mailto:info@hotelwestend.de?subject=${mailSubject}&body=${mailBody}`;
@@ -539,8 +464,9 @@ async function confirmBooking() {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('summaryCard').style.display = 'none';
     document.getElementById('errorCard').style.display = 'block';
+    console.error('Confirmation error:', e);
   }
-});
+}
 </script>
 </body>
 </html>
