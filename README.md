@@ -1,7 +1,7 @@
 # Projekt: Westendhotel Nürnberg – Angebotstool & Power Automate Flow
 
 ## Übersicht
-Ein HTML-basiertes Angebots- und Bestätigungstool für das Westendhotel Nürnberg, gehostet auf GitHub Pages. Ein Power Automate Flow erkennt eingehende Buchungsanfragen und sendet automatisch eine Benachrichtigung mit Link zum Tool.
+Ein HTML-basiertes Angebots- und Bestätigungstool für das Westendhotel Nürnberg, gehostet auf GitHub Pages. Ein Power  Automate Flow erkennt eingehende Buchungsanfragen und sendet automatisch eine Benachrichtigung mit Link zum Tool.
 
 ---
 
