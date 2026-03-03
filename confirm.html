@@ -10,8 +10,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #faf8f4; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
   header { background: #3a3a3a; width: 100%; padding: 18px 32px; text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
-  .hotel-name { color: white; font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-  .hotel-name span { font-weight: 300; }
   .hotel-sub { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
   .container { max-width: 560px; width: 100%; margin: 32px auto; padding: 0 16px; }
   .card { background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); overflow: hidden; }
@@ -54,8 +52,10 @@
 </head>
 <body>
 <header>
-  <div class="hotel-name">westend<span>hotel</span></div>
-  <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
+  <div style="text-align:center;">
+    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:36px;margin-bottom:6px;">
+    <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
+  </div>
 </header>
 
 <div class="container">
