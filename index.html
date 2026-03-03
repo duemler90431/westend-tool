@@ -1104,7 +1104,7 @@ function generateEmailHTML(forPreview = false) {
       </div>`;}).join('')}
       ${verpflegung === 'inkl. Frühstück' ? `
       <div class="price-row">
-        <span>${t.fruehstueckLabel} (${zimmer.reduce((s,z)=>s+z.anzahl*z.personen,0)} Pers. × ${nights} ${nights!==1 ? t.naechte : t.nacht})</span>
+        <span>${t.fruehstueckLabel} (${zimmer.map(z => z.anzahl*z.personen + ' Pers. \u00d7 ' + (z.nights||nights) + ' ' + ((z.nights||nights)!==1 ? t.naechte : t.nacht)).join(' + ')})</span>
         <span>${formatEuro(calcFruehstueckTotal(zimmer, nights))}</span>
       </div>` : ''}
       <div class="price-row total">
