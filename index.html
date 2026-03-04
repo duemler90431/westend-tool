@@ -375,7 +375,7 @@
     <div class="card">
       <div class="card-header">
         <div class="icon">👤</div>
-        <h2>Gastinformationen</h2>
+        <h2>Gastinformationen / Besteller</h2>
       </div>
       <div class="card-body">
         <div class="form-row">
@@ -865,6 +865,12 @@ function addZimmerRow() {
       <input type="number" min="1" max="4" value="1" id="zpers-${id}" oninput="updatePreview()">
     </div>
     <button class="btn-remove" onclick="removeZimmerRow(${id})" title="Entfernen">✕</button>
+    <div style="grid-column:1/-1;margin-top:2px;">
+      <div class="field">
+        <label style="font-size:11px;color:var(--gray-600);">Gastname <span style="font-weight:400;color:var(--gray-400);">(optional – nur wenn abweichend vom Besteller)</span></label>
+        <input type="text" id="zgast-${id}" placeholder="Name oder Firma des Gastes" oninput="updatePreview()" style="max-width:400px;">
+      </div>
+    </div>
     <div class="zimmer-dates-toggle" style="grid-column:1/-1;margin-top:4px;">
       <label style="cursor:pointer;font-size:11px;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:5px;" onclick="toggleZimmerDates(${id})">
         <span id="zdates-arrow-${id}" style="transition:transform 0.2s;">▶</span>
@@ -937,6 +943,7 @@ function getZimmerData() {
       abreise: rowAbreise,
       nights: rowNights,
       hasCustomDates: !!(document.getElementById(`zanreise-${id}`)?.value),
+      gastname: document.getElementById(`zgast-${id}`)?.value || '',
     };
   });
 }
@@ -1022,7 +1029,7 @@ function generateEmailHTML(forPreview = false) {
       : '';
     return `
       <tr>
-        <td>${z.anzahl}x ${z.kategorie}${dateInfo}</td>
+        <td>${z.anzahl}x ${z.kategorie}${z.gastname ? `<br><span style="font-size:11px;color:#6b7280;">↳ Gast: ${z.gastname}</span>` : ''}${dateInfo}</td>
         <td>${z.personen} ${t.persZi}</td>
         <td>${formatEuro(z.preisNacht)}/${t.nacht}</td>
         <td><strong>${formatEuro(subtotal)}</strong></td>
@@ -1062,6 +1069,7 @@ function generateEmailHTML(forPreview = false) {
   <div class="email-content">
     <p class="greeting">${t.greeting(anrede, nachname)}</p>
     ${firma ? `<p style="font-size:12px;color:#6b7280;margin-bottom:10px;">${firma}</p>` : ''}
+    ${zimmer.some(z => z.gastname) ? `<p style="font-size:11px;color:#9ca3af;margin-bottom:10px;font-style:italic;">${emailLang === 'de' ? '(Besteller – Gast siehe Zimmerkonfiguration)' : '(Booker – guest see room configuration)'}</p>` : ''}
     ${(() => {
       const rname = document.getElementById('rechnung_name')?.value;
       const rzusatz = document.getElementById('rechnung_zusatz')?.value;
@@ -1104,7 +1112,7 @@ function generateEmailHTML(forPreview = false) {
       </div>`;}).join('')}
       ${verpflegung === 'inkl. Frühstück' ? `
       <div class="price-row">
-        <span>${t.fruehstueckLabel} (${zimmer.map(z => z.anzahl*z.personen + ' Pers. \u00d7 ' + (z.nights||nights) + ' ' + ((z.nights||nights)!==1 ? t.naechte : t.nacht)).join(' + ')})</span>
+        <span>${t.fruehstueckLabel} (${zimmer.map(z => z.anzahl*z.personen + ' Pers. × ' + (z.nights||nights) + ' ' + ((z.nights||nights)!==1 ? t.naechte : t.nacht)).join(' + ')})</span>
         <span>${formatEuro(calcFruehstueckTotal(zimmer, nights))}</span>
       </div>` : ''}
       <div class="price-row total">
@@ -1126,7 +1134,11 @@ function generateEmailHTML(forPreview = false) {
         telefon: document.getElementById('telefon').value || '',
         anreise: anreise,
         abreise: abreise,
-        zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => z.anzahl + 'x ' + z.kategorie).join(', '),
+        zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => {
+          let s = z.anzahl + 'x ' + z.kategorie;
+          if (z.gastname) s += ' [Gast: ' + z.gastname + ']';
+          return s;
+        }).join(', '),
         gesamt: total.toFixed(2),
         r_name: document.getElementById('rechnung_name')?.value || '',
         r_strasse: document.getElementById('rechnung_strasse')?.value || '',
