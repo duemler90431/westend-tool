@@ -471,35 +471,12 @@ async function confirmBooking() {
   </body></html>`;
 
   try {
-    // Brevo API-Key: eingebettet für automatischen Versand (auch ohne localStorage)
-    const BREVO_API_KEY = '';
-    let brevoKey = '';
-    try { brevoKey = localStorage.getItem('westend_brevo_key') || ''; } catch(e) {}
-    if (!brevoKey && BREVO_API_KEY && BREVO_API_KEY !== 'DEIN_BREVO_API_KEY_HIER') {
-      brevoKey = BREVO_API_KEY;
-    }
+    // E-Mail-Versand über Cloudflare Worker Proxy (Brevo API-Key serverseitig geschützt)
+    const WORKER_URL = 'https://westend-brevo-proxy.dd-f19.workers.dev';
 
-    if (!brevoKey) {
-      const mailSubject = encodeURIComponent(`${t.emailSubject}: ${fullName} – ${formatDateDE(anreise)} bis ${formatDateDE(abreise)}`);
-      let mailBodyText = `${fullName} (${email}) ${t.emailBody}.\n\n`;
-      if (firma) mailBodyText += `${t.firma}: ${firma}\n`;
-      if (telefon) mailBodyText += `${t.telefon}: ${telefon}\n`;
-      mailBodyText += `\n${t.checkin}: ${formatDateDE(anreise)}\n${t.checkout}: ${formatDateDE(abreise)}\n${t.rooms}: ${zimmer}\n${t.total}: € ${parseFloat(gesamt).toFixed(2).replace('.', ',')}\n`;
-      if (r_name) mailBodyText += `\n${t.emailBilling}:\n${r_name}\n${r_zusatz ? r_zusatz + '\n' : ''}${r_strasse}\n${r_plzort}\n`;
-      if (remarkText) mailBodyText += `\n${t.emailRemark}:\n${remarkText}\n`;
-      mailBodyText += `\n${t.stornoLabel}: ${stornoTitle}\n${stornoText}\n`;
-      mailBodyText += `\nAGB akzeptiert.`;
-      const mailBody = encodeURIComponent(mailBodyText);
-      window.location.href = `mailto:info@hotelwestend.de?subject=${mailSubject}&body=${mailBody}`;
-      document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('summaryCard').style.display = 'none';
-      document.getElementById('successCard').style.display = 'block';
-      return;
-    }
-
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const res = await fetch(WORKER_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': brevoKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sender: { name: "westendhotel nürnberg – Angebotsannahme", email: "info@hotelwestend.de" },
         to: [{ email: "info@hotelwestend.de", name: "Westendhotel Rezeption" }],
@@ -526,4 +503,5 @@ async function confirmBooking() {
 </script>
 </body>
 </html>
+
 
