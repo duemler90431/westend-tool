@@ -6,7 +6,7 @@
 <title>Angebot bestätigen – westendhotel nürnberg</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --gold: #c9983a; --green: #16a34a; --navy: #3a3a3a; }
+  :root { --accent: #2a6b7c; --green: #2d6b4a; --navy: #3a3a3a; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #faf8f4; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
   header { background: #3a3a3a; width: 100%; padding: 18px 32px; text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
@@ -23,18 +23,18 @@
   .detail-label { color: #6b7280; }
   .detail-value { font-weight: 600; color: var(--navy); text-align: right; max-width: 60%; word-break: break-word; }
   .total-row { background: #f8f6f0; margin: 16px -28px -24px; padding: 16px 28px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; }
-  .total-row .amount { color: var(--gold); font-size: 18px; }
-  .section-label { font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; padding: 14px 0 4px; }
+  .total-row .amount { color: var(--accent); font-size: 18px; }
+  .section-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; padding: 14px 0 4px; }
   .remark-section { margin-top: 16px; }
   .remark-section label { display: block; font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px; }
   .remark-section textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1f2937; resize: vertical; transition: border-color 0.2s; }
-  .remark-section textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,152,58,0.1); }
+  .remark-section textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42,107,124,0.1); }
   .remark-section .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
   .agb-section { margin-top: 16px; padding: 20px 28px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); }
   .agb-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .agb-check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
   .agb-check label { font-size: 13px; color: #374151; line-height: 1.5; cursor: pointer; }
-  .agb-check a { color: var(--gold); font-weight: 600; }
+  .agb-check a { color: var(--accent); font-weight: 600; }
   .btn-confirm { display: block; width: 100%; margin-top: 20px; padding: 16px; background: #d1d5db; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: not-allowed; transition: all 0.3s; font-family: 'DM Sans', sans-serif; }
   .btn-confirm.enabled { background: var(--green); cursor: pointer; box-shadow: 0 4px 16px rgba(22,163,74,0.3); }
   .btn-confirm.enabled:hover { background: #15803d; transform: translateY(-1px); }
@@ -119,8 +119,8 @@
         <span class="amount" id="val_gesamt">–</span>
       </div>
       <!-- STORNO SECTION -->
-      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#fff8f0;border-left:3px solid #c9983a;">
-        <div style="font-size:10px;font-weight:700;color:#c9983a;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
+      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#eae8e3;border:1px solid #ddd9d0;">
+        <div style="font-size:10px;font-weight:700;color:#2a6b7c;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
         <div style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:2px;" id="val_storno_title">–</div>
         <div style="font-size:12px;color:#4b5563;line-height:1.5;" id="val_storno_text">–</div>
       </div>
@@ -168,7 +168,7 @@
     <div class="error-title" id="errorTitle">Fehler</div>
     <div class="success-text" id="errorText">
       Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter
-      <a href="/cdn-cgi/l/email-protection#f891969e97b890978c9d948f9d8b8c9d969cd69c9d" style="color:#c9983a;font-weight:600;"><span class="__cf_email__" data-cfemail="325b5c545d725a5d46575e45574146575c561c5657">[email&#160;protected]</span></a>
+      <a href="/cdn-cgi/l/email-protection#f891969e97b890978c9d948f9d8b8c9d969cd69c9d" style="color:#2a6b7c;font-weight:600;"><span class="__cf_email__" data-cfemail="325b5c545d725a5d46575e45574146575c561c5657">[email&#160;protected]</span></a>
       oder +49 911 93986-0.
     </div>
   </div>
@@ -249,7 +249,7 @@ const texts = {
     successTitle: 'Vielen Dank!',
     successText: 'Ihre Buchung wurde erfolgreich bestätigt. Sie erhalten in Kürze eine Bestätigung per E-Mail.<br><br>Wir freuen uns auf Ihren Besuch!',
     errorTitle: 'Fehler',
-    errorText: 'Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a> oder +49 911 93986-0.',
+    errorText: 'Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter <a href="mailto:info@hotelwestend.de" style="color:#2a6b7c;font-weight:600;">info@hotelwestend.de</a> oder +49 911 93986-0.',
     emailSubject: 'Angebotsannahme',
     emailBody: 'hat das Angebot angenommen',
     emailDetails: 'Buchungsdetails',
@@ -277,7 +277,7 @@ const texts = {
     successTitle: 'Thank you!',
     successText: 'Your booking has been successfully confirmed. You will receive a confirmation email shortly.<br><br>We look forward to your visit!',
     errorTitle: 'Error',
-    errorText: 'Unfortunately, the confirmation could not be sent. Please contact us directly at <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a> or +49 911 93986-0.',
+    errorText: 'Unfortunately, the confirmation could not be sent. Please contact us directly at <a href="mailto:info@hotelwestend.de" style="color:#2a6b7c;font-weight:600;">info@hotelwestend.de</a> or +49 911 93986-0.',
     emailSubject: 'Quotation Accepted',
     emailBody: 'has accepted the quotation',
     emailDetails: 'Booking details',
@@ -424,7 +424,7 @@ async function confirmBooking() {
       <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.r_plzort}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${r_plzort}</td></tr>`;
     billingBlock = `
       <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;margin-top:16px;">
-        <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailBilling}</th></tr>
+        <tr style="background:#2d2d2d;"><th colspan="2" style="color:#d0cdc6;padding:10px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-align:left;">${t.emailBilling}</th></tr>
         ${billingRows}
       </table>`;
   }
@@ -432,37 +432,37 @@ async function confirmBooking() {
   let remarkBlock = '';
   if (remarkText) {
     remarkBlock = `
-      <div style="margin-top:16px;padding:12px 16px;background:#fef9ee;border-left:3px solid #c9983a;border-radius:4px;">
-        <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.emailRemark}</div>
+      <div style="margin-top:16px;padding:12px 16px;background:#eef6f0;border-left:3px solid #2d6b4a;">
+        <div style="font-size:11px;font-weight:bold;color:#2a6b7c;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.emailRemark}</div>
         <p style="font-size:13px;color:#374151;line-height:1.5;margin:0;">${remarkText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>
       </div>`;
   }
 
   // Storno block for email
   const stornoBlock = `
-      <div style="margin-top:16px;padding:12px 16px;background:#fff8f0;border-left:3px solid #c9983a;border-radius:0 6px 6px 0;">
-        <div style="font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.stornoLabel}</div>
+      <div style="margin-top:16px;padding:12px 16px;background:#eae8e3;border:1px solid #ddd9d0;;">
+        <div style="font-size:11px;font-weight:bold;color:#2a6b7c;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${t.stornoLabel}</div>
         <p style="font-size:12px;font-weight:600;color:#1f2937;margin:0 0 2px;">${stornoTitle}</p>
         <p style="font-size:12px;color:#4b5563;margin:0;line-height:1.5;">${stornoText}</p>
       </div>`;
 
   const confirmHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">
-    <div style="background:white;max-width:560px;margin:0 auto;border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <div style="background:#16a34a;padding:20px 28px;text-align:center;">
+    <div style="background:#f5f3ef;max-width:560px;margin:0 auto;overflow:hidden;">
+      <div style="background:#2d6b4a;padding:20px 28px;text-align:center;">
         <div style="color:white;font-size:18px;font-weight:bold;">✅ ${t.emailSubject}</div>
       </div>
       <div style="padding:24px 28px;">
         <p style="font-size:14px;margin-bottom:16px;"><strong>${fullName}</strong> (${email}) ${t.emailBody}.</p>
         <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
-          <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailGuest}</th></tr>
+          <tr style="background:#2d2d2d;"><th colspan="2" style="color:#d0cdc6;padding:10px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-align:left;">${t.emailGuest}</th></tr>
           ${guestRows}
         </table>
         <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;margin-top:16px;">
-          <tr style="background:#3a3a3a;"><th colspan="2" style="color:white;padding:9px 12px;font-size:11px;text-align:left;">${t.emailDetails}</th></tr>
+          <tr style="background:#2d2d2d;"><th colspan="2" style="color:#d0cdc6;padding:10px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-align:left;">${t.emailDetails}</th></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.checkin}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${formatDateDE(anreise)}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.checkout}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${formatDateDE(abreise)}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#6b7280;">${t.rooms}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;font-weight:600;">${zimmerDisplay}</td></tr>
-          <tr><td style="padding:8px 12px;font-size:12px;color:#6b7280;">${t.total}</td><td style="padding:8px 12px;font-size:14px;font-weight:bold;color:#c9983a;">€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}</td></tr>
+          <tr><td style="padding:8px 12px;font-size:12px;color:#6b7280;">${t.total}</td><td style="padding:8px 12px;font-size:14px;font-weight:700;color:#2a6b7c;">€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}</td></tr>
         </table>
         ${billingBlock}
         ${remarkBlock}
@@ -487,7 +487,7 @@ async function confirmBooking() {
             r_plzort: r_plzort,
             r_zusatz: r_zusatz,
             bemerkungen: remarkText
-          })))))}" style="display:inline-block;background:#1a7a4a;color:#ffffff;padding:12px 28px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:bold;letter-spacing:0.3px;" target="_blank">
+          })))))}" style="display:inline-block;background:#2d6b4a;color:#ffffff;padding:12px 28px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;" target="_blank">
             📋 Buchungsbestätigung erstellen
           </a>
           <p style="font-size:11px;color:#9ca3af;margin-top:8px;">Öffnet das Angebotstool mit vorausgefüllten Daten</p>

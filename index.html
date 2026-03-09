@@ -199,74 +199,76 @@
   .preview-header p { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 3px; }
   .preview-body { padding: 0; max-height: 70vh; overflow-y: auto; }
   .email-preview {
-    font-family: Arial, sans-serif; font-size: 13px;
-    background: #f5f5f5; padding: 16px;
+    font-family: 'DM Sans', Arial, sans-serif; font-size: 13px;
+    background: #e8e5de; padding: 16px;
   }
   .email-inner {
-    background: white; max-width: 560px; margin: 0 auto;
-    border-radius: 6px; overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: #f5f3ef; max-width: 560px; margin: 0 auto;
+    overflow: hidden;
   }
   .email-header-bar {
-    background: #3a3a3a; padding: 24px 28px;
+    background: #2d2d2d; padding: 28px 28px 24px;
     text-align: center;
   }
   .email-header-bar .hotel-name {
     color: white; font-family: Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 1px;
   }
   .email-header-bar .hotel-sub {
-    color: rgba(255,255,255,0.6); font-size: 11px; margin-top: 4px; letter-spacing: 2px;
+    color: #7a7a7a; font-size: 10px; margin-top: 6px; letter-spacing: 2.5px;
     text-transform: uppercase;
   }
   .email-type-bar {
-    background: #c9983a; padding: 10px 28px; text-align: center;
-    color: #3a3a3a; font-size: 12px; font-weight: bold; letter-spacing: 1.5px;
+    padding: 10px 28px; text-align: center;
+    font-size: 11px; font-weight: bold; letter-spacing: 2px;
     text-transform: uppercase;
   }
-  .email-content { padding: 24px 28px; }
-  .email-content .greeting { font-size: 14px; margin-bottom: 14px; color: #1f2937; }
-  .email-content .intro-text { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 16px; }
+  .email-content { padding: 28px 28px; }
+  .email-content .greeting { font-size: 14px; margin-bottom: 14px; color: #2d2d2d; line-height: 1.7; }
+  .email-content .intro-text { font-size: 13px; color: #3a3a3a; line-height: 1.7; margin-bottom: 16px; }
+  .section-header-line { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
+  .section-header-line h3 { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #2d2d2d; white-space: nowrap; }
+  .section-header-line .line { flex: 1; height: 1px; background: #d8d4cc; }
   .booking-table {
-    width: 100%; border-collapse: collapse; margin: 16px 0;
-    border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden;
+    width: 100%; border-collapse: collapse; margin: 0 0 4px;
+    border: 1px solid #e8e5de; overflow: hidden; background: #ffffff;
   }
   .booking-table th {
-    background: #3a3a3a; color: white; padding: 9px 12px;
-    font-size: 11px; text-align: left; letter-spacing: 0.5px;
+    background: #2d2d2d; color: #d0cdc6; padding: 9px 14px;
+    font-size: 10px; text-align: left; letter-spacing: 1.5px; text-transform: uppercase;
   }
-  .booking-table td { padding: 8px 12px; font-size: 12px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .booking-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0ede8; color: #2d2d2d; }
+  .booking-table td:first-child { color: #8a8580; font-size: 12px; }
   .booking-table tr:last-child td { border-bottom: none; }
-  .booking-table tr:nth-child(even) td { background: #fafafa; }
-  .zimmer-detail-table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; }
+  .zimmer-detail-table { width: 100%; border-collapse: collapse; margin: 0; border: 1px solid #e8e5de; }
   .zimmer-detail-table th {
-    background: #4a4a4a; color: rgba(255,255,255,0.9); padding: 7px 10px;
-    font-size: 11px; text-align: left;
+    background: #2d2d2d; color: #d0cdc6; padding: 10px 14px;
+    font-size: 10px; text-align: left; letter-spacing: 1.5px; text-transform: uppercase;
   }
-  .zimmer-detail-table td { padding: 7px 10px; font-size: 12px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .zimmer-detail-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0ede8; color: #2d2d2d; background: #ffffff; }
   .zimmer-detail-table tr:last-child td { border-bottom: none; }
   .price-summary {
-    background: #f8f6f0; border: 1px solid #e5d5b5;
-    border-radius: 6px; padding: 14px 16px; margin: 16px 0;
+    background: #2d2d2d;
+    padding: 16px 18px; margin: 0; border: 1px solid #e8e5de; border-top: none;
   }
-  .price-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: #4b5563; }
-  .price-row.total { font-weight: bold; font-size: 14px; color: #3a3a3a; border-top: 1px solid #e5d5b5; margin-top: 6px; padding-top: 8px; }
+  .price-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: #a0a0a0; }
+  .price-row.total { font-weight: 700; font-size: 14px; color: #ffffff; border-top: 1px solid #444; margin-top: 6px; padding-top: 10px; }
   .storno-box {
-    background: #fff8f0; border-left: 3px solid #c9983a;
-    padding: 12px 14px; margin: 14px 0; border-radius: 0 6px 6px 0;
+    background: #eae8e3; border: 1px solid #ddd9d0;
+    padding: 14px 16px; margin: 14px 0;
   }
-  .storno-box .storno-heading { font-size: 11px; font-weight: bold; color: #c9983a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-  .storno-box p { font-size: 12px; color: #4b5563; line-height: 1.5; }
+  .storno-box .storno-heading { font-size: 10px; font-weight: 700; color: #2a6b7c; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+  .storno-box p { font-size: 12px; color: #5a5550; line-height: 1.6; }
   .angebot-validity {
-    background: #f0f9ff; border-left: 3px solid #0284c7;
-    padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #0369a1;
-    border-radius: 0 6px 6px 0;
+    background: #e8f1f4; border-left: 3px solid #2a6b7c;
+    padding: 12px 16px; margin: 14px 0; font-size: 12px; color: #3a5560;
   }
   .email-footer {
-    background: #f9fafb; border-top: 1px solid #e5e7eb;
-    padding: 16px 28px; text-align: center;
+    background: #2d2d2d;
+    padding: 24px 28px; text-align: center;
   }
-  .email-footer p { font-size: 11px; color: #9ca3af; line-height: 1.6; }
-  .email-footer strong { color: #6b7280; }
+  .email-footer p { font-size: 11px; color: #8a8a8a; line-height: 1.8; }
+  .email-footer strong { color: #ffffff; }
+  .email-footer a { color: #8bb8c4; text-decoration: none; }
 
   /* ── Action buttons ── */
   .action-bar {
@@ -1116,7 +1118,7 @@ function generateEmailHTML(forPreview = false) {
 
   const t = I18N[emailLang];
   const typeLabel = t.typeLabel[emailType];
-  const typeColor = emailType === 'angebot' ? '#c9983a' : '#1a7a4a';
+  const typeColor = emailType === 'angebot' ? '#2a6b7c' : '#2d6b4a';
   const vorname_str = vorname ? ` ${vorname}` : '';
 
   // Zimmer-Detail-Rows
@@ -1140,25 +1142,26 @@ function generateEmailHTML(forPreview = false) {
 
   const angebotBox = emailType === 'angebot' ? (() => {
     if (gueltigTyp === 'freibleibend') return `
-    <div style="background:#f0f9ff;border-left:3px solid #0284c7;padding:10px 14px;margin:12px 0;border-radius:0 6px 6px 0;font-size:12px;color:#0369a1;">
+    <div style="background:#e8f1f4;border-left:3px solid #2a6b7c;padding:12px 16px;margin:14px 0;font-size:12px;color:#3a5560;">
       ${t.angebotFreibleibend}
     </div>`;
     if (gueltig) return `
-    <div style="background:#f0f9ff;border-left:3px solid #0284c7;padding:10px 14px;margin:12px 0;border-radius:0 6px 6px 0;font-size:12px;color:#0369a1;">
+    <div style="background:#e8f1f4;border-left:3px solid #2a6b7c;padding:12px 16px;margin:14px 0;font-size:12px;color:#3a5560;">
       ${t.angebotGueltig(formatDateDE(gueltig))}
     </div>`;
     return '';
   })() : '';
 
   const hinweisBox = hinweise ? `
-    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:12px 14px;margin:12px 0;font-size:12px;color:#4b5563;">
-      <strong style="color:#374151;">${t.hinweiseLabel}</strong><br>${hinweise.replace(/\n/g,'<br>')}
+    <div style="background:#ffffff;border:1px solid #e8e5de;padding:14px 16px;margin:14px 0;font-size:12px;color:#3a3a3a;">
+      <div style="font-size:10px;font-weight:700;color:#7a7570;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.hinweiseLabel}</div>
+      ${hinweise.replace(/\n/g,'<br>')}
     </div>` : '';
 
   const bemerkungenBox = bemerkungen ? `
-    <div style="background:#f0fff4;border-left:3px solid #16a34a;padding:12px 14px;margin:14px 0;border-radius:0 6px 6px 0;">
-      <div style="font-size:11px;font-weight:bold;color:#16a34a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.bemerkungenLabel}</div>
-      <p style="font-size:12px;color:#374151;line-height:1.6;">${bemerkungen.replace(/\n/g,'<br>')}</p>
+    <div style="background:#eef6f0;border-left:3px solid #2d6b4a;padding:14px 16px;margin:14px 0;">
+      <div style="font-size:10px;font-weight:700;color:#2d6b4a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.bemerkungenLabel}</div>
+      <p style="font-size:12px;color:#3a3a3a;line-height:1.6;margin:0;">${bemerkungen.replace(/\n/g,'<br>')}</p>
     </div>` : '';
 
   const introText = t.intro[emailType];
@@ -1169,7 +1172,7 @@ function generateEmailHTML(forPreview = false) {
     <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:52px;width:auto;display:block;margin:0 auto 10px;">
     <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
   </div>
-  <div style="background:${typeColor};padding:9px 28px;text-align:center;color:${emailType==='angebot'?'#3a3a3a':'#ffffff'};font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;">
+  <div style="background:${typeColor};padding:13px 28px;text-align:center;color:#ffffff;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;">
     ${typeLabel}
   </div>
   <div class="email-content">
@@ -1182,10 +1185,10 @@ function generateEmailHTML(forPreview = false) {
       const rstrasse = document.getElementById('rechnung_strasse')?.value;
       const rplzort = document.getElementById('rechnung_plzort')?.value;
       if (!rname && !rstrasse) return '';
-      return `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin:0 0 14px;font-size:12px;color:#374151;">
-        <div style="font-size:10px;font-weight:bold;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.rechnungsadresse}</div>
+      return `<div style="background:#ffffff;border:1px solid #e8e5de;padding:12px 16px;margin:0 0 14px;font-size:12px;color:#2d2d2d;">
+        <div style="font-size:10px;font-weight:700;color:#7a7570;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.rechnungsadresse}</div>
         ${rname ? `<div>${rname}</div>` : ''}
-        ${rzusatz ? `<div style="color:#6b7280;">${rzusatz}</div>` : ''}
+        ${rzusatz ? `<div style="color:#8a8580;">${rzusatz}</div>` : ''}
         ${rstrasse ? `<div>${rstrasse}</div>` : ''}
         ${rplzort ? `<div>${rplzort}</div>` : ''}
       </div>`;
@@ -1254,10 +1257,10 @@ function generateEmailHTML(forPreview = false) {
       };
       const confirmURL = confirmBaseURL + '?d=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(confirmData)))));
       return `
-    <div style="text-align:center;margin:18px 0;">
-      <p style="font-size:12px;color:#4b5563;margin-bottom:10px;">${t.acceptHint}</p>
+    <div style="text-align:center;margin:22px 0;">
+      <p style="font-size:11px;color:#8a8580;margin-bottom:14px;">${t.acceptHint}</p>
       <a href="${confirmURL}"
-         style="display:inline-block;background:#16a34a;color:#ffffff;padding:12px 32px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold;letter-spacing:0.5px;"
+         style="display:inline-block;background:#2d6b4a;color:#ffffff;padding:14px 36px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;"
          target="_blank">
         ✓ ${t.acceptButton}
       </a>
@@ -1265,26 +1268,26 @@ function generateEmailHTML(forPreview = false) {
     })() : ''}
     ${hinweisBox}
     ${bemerkungenBox}
-    <div class="storno-box" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;">
-      <div class="storno-heading" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;color:#c9983a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${t.stornoLabel}</div>
-      <p style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:13px;color:#4b5563;line-height:1.7;margin:0;">${stornoText}</p>
+    <div class="storno-box" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;background:#eae8e3;border:1px solid #ddd9d0;border-left:none;padding:14px 16px;">
+      <div class="storno-heading" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;color:#2a6b7c;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.stornoLabel}</div>
+      <p style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#5a5550;line-height:1.6;margin:0;">${stornoText}</p>
     </div>
 
-    <p style="font-size:13px;color:#4b5563;line-height:1.7;margin-top:16px;">
+    <p style="font-size:13px;color:#4b4540;line-height:1.75;margin-top:20px;">
       ${emailType==='angebot' ? t.closingAngebot : t.closingBestaetigung}
     </p>
-    <p style="font-size:13px;color:#4b5563;margin-top:12px;">
+    <p style="font-size:13px;color:#4b4540;margin-top:14px;line-height:1.6;">
       ${t.gruss}<br>
-      <strong style="color:#3a3a3a;">${mitarbeiter}</strong><br>
-      <span style="font-size:12px;color:#9ca3af;">westendhotel nürnberg</span>
+      <strong style="color:#2d2d2d;">${mitarbeiter}</strong><br>
+      <span style="font-size:12px;color:#8a8580;">westendhotel nürnberg</span>
     </p>
   </div>
-  <div class="email-footer">
-    <p>
-      <strong>westendhotel nürnberg</strong><br>
+  <div class="email-footer" style="background:#2d2d2d;padding:24px 28px;text-align:center;">
+    <p style="font-size:11px;color:#8a8a8a;line-height:1.8;">
+      <strong style="color:#ffffff;">westendhotel nürnberg</strong><br>
       Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-      Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de" style="color:#c9983a;">info@hotelwestend.de</a> · www.hotelwestend.de<br>
-      <span style="font-size:10px;margin-top:4px;display:block;">${t.footerRezeption}</span>
+      Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de" style="color:#8bb8c4;text-decoration:none;">info@hotelwestend.de</a> · <a href="https://www.hotelwestend.de" style="color:#8bb8c4;text-decoration:none;">www.hotelwestend.de</a><br>
+      <span style="font-size:10px;margin-top:6px;display:block;color:#666;">${t.footerRezeption}</span>
     </p>
   </div>
 </div>`;
@@ -1312,24 +1315,26 @@ async function sendEmail() {
 
   const htmlBody = `<!DOCTYPE html><html><head><meta charset="UTF-8">
     <style>
-      body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;}
-      .email-inner{background:white;max-width:560px;margin:0 auto;border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
-      .email-header-bar{background:#3a3a3a;padding:24px 28px;text-align:center;}
+      body{font-family:'DM Sans',Arial,sans-serif;background:#e8e5de;padding:20px;}
+      .email-inner{background:#f5f3ef;max-width:560px;margin:0 auto;overflow:hidden;}
+      .email-header-bar{background:#2d2d2d;padding:28px 28px 24px;text-align:center;}
       .hotel-name{color:white;font-family:Georgia,serif;font-size:22px;font-weight:bold;letter-spacing:1px;}
-      .hotel-sub{color:rgba(255,255,255,0.6);font-size:11px;margin-top:4px;letter-spacing:2px;text-transform:uppercase;}
-      .email-content{padding:24px 28px;}
-      .greeting{font-size:14px;margin-bottom:14px;color:#1f2937;}
-      .intro-text{font-size:13px;color:#4b5563;line-height:1.6;margin-bottom:16px;}
-      table{width:100%;border-collapse:collapse;margin:16px 0;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;}
-      th{background:#3a3a3a;color:white;padding:9px 12px;font-size:11px;text-align:left;}
-      td{padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#374151;}
+      .hotel-sub{color:#7a7a7a;font-size:10px;margin-top:6px;letter-spacing:2.5px;text-transform:uppercase;}
+      .email-content{padding:28px 28px;}
+      .greeting{font-size:14px;margin-bottom:14px;color:#2d2d2d;line-height:1.7;}
+      .intro-text{font-size:13px;color:#3a3a3a;line-height:1.7;margin-bottom:16px;}
+      table{width:100%;border-collapse:collapse;border:1px solid #e8e5de;}
+      th{background:#2d2d2d;color:#d0cdc6;padding:10px 14px;font-size:10px;text-align:left;letter-spacing:1.5px;text-transform:uppercase;}
+      td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f0ede8;color:#2d2d2d;background:#ffffff;}
       tr:last-child td{border-bottom:none;}
-      tr:nth-child(even) td{background:#fafafa;}
-      .price-summary{background:#f8f6f0;border:1px solid #e5d5b5;border-radius:6px;padding:14px 16px;margin:16px 0;}
-      .price-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#4b5563;}
-      .storno-box{background:#fff8f0;border-left:3px solid #c9983a;padding:12px 14px;margin:14px 0;border-radius:0 6px 6px 0;}
-      .email-footer{background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 28px;text-align:center;}
-      .email-footer p{font-size:11px;color:#9ca3af;line-height:1.6;}
+      .price-summary{background:#2d2d2d;padding:16px 18px;border:1px solid #e8e5de;border-top:none;}
+      .price-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#a0a0a0;}
+      .price-row.total{font-weight:700;font-size:14px;color:#ffffff;border-top:1px solid #444;margin-top:6px;padding-top:10px;}
+      .storno-box{background:#eae8e3;border:1px solid #ddd9d0;padding:14px 16px;margin:14px 0;}
+      .email-footer{background:#2d2d2d;padding:24px 28px;text-align:center;}
+      .email-footer p{font-size:11px;color:#8a8a8a;line-height:1.8;}
+      .email-footer strong{color:#ffffff;}
+      .email-footer a{color:#8bb8c4;text-decoration:none;}
     </style></head><body>${generateEmailHTML(false)}</body></html>`;
 
   const cc = document.getElementById('cc_email').value;
@@ -1374,18 +1379,20 @@ async function sendEmail() {
 function copyHTML() {
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
-  body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;}
-  .email-inner{background:white;max-width:560px;margin:0 auto;border-radius:6px;overflow:hidden;}
-  .email-header-bar{background:#3a3a3a;padding:24px 28px;text-align:center;}
+  body{font-family:'DM Sans',Arial,sans-serif;background:#e8e5de;padding:20px;}
+  .email-inner{background:#f5f3ef;max-width:560px;margin:0 auto;overflow:hidden;}
+  .email-header-bar{background:#2d2d2d;padding:28px 28px 24px;text-align:center;}
   .hotel-name{color:white;font-family:Georgia,serif;font-size:22px;font-weight:bold;}
-  .hotel-sub{color:rgba(255,255,255,0.6);font-size:11px;margin-top:4px;}
-  .email-content{padding:24px 28px;}
-  table{width:100%;border-collapse:collapse;margin:16px 0;}
-  th{background:#3a3a3a;color:white;padding:9px 12px;font-size:11px;text-align:left;}
-  td{padding:8px 12px;font-size:12px;border-bottom:1px solid #f3f4f6;color:#374151;}
-  .storno-box{background:#fff8f0;border-left:3px solid #c9983a;padding:12px 14px;margin:14px 0;}
-  .email-footer{background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 28px;text-align:center;}
-  .email-footer p{font-size:11px;color:#9ca3af;line-height:1.6;}
+  .hotel-sub{color:#7a7a7a;font-size:10px;margin-top:6px;}
+  .email-content{padding:28px 28px;}
+  table{width:100%;border-collapse:collapse;border:1px solid #e8e5de;}
+  th{background:#2d2d2d;color:#d0cdc6;padding:10px 14px;font-size:10px;text-align:left;letter-spacing:1.5px;text-transform:uppercase;}
+  td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f0ede8;color:#2d2d2d;background:#ffffff;}
+  .storno-box{background:#eae8e3;border:1px solid #ddd9d0;padding:14px 16px;margin:14px 0;}
+  .email-footer{background:#2d2d2d;padding:24px 28px;text-align:center;}
+  .email-footer p{font-size:11px;color:#8a8a8a;line-height:1.8;}
+  .email-footer strong{color:#ffffff;}
+  .email-footer a{color:#8bb8c4;text-decoration:none;}
 </style>
 </head><body>${generateEmailHTML(false)}</body></html>`;
   navigator.clipboard.writeText(html)
