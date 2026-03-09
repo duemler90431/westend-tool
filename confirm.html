@@ -472,7 +472,7 @@ async function confirmBooking() {
 
   try {
     // Brevo API-Key: eingebettet für automatischen Versand (auch ohne localStorage)
-    const BREVO_API_KEY = 'xkeysib-961cb9ebf38303e3474f296d2a33ffd81ff5baaff663a1b49398fb66b07b358c-gHEdvxMfiaaiax0aDEIN_BREVO_API_KEY_HIER';
+    const BREVO_API_KEY = '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';
     let brevoKey = '';
     try { brevoKey = localStorage.getItem('westend_brevo_key') || ''; } catch(e) {}
     if (!brevoKey && BREVO_API_KEY && BREVO_API_KEY !== 'DEIN_BREVO_API_KEY_HIER') {
