@@ -168,13 +168,13 @@
     <div class="error-title" id="errorTitle">Fehler</div>
     <div class="success-text" id="errorText">
       Die Bestätigung konnte leider nicht gesendet werden. Bitte kontaktieren Sie uns direkt unter
-      <a href="mailto:info@hotelwestend.de" style="color:#c9983a;font-weight:600;">info@hotelwestend.de</a>
+      <a href="/cdn-cgi/l/email-protection#f891969e97b890978c9d948f9d8b8c9d969cd69c9d" style="color:#c9983a;font-weight:600;"><span class="__cf_email__" data-cfemail="325b5c545d725a5d46575e45574146575c561c5657">[email&#160;protected]</span></a>
       oder +49 911 93986-0.
     </div>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const params = new URLSearchParams(window.location.search);
 
 // Decode data: try new Base64 format first, fall back to legacy URL params
@@ -471,8 +471,13 @@ async function confirmBooking() {
   </body></html>`;
 
   try {
+    // Brevo API-Key: eingebettet für automatischen Versand (auch ohne localStorage)
+    const BREVO_API_KEY = 'xkeysib-961cb9ebf38303e3474f296d2a33ffd81ff5baaff663a1b49398fb66b07b358c-gHEdvxMfiaaiax0aDEIN_BREVO_API_KEY_HIER';
     let brevoKey = '';
     try { brevoKey = localStorage.getItem('westend_brevo_key') || ''; } catch(e) {}
+    if (!brevoKey && BREVO_API_KEY && BREVO_API_KEY !== 'DEIN_BREVO_API_KEY_HIER') {
+      brevoKey = BREVO_API_KEY;
+    }
 
     if (!brevoKey) {
       const mailSubject = encodeURIComponent(`${t.emailSubject}: ${fullName} – ${formatDateDE(anreise)} bis ${formatDateDE(abreise)}`);
@@ -516,9 +521,9 @@ async function confirmBooking() {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('summaryCard').style.display = 'none';
     document.getElementById('errorCard').style.display = 'block';
-    console.error('Confirmation error:', e);
   }
 }
 </script>
 </body>
 </html>
+
