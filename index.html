@@ -768,21 +768,107 @@ document.addEventListener('DOMContentLoaded', () => {
   const paramBetreff = urlParams.get('betreff');
   const paramName = urlParams.get('name');
 
-  if (paramVon || paramBetreff || paramName) {
-    // Info-Banner anzeigen
-    showUrlParamBanner(paramVon, paramBetreff);
-  }
+  // Prefill aus Angebotsannahme-E-Mail (Base64-kodiertes JSON)
+  const prefillParam = urlParams.get('prefill');
+  if (prefillParam) {
+    try {
+      const pf = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(prefillParam)))));
 
-  if (paramVon) {
-    document.getElementById('email').value = paramVon;
-  }
-  if (paramName) {
-    document.getElementById('nachname').value = paramName;
-  }
-  if (paramBetreff) {
-    // Betreff als Hinweis in die internen Notizen schreiben
-    const hinweiseField = document.getElementById('hinweise');
-    hinweiseField.value = '📧 Ursprüngliche Anfrage-Betreff: ' + paramBetreff + '\n' + hinweiseField.value;
+      // Modus auf Bestätigung setzen
+      if (pf.mode === 'bestaetigung') {
+        setType('bestaetigung');
+      }
+
+      // Gastinformationen
+      if (pf.anrede) {
+        const anredeSelect = document.getElementById('anrede');
+        for (let opt of anredeSelect.options) {
+          if (opt.value === pf.anrede) { anredeSelect.value = pf.anrede; break; }
+        }
+      }
+      if (pf.name) document.getElementById('nachname').value = pf.name;
+      if (pf.vorname) document.getElementById('vorname').value = pf.vorname;
+      if (pf.email) document.getElementById('email').value = pf.email;
+      if (pf.firma) document.getElementById('firma').value = pf.firma;
+      if (pf.telefon) document.getElementById('telefon').value = pf.telefon;
+
+      // Aufenthalt
+      if (pf.anreise) document.getElementById('anreise').value = pf.anreise;
+      if (pf.abreise) document.getElementById('abreise').value = pf.abreise;
+
+      // Stornobedingungen
+      if (pf.storno) {
+        const stornoRadio = document.querySelector(`input[name="storno"][value="${pf.storno}"]`);
+        if (stornoRadio) stornoRadio.checked = true;
+      }
+
+      // Rechnungsadresse
+      if (pf.r_name) {
+        document.getElementById('rechnung_name').value = pf.r_name;
+        if (pf.r_strasse) document.getElementById('rechnung_strasse').value = pf.r_strasse;
+        if (pf.r_plzort) document.getElementById('rechnung_plzort').value = pf.r_plzort;
+        if (pf.r_zusatz) document.getElementById('rechnung_zusatz').value = pf.r_zusatz;
+        // Rechnungsadresse aufklappen
+        const rBlock = document.getElementById('rechnungBlock');
+        if (rBlock) {
+          rBlock.style.display = 'block';
+          const rArrow = document.getElementById('rechnungArrow');
+          if (rArrow) rArrow.style.transform = 'rotate(90deg)';
+        }
+      }
+
+      // Bemerkungen aus der Gast-Annahme
+      if (pf.bemerkungen) {
+        const bemField = document.getElementById('bemerkungen');
+        if (bemField) bemField.value = pf.bemerkungen;
+      }
+
+      // Zimmer parsen: "1x BASIC ROOM [Gast: Hugo], 2x MORE ROOM"
+      if (pf.zimmer) {
+        // Erste Standard-Zeile entfernen
+        const firstRow = zimmerRows[0];
+        if (firstRow) removeZimmerRow(firstRow);
+
+        const zimmerParts = pf.zimmer.split(',').map(s => s.trim());
+        zimmerParts.forEach(part => {
+          const match = part.match(/^(\d+)x\s+(.+?)(?:\s+\[Gast:\s*(.+?)\])?$/);
+          if (match) {
+            const anz = match[1];
+            const kat = match[2].trim();
+            const gast = match[3] || '';
+            addZimmerRow();
+            const id = zimmerRows[zimmerRows.length - 1];
+            document.getElementById(`zanz-${id}`).value = anz;
+            const katSelect = document.getElementById(`zkat-${id}`);
+            for (let opt of katSelect.options) {
+              if (opt.value === kat) { katSelect.value = kat; break; }
+            }
+            if (gast) document.getElementById(`zgast-${id}`).value = gast;
+          }
+        });
+      }
+
+      // Info-Banner
+      showUrlParamBanner(null, null, pf);
+
+    } catch(e) {
+      console.error('Prefill decode error:', e);
+    }
+  } else {
+    if (paramVon || paramBetreff || paramName) {
+      showUrlParamBanner(paramVon, paramBetreff);
+    }
+
+    if (paramVon) {
+      document.getElementById('email').value = paramVon;
+    }
+    if (paramName) {
+      document.getElementById('nachname').value = paramName;
+    }
+    if (paramBetreff) {
+      const hinweiseField = document.getElementById('hinweise');
+      hinweiseField.value = '📧 Ursprüngliche Anfrage-Betreff: ' + paramBetreff + '\n' + hinweiseField.value;
+    }
   }
 
   updatePreview();
@@ -1327,21 +1413,38 @@ function showToast(msg, type = 'success') {
 }
 
 // ─── URL-Param Banner ────────────────────────────────────────────────────────
-function showUrlParamBanner(von, betreff) {
+function showUrlParamBanner(von, betreff, prefill) {
   const banner = document.createElement('div');
   banner.id = 'urlParamBanner';
-  banner.innerHTML = `
-    <div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1.5px solid #0284c7;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
-      <span style="font-size:20px;">📨</span>
-      <div style="flex:1;">
-        <div style="font-weight:700;color:#0369a1;font-size:13px;margin-bottom:6px;">Neue Buchungsanfrage eingegangen</div>
-        ${von ? `<div style="font-size:12px;color:#374151;margin-bottom:3px;"><strong>Von:</strong> ${von}</div>` : ''}
-        ${betreff ? `<div style="font-size:12px;color:#374151;"><strong>Betreff:</strong> ${betreff}</div>` : ''}
-        <div style="font-size:11px;color:#6b7280;margin-top:6px;">Die E-Mail-Adresse wurde automatisch eingetragen. Bitte Angebot ausfüllen und absenden.</div>
+
+  if (prefill) {
+    const guestName = [prefill.vorname, prefill.name].filter(Boolean).join(' ');
+    banner.innerHTML = `
+      <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #16a34a;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:20px;">✅</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:#15803d;font-size:13px;margin-bottom:6px;">Angebotsannahme – Buchungsbestätigung vorbereitet</div>
+          <div style="font-size:12px;color:#374151;margin-bottom:3px;"><strong>Gast:</strong> ${guestName}</div>
+          <div style="font-size:12px;color:#374151;margin-bottom:3px;"><strong>Zeitraum:</strong> ${prefill.anreise ? formatDateDE(prefill.anreise) : '–'} bis ${prefill.abreise ? formatDateDE(prefill.abreise) : '–'}</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:6px;">Alle Daten wurden aus der Angebotsannahme übernommen. Bitte Preise prüfen und Bestätigung senden.</div>
+        </div>
+        <button onclick="this.closest('#urlParamBanner').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0;line-height:1;">✕</button>
       </div>
-      <button onclick="this.closest('#urlParamBanner').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0;line-height:1;">✕</button>
-    </div>
-  `;
+    `;
+  } else {
+    banner.innerHTML = `
+      <div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1.5px solid #0284c7;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:20px;">📨</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:#0369a1;font-size:13px;margin-bottom:6px;">Neue Buchungsanfrage eingegangen</div>
+          ${von ? `<div style="font-size:12px;color:#374151;margin-bottom:3px;"><strong>Von:</strong> ${von}</div>` : ''}
+          ${betreff ? `<div style="font-size:12px;color:#374151;"><strong>Betreff:</strong> ${betreff}</div>` : ''}
+          <div style="font-size:11px;color:#6b7280;margin-top:6px;">Die E-Mail-Adresse wurde automatisch eingetragen. Bitte Angebot ausfüllen und absenden.</div>
+        </div>
+        <button onclick="this.closest('#urlParamBanner').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0;line-height:1;">✕</button>
+      </div>
+    `;
+  }
   const mainContainer = document.querySelector('.main-container');
   mainContainer.parentNode.insertBefore(banner, mainContainer);
 }
