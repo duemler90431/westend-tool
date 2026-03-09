@@ -823,7 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bemField) bemField.value = pf.bemerkungen;
       }
 
-      // Zimmer parsen: "1x BASIC ROOM [Gast: Hugo], 2x MORE ROOM"
+      // Zimmer parsen: "1x BASIC ROOM @89.00 [Gast: Hugo], 2x MORE ROOM @109.00"
       if (pf.zimmer) {
         // Erste Standard-Zeile entfernen
         const firstRow = zimmerRows[0];
@@ -831,11 +831,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const zimmerParts = pf.zimmer.split(',').map(s => s.trim());
         zimmerParts.forEach(part => {
-          const match = part.match(/^(\d+)x\s+(.+?)(?:\s+\[Gast:\s*(.+?)\])?$/);
+          const match = part.match(/^(\d+)x\s+(.+?)(?:\s+@(\d+(?:\.\d+)?))?(?:\s+\[Gast:\s*(.+?)\])?$/);
           if (match) {
             const anz = match[1];
             const kat = match[2].trim();
-            const gast = match[3] || '';
+            const preis = match[3] || '';
+            const gast = match[4] || '';
             addZimmerRow();
             const id = zimmerRows[zimmerRows.length - 1];
             document.getElementById(`zanz-${id}`).value = anz;
@@ -843,6 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let opt of katSelect.options) {
               if (opt.value === kat) { katSelect.value = kat; break; }
             }
+            if (preis) document.getElementById(`zpreis-${id}`).value = preis;
             if (gast) document.getElementById(`zgast-${id}`).value = gast;
           }
         });
@@ -1239,7 +1241,7 @@ function generateEmailHTML(forPreview = false) {
         anreise: anreise,
         abreise: abreise,
         zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => {
-          let s = z.anzahl + 'x ' + z.kategorie;
+          let s = z.anzahl + 'x ' + z.kategorie + ' @' + z.preisNacht.toFixed(2);
           if (z.gastname) s += ' [Gast: ' + z.gastname + ']';
           return s;
         }).join(', '),
