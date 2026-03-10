@@ -198,79 +198,387 @@
   .preview-header h3 { color: var(--white); font-family: 'Playfair Display', serif; font-size: 16px; }
   .preview-header p { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 3px; }
   .preview-body { padding: 0; max-height: 70vh; overflow-y: auto; }
+
+  /* ── E-Mail Preview – exakt nach Mockup (vollständig gescoped) ── */
+
+  /* Outer wrapper */
   .email-preview {
-    font-family: 'DM Sans', Arial, sans-serif; font-size: 13px;
-    background: #e8e5de; padding: 16px;
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 13px;
+    background: #e8e5de;
+    padding: 16px;
   }
-  .email-inner {
-    background: #f5f3ef; max-width: 560px; margin: 0 auto;
+  /* Email container – beige bg */
+  .email-preview .email-inner {
+    background: #f5f3ef;
+    max-width: 620px;
+    margin: 0 auto;
     overflow: hidden;
   }
-  .email-header-bar {
-    background: #2d2d2d; padding: 28px 28px 24px;
+  /* Header */
+  .email-preview .email-header-bar {
+    background: #2d2d2d;
+    padding: 30px 40px 26px;
     text-align: center;
   }
-  .email-header-bar .hotel-name {
-    color: white; font-family: Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 1px;
+  .email-preview .hotel-sub {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #7a7a7a;
+    margin-top: 6px;
   }
-  .email-header-bar .hotel-sub {
-    color: #7a7a7a; font-size: 10px; margin-top: 6px; letter-spacing: 2.5px;
+  /* Type Banner */
+  .email-preview .type-banner {
+    padding: 13px 40px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  /* Body – NO own bg, inherits beige from .email-inner */
+  .email-preview .email-content {
+    padding: 34px 40px;
+  }
+  .email-preview .greeting {
+    font-size: 14px;
+    color: #3a3a3a;
+    line-height: 1.75;
+    margin-bottom: 22px;
+  }
+  .email-preview .firma-line {
+    font-size: 12px;
+    color: #7a7570;
+    margin-top: -16px;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  .email-preview .intro-text {
+    font-size: 13px;
+    color: #3a3a3a;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  /* Section Headers */
+  .email-preview .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  .email-preview .section-header h3 {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #2d2d2d;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+  }
+  .email-preview .section-line {
+    flex: 1;
+    height: 1px;
+    background: #d8d4cc;
+  }
+  /* Data Table (Aufenthalt) – white, 140px label col */
+  .email-preview .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #e8e5de;
+  }
+  .email-preview .data-table td {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #f0ede8;
+    background: #ffffff;
+  }
+  .email-preview .data-table td:first-child {
+    color: #8a8580;
+    width: 140px;
+    font-size: 12px;
+  }
+  .email-preview .data-table td:last-child {
+    color: #2d2d2d;
+    font-weight: 500;
+  }
+  .email-preview .data-table tr:last-child td {
+    border-bottom: none;
+  }
+  /* Zimmer Table – dark thead, white tbody */
+  .email-preview .zimmer-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e8e5de;
+  }
+  .email-preview .zimmer-table thead th {
+    background: #2d2d2d;
+    color: #d0cdc6;
+    padding: 10px 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: left;
+    border: none;
+  }
+  .email-preview .zimmer-table thead th:last-child {
+    text-align: right;
+  }
+  .email-preview .zimmer-table tbody tr {
+    background: #ffffff;
+  }
+  .email-preview .zimmer-table tbody td {
+    padding: 11px 16px;
+    font-size: 13px;
+    color: #2d2d2d;
+    border-bottom: 1px solid #f0ede8;
+    background: #ffffff;
+  }
+  .email-preview .zimmer-table tbody td:last-child {
+    text-align: right;
+    font-weight: 600;
+  }
+  .email-preview .zimmer-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .email-preview .guest-sub {
+    font-size: 11px;
+    color: #8a8580;
+    margin-top: 3px;
+  }
+  /* Price Summary */
+  .email-preview .price-summary {
+    background: #2d2d2d;
+    padding: 18px 20px;
+    border: 1px solid #e8e5de;
+    border-top: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .email-preview .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #a0a0a0;
+  }
+  .email-preview .price-row.total {
+    border-top: 1px solid #444;
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+  .email-preview .price-row.total .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
   }
-  .email-type-bar {
-    padding: 10px 28px; text-align: center;
-    font-size: 11px; font-weight: bold; letter-spacing: 2px;
+  .email-preview .price-row.total .amount {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 700;
+  }
+  /* Validity Banner */
+  .email-preview .validity-banner {
+    margin-top: 24px;
+    padding: 14px 18px;
+    background: #e8f1f4;
+    border-left: 3px solid #2a6b7c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .email-preview .validity-banner p {
+    font-size: 12px;
+    color: #3a5560;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .email-preview .validity-banner strong {
+    color: #1e4450;
+  }
+  /* CTA */
+  .email-preview .cta-section {
+    text-align: center;
+    margin: 28px 0 8px;
+  }
+  .email-preview .cta-hint {
+    font-size: 11px;
+    color: #8a8580;
+    margin-bottom: 14px;
+  }
+  .email-preview .cta-button {
+    display: inline-block;
+    background: #2d6b4a;
+    color: #fff;
+    padding: 14px 36px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
   }
-  .email-content { padding: 28px 28px; }
-  .email-content .greeting { font-size: 14px; margin-bottom: 14px; color: #2d2d2d; line-height: 1.7; }
-  .email-content .intro-text { font-size: 13px; color: #3a3a3a; line-height: 1.7; margin-bottom: 16px; }
-  .section-header-line { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
-  .section-header-line h3 { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #2d2d2d; white-space: nowrap; }
-  .section-header-line .line { flex: 1; height: 1px; background: #d8d4cc; }
-  .booking-table {
-    width: 100%; border-collapse: collapse; margin: 0 0 4px;
-    border: 1px solid #e8e5de; overflow: hidden; background: #ffffff;
+  /* Storno */
+  .email-preview .storno-box {
+    margin-top: 24px;
+    padding: 16px 18px;
+    background: #eae8e3;
+    border: 1px solid #ddd9d0;
   }
-  .booking-table th {
-    background: #2d2d2d; color: #d0cdc6; padding: 9px 14px;
-    font-size: 10px; text-align: left; letter-spacing: 1.5px; text-transform: uppercase;
+  .email-preview .storno-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #2a6b7c;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
   }
-  .booking-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0ede8; color: #2d2d2d; }
-  .booking-table td:first-child { color: #8a8580; font-size: 12px; }
-  .booking-table tr:last-child td { border-bottom: none; }
-  .zimmer-detail-table { width: 100%; border-collapse: collapse; margin: 0; border: 1px solid #e8e5de; }
-  .zimmer-detail-table th {
-    background: #2d2d2d; color: #d0cdc6; padding: 10px 14px;
-    font-size: 10px; text-align: left; letter-spacing: 1.5px; text-transform: uppercase;
+  .email-preview .storno-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 4px;
   }
-  .zimmer-detail-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0ede8; color: #2d2d2d; background: #ffffff; }
-  .zimmer-detail-table tr:last-child td { border-bottom: none; }
-  .price-summary {
+  .email-preview .storno-text {
+    font-size: 12px;
+    color: #5a5550;
+    line-height: 1.6;
+  }
+  /* Hinweise */
+  .email-preview .hinweise-box {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: #ffffff;
+    border: 1px solid #e8e5de;
+  }
+  .email-preview .hinweise-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #7a7570;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .email-preview .hinweise-text {
+    font-size: 12px;
+    color: #3a3a3a;
+    line-height: 1.6;
+  }
+  /* Bemerkungen */
+  .email-preview .bemerkungen-box {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: #eef6f0;
+    border-left: 3px solid #2d6b4a;
+  }
+  .email-preview .bemerkungen-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #2d6b4a;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .email-preview .bemerkungen-text {
+    font-size: 12px;
+    color: #3a3a3a;
+    line-height: 1.6;
+    margin: 0;
+  }
+  /* Rechnungsadresse */
+  .email-preview .rechnung-box {
+    background: #ffffff;
+    border: 1px solid #e8e5de;
+    padding: 12px 16px;
+    margin: 0 0 14px;
+    font-size: 12px;
+    color: #2d2d2d;
+  }
+  .email-preview .rechnung-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #7a7570;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
+  }
+  /* Divider + Closing */
+  .email-preview .divider {
+    height: 1px;
+    background: #d8d4cc;
+    margin: 28px 0;
+  }
+  .email-preview .closing {
+    font-size: 13px;
+    color: #4b4540;
+    line-height: 1.75;
+  }
+  .email-preview .signature {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #4b4540;
+    line-height: 1.6;
+  }
+  .email-preview .signature strong {
+    color: #2d2d2d;
+  }
+  .email-preview .hotel-sig {
+    font-size: 12px;
+    color: #8a8580;
+  }
+  /* Footer */
+  .email-preview .email-footer {
     background: #2d2d2d;
-    padding: 16px 18px; margin: 0; border: 1px solid #e8e5de; border-top: none;
+    padding: 26px 40px;
+    text-align: center;
   }
-  .price-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: #a0a0a0; }
-  .price-row.total { font-weight: 700; font-size: 14px; color: #ffffff; border-top: 1px solid #444; margin-top: 6px; padding-top: 10px; }
-  .storno-box {
-    background: #eae8e3; border: 1px solid #ddd9d0;
-    padding: 14px 16px; margin: 14px 0;
+  .email-preview .footer-hotel {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
   }
-  .storno-box .storno-heading { font-size: 10px; font-weight: 700; color: #2a6b7c; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
-  .storno-box p { font-size: 12px; color: #5a5550; line-height: 1.6; }
-  .angebot-validity {
-    background: #e8f1f4; border-left: 3px solid #2a6b7c;
-    padding: 12px 16px; margin: 14px 0; font-size: 12px; color: #3a5560;
+  .email-preview .footer-details {
+    font-size: 11px;
+    color: #8a8a8a;
+    line-height: 1.8;
   }
-  .email-footer {
-    background: #2d2d2d;
-    padding: 24px 28px; text-align: center;
+  .email-preview .footer-details a {
+    color: #8bb8c4;
+    text-decoration: none;
   }
-  .email-footer p { font-size: 11px; color: #8a8a8a; line-height: 1.8; }
-  .email-footer strong { color: #ffffff; }
-  .email-footer a { color: #8bb8c4; text-decoration: none; }
+  .email-preview .footer-links {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  }
+  .email-preview .footer-links a {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8bb8c4;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .email-preview .impressum {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #3d3d3d;
+    font-size: 10px;
+    color: #555;
+    line-height: 1.6;
+  }
 
-  /* ── Action buttons ── */
+    /* ── Action buttons ── */
   .action-bar {
     padding: 20px 28px; border-top: 1px solid var(--gray-200);
     display: flex; gap: 12px;
@@ -628,6 +936,138 @@
 </div>
 
 <script>
+// ─── Design Tokens (E-Mail) ───────────────────────────────────────────────────
+const EMAIL_COLORS = {
+  dark:        '#2d2d2d',   // Header, Footer, Tabellen-Kopf, Price-Summary
+  bg:          '#f5f3ef',   // E-Mail Hintergrundfarbe (inner)
+  outer:       '#e8e5de',   // body background
+  border:      '#e8e5de',   // Tabellen-Rand
+  rowBorder:   '#f0ede8',   // Zeilen-Trennlinie
+  textDark:    '#2d2d2d',   // Haupttext
+  textMid:     '#3a3a3a',   // Intro-Text
+  textLabel:   '#8a8580',   // Label-Farbe (erste Spalte)
+  textSub:     '#7a7570',   // Hinweis-Header
+  headerText:  '#d0cdc6',   // Tabellen-Kopf Text
+  footerText:  '#8a8a8a',   // Footer Text
+  footerLink:  '#8bb8c4',   // Footer Links
+  accentBlue:  '#2a6b7c',   // Storno-Box, Gültigkeits-Box, Akzent
+  accentGreen: '#2d6b4a',   // Bestätigungs-Farbe, Bemerkungen, Button
+  stornoBox:   '#eae8e3',   // Storno-Hintergrund
+  stornoBord:  '#ddd9d0',   // Storno-Rand
+  validityBg:  '#e8f1f4',   // Gültigkeits-Box Hintergrund
+  validityText:'#3a5560',   // Gültigkeits-Box Text
+  remarkBg:    '#eef6f0',   // Bemerkungen-Hintergrund
+  hinweisBg:   '#ffffff',   // Hinweis-Hintergrund
+  priceSub:    '#a0a0a0',   // Preis-Zeilen Text
+  priceTotal:  '#ffffff',   // Gesamtbetrag Text
+  priceDivide: '#444444',   // Trennlinie im Preisblock
+};
+
+// ─── E-Mail CSS Helper ────────────────────────────────────────────────────────
+function getEmailStyles() {
+  const c = EMAIL_COLORS;
+  return `
+    /* Reset */
+    body{font-family:'DM Sans',Arial,sans-serif;background:${c.outer};padding:20px;margin:0;}
+
+    /* Email wrapper - beige background is HERE, not on content */
+    .email-inner{background:${c.bg};max-width:620px;margin:0 auto;overflow:hidden;}
+
+    /* Header */
+    .email-header-bar{background:${c.dark};padding:30px 40px 26px;text-align:center;}
+    .hotel-sub{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#7a7a7a;margin-top:6px;}
+
+    /* Type Banner */
+    .type-banner{padding:13px 40px;text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ffffff;}
+
+    /* Body - NO background color, inherits beige from .email-inner */
+    .email-content{padding:34px 40px;}
+    .greeting{font-size:14px;color:#3a3a3a;line-height:1.75;margin-bottom:22px;}
+    .firma-line{font-size:12px;color:#7a7570;margin-top:-16px;margin-bottom:24px;font-style:italic;}
+    .intro-text{font-size:13px;color:#3a3a3a;line-height:1.7;margin-bottom:20px;}
+
+    /* Section Headers */
+    .section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:28px;}
+    .section-header h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${c.dark};}
+    .section-line{flex:1;height:1px;background:#d8d4cc;}
+
+    /* Data Table (Aufenthalt) - white on beige, fixed label width */
+    .data-table{width:100%;border-collapse:collapse;background:#ffffff;border:1px solid ${c.border};}
+    .data-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid ${c.rowBorder};}
+    .data-table td:first-child{color:${c.textLabel};width:140px;font-size:12px;}
+    .data-table td:last-child{color:${c.textDark};font-weight:500;}
+    .data-table tr:last-child td{border-bottom:none;}
+
+    /* Zimmer Table - white on beige, dark thead */
+    .zimmer-table{width:100%;border-collapse:collapse;border:1px solid ${c.border};}
+    .zimmer-table thead th{background:${c.dark};color:${c.headerText};padding:10px 16px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-align:left;}
+    .zimmer-table thead th:last-child{text-align:right;}
+    .zimmer-table tbody{background:#ffffff;}
+    .zimmer-table tbody td{padding:11px 16px;font-size:13px;color:${c.textDark};border-bottom:1px solid ${c.rowBorder};}
+    .zimmer-table tbody td:last-child{text-align:right;font-weight:600;}
+    .zimmer-table tbody tr:last-child td{border-bottom:none;}
+    .guest-sub{font-size:11px;color:${c.textLabel};margin-top:3px;}
+
+    /* Total Box - dark background, attached to zimmer table */
+    .price-summary{background:${c.dark};padding:18px 20px;border:1px solid ${c.border};border-top:none;display:flex;flex-direction:column;gap:8px;}
+    .price-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:${c.priceSub};}
+    .price-row.total{border-top:1px solid ${c.priceDivide};padding-top:10px;margin-top:4px;}
+    .price-row.total .label{font-size:12px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;}
+    .price-row.total .amount{font-size:20px;color:#ffffff;font-weight:700;}
+
+    /* Validity Banner */
+    .validity-banner{margin-top:24px;padding:14px 18px;background:${c.validityBg};border-left:3px solid ${c.accentBlue};display:flex;align-items:center;gap:10px;}
+    .validity-banner p{font-size:12px;color:${c.validityText};line-height:1.5;}
+    .validity-banner strong{color:#1e4450;}
+
+    /* CTA Button */
+    .cta-section{text-align:center;margin:28px 0 8px;}
+    .cta-hint{font-size:11px;color:${c.textLabel};margin-bottom:14px;}
+    .cta-button{display:inline-block;background:${c.accentGreen};color:#ffffff;padding:14px 36px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+
+    /* Storno Box - beige tinted */
+    .storno-box{margin-top:24px;padding:16px 18px;background:${c.stornoBox};border:1px solid ${c.stornoBord};}
+    .storno-label{font-size:10px;font-weight:700;color:${c.accentBlue};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+    .storno-title{font-size:13px;font-weight:600;color:${c.textDark};margin-bottom:4px;}
+    .storno-text{font-size:12px;color:#5a5550;line-height:1.6;}
+
+    /* Hinweise Box - white */
+    .hinweise-box{margin-top:16px;padding:14px 18px;background:#ffffff;border:1px solid ${c.border};}
+    .hinweise-label{font-size:10px;font-weight:700;color:${c.textSub};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+    .hinweise-text{font-size:12px;color:#3a3a3a;line-height:1.6;}
+
+    /* Bemerkungen Box */
+    .bemerkungen-box{margin-top:16px;padding:14px 18px;background:${c.remarkBg};border-left:3px solid ${c.accentGreen};}
+    .bemerkungen-label{font-size:10px;font-weight:700;color:${c.accentGreen};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+    .bemerkungen-text{font-size:12px;color:${c.textMid};line-height:1.6;margin:0;}
+
+    /* Rechnungsadresse */
+    .rechnung-box{background:#ffffff;border:1px solid ${c.border};padding:12px 16px;margin:0 0 14px;font-size:12px;color:${c.textDark};}
+    .rechnung-label{font-size:10px;font-weight:700;color:${c.textSub};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;}
+
+    /* Divider + Closing */
+    .divider{height:1px;background:#d8d4cc;margin:28px 0;}
+    .closing{font-size:13px;color:#4b4540;line-height:1.75;}
+    .signature{margin-top:16px;font-size:13px;color:#4b4540;line-height:1.6;}
+    .signature strong{color:${c.textDark};}
+    .hotel-sig{font-size:12px;color:${c.textLabel};}
+
+    /* Footer */
+    .email-footer{background:${c.dark};padding:26px 40px;text-align:center;}
+    .footer-hotel{font-family:'Playfair Display',Georgia,serif;font-size:15px;color:#ffffff;margin-bottom:10px;letter-spacing:1px;}
+    .footer-details{font-size:11px;color:${c.footerText};line-height:1.8;}
+    .footer-details a{color:${c.footerLink};text-decoration:none;}
+    .footer-links{margin-top:14px;display:flex;justify-content:center;gap:24px;}
+    .footer-links a{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${c.footerLink};text-decoration:none;font-weight:600;}
+    .impressum{margin-top:16px;padding-top:14px;border-top:1px solid #3d3d3d;font-size:10px;color:#555;line-height:1.6;}
+  `;
+}
+
+// ─── Build complete email document ────────────────────────────────────────────
+function buildEmailDocument(bodyHTML) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${getEmailStyles()}</style></head><body>${bodyHTML}</body></html>`;
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 let emailType = 'angebot';
 let emailLang = 'de';
@@ -1098,6 +1538,7 @@ function updateSummary() {
 }
 
 function generateEmailHTML(forPreview = false) {
+  const c = EMAIL_COLORS;
   const anrede = document.getElementById('anrede').value;
   const nachname = document.getElementById('nachname').value || 'Gast';
   const vorname = document.getElementById('vorname').value;
@@ -1118,177 +1559,217 @@ function generateEmailHTML(forPreview = false) {
 
   const t = I18N[emailLang];
   const typeLabel = t.typeLabel[emailType];
-  const typeColor = emailType === 'angebot' ? '#2a6b7c' : '#2d6b4a';
-  const vorname_str = vorname ? ` ${vorname}` : '';
+  const typeColor = emailType === 'angebot' ? c.accentBlue : c.accentGreen;
 
-  // Zimmer-Detail-Rows
-  const zimmerRows = zimmer.filter(z => z.preisNacht > 0 || z.anzahl > 0).map(z => {
+  // ── Storno-Titel für Mockup-Design ──
+  const STORNO_TITLES = {
+    de: { regulaer: 'Regulär', messe: 'Messe / Sonderveranstaltung', gruppe: 'Gruppe (ab 4 Zimmer)', flexibel: 'NON-CLX (nicht erstattungsfähig)' },
+    en: { regulaer: 'Standard', messe: 'Trade Fair / Special Event', gruppe: 'Group (4+ rooms)', flexibel: 'NON-CLX (non-refundable)' }
+  };
+  const stornoTitle = STORNO_TITLES[emailLang][storno] || '';
+
+  // ── Zimmer-Rows ──
+  const zimmerRowsHTML = zimmer.filter(z => z.preisNacht > 0 || z.anzahl > 0).map(z => {
     const rowNights = z.nights || nights;
     const subtotal = z.anzahl * z.preisNacht * rowNights;
     const dateInfo = z.hasCustomDates
-      ? `<br><span style="font-size:11px;color:#9ca3af;">${formatDateDE(z.anreise)} – ${formatDateDE(z.abreise)} (${rowNights} ${rowNights!==1 ? t.naechte : t.nacht})</span>`
+      ? `<div class="guest-sub">${formatDateDE(z.anreise)} – ${formatDateDE(z.abreise)} (${rowNights} ${rowNights!==1 ? t.naechte : t.nacht})</div>`
       : '';
+    const gastSub = z.gastname ? `<div class="guest-sub">↳ Gast: ${z.gastname}</div>` : '';
     return `
       <tr>
-        <td>${z.anzahl}x ${z.kategorie}${z.gastname ? `<br><span style="font-size:11px;color:#6b7280;">↳ Gast: ${z.gastname}</span>` : ''}${dateInfo}</td>
+        <td>${z.anzahl}x ${z.kategorie}${gastSub}${dateInfo}</td>
         <td>${z.personen} ${t.persZi}</td>
         <td>${formatEuro(z.preisNacht)}/${t.nacht}</td>
-        <td><strong>${formatEuro(subtotal)}</strong></td>
+        <td>${formatEuro(subtotal)}</td>
       </tr>`;
   }).join('');
 
-  const frühstückHinweis = verpflegung === 'inkl. Frühstück'
+  // ── Price Rows ──
+  const priceRowsHTML = zimmer.filter(z => z.preisNacht > 0).map(z => {
+    const rn = z.nights || nights;
+    return `<div class="price-row"><span>${z.anzahl}x ${z.kategorie} × ${rn} ${rn!==1 ? t.naechte : t.nacht}</span><span>${formatEuro(z.anzahl * z.preisNacht * rn)}</span></div>`;
+  }).join('');
+
+  const fruehstueckRow = verpflegung === 'inkl. Frühstück' ? `
+    <div class="price-row">
+      <span>${t.fruehstueckLabel} (${zimmer.map(z => z.anzahl*z.personen + ' Pers. × ' + (z.nights||nights) + ' ' + ((z.nights||nights)!==1 ? t.naechte : t.nacht)).join(' + ')})</span>
+      <span>${formatEuro(calcFruehstueckTotal(zimmer, nights))}</span>
+    </div>` : '';
+
+  // ── Frühstück-Hinweis unter Zimmer-Tabelle ──
+  const fruehstueckHinweis = verpflegung === 'inkl. Frühstück'
     ? `<p style="font-size:12px;color:#4b5563;margin:8px 0 0;">${t.verpflegung}: <strong>${t.fruehstueck} (${t.fruehstueckPreis})</strong></p>` : '';
 
+  // ── Validity Banner ──
   const angebotBox = emailType === 'angebot' ? (() => {
-    if (gueltigTyp === 'freibleibend') return `
-    <div style="background:#e8f1f4;border-left:3px solid #2a6b7c;padding:12px 16px;margin:14px 0;font-size:12px;color:#3a5560;">
-      ${t.angebotFreibleibend}
-    </div>`;
-    if (gueltig) return `
-    <div style="background:#e8f1f4;border-left:3px solid #2a6b7c;padding:12px 16px;margin:14px 0;font-size:12px;color:#3a5560;">
-      ${t.angebotGueltig(formatDateDE(gueltig))}
-    </div>`;
-    return '';
+    const content = gueltigTyp === 'freibleibend'
+      ? t.angebotFreibleibend
+      : (gueltig ? t.angebotGueltig(formatDateDE(gueltig)) : '');
+    if (!content) return '';
+    return `<div class="validity-banner"><p>${content}</p></div>`;
   })() : '';
 
+  // ── CTA Button ──
+  const ctaSection = emailType === 'angebot' ? (() => {
+    const confirmBaseURL = 'https://duemler90431.github.io/westend-tool/confirm.html';
+    const confirmData = {
+      lang: emailLang,
+      anrede: document.getElementById('anrede').value || '',
+      name: nachname,
+      vorname: vorname || '',
+      email: document.getElementById('email').value || '',
+      firma: document.getElementById('firma').value || '',
+      telefon: document.getElementById('telefon').value || '',
+      anreise, abreise,
+      zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => {
+        let s = z.anzahl + 'x ' + z.kategorie + ' @' + z.preisNacht.toFixed(2);
+        if (z.gastname) s += ' [Gast: ' + z.gastname + ']';
+        return s;
+      }).join(', '),
+      gesamt: total.toFixed(2),
+      r_name: document.getElementById('rechnung_name')?.value || '',
+      r_strasse: document.getElementById('rechnung_strasse')?.value || '',
+      r_plzort: document.getElementById('rechnung_plzort')?.value || '',
+      r_zusatz: document.getElementById('rechnung_zusatz')?.value || '',
+      storno
+    };
+    const confirmURL = confirmBaseURL + '?d=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(confirmData)))));
+    return `
+    <div class="cta-section">
+      <p class="cta-hint">${t.acceptHint}</p>
+      <a href="${confirmURL}" class="cta-button" target="_blank">✓ ${t.acceptButton}</a>
+    </div>`;
+  })() : '';
+
+  // ── Hinweise Box ──
   const hinweisBox = hinweise ? `
-    <div style="background:#ffffff;border:1px solid #e8e5de;padding:14px 16px;margin:14px 0;font-size:12px;color:#3a3a3a;">
-      <div style="font-size:10px;font-weight:700;color:#7a7570;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.hinweiseLabel}</div>
-      ${hinweise.replace(/\n/g,'<br>')}
+    <div class="hinweise-box">
+      <div class="hinweise-label">${t.hinweiseLabel}</div>
+      <div class="hinweise-text">${hinweise.replace(/\n/g,'<br>')}</div>
     </div>` : '';
 
+  // ── Bemerkungen Box ──
   const bemerkungenBox = bemerkungen ? `
-    <div style="background:#eef6f0;border-left:3px solid #2d6b4a;padding:14px 16px;margin:14px 0;">
-      <div style="font-size:10px;font-weight:700;color:#2d6b4a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.bemerkungenLabel}</div>
-      <p style="font-size:12px;color:#3a3a3a;line-height:1.6;margin:0;">${bemerkungen.replace(/\n/g,'<br>')}</p>
+    <div class="bemerkungen-box">
+      <div class="bemerkungen-label">${t.bemerkungenLabel}</div>
+      <p class="bemerkungen-text">${bemerkungen.replace(/\n/g,'<br>')}</p>
     </div>` : '';
 
-  const introText = t.intro[emailType];
+  // ── Rechnungsadresse ──
+  const rechnungBlock = (() => {
+    const rname = document.getElementById('rechnung_name')?.value;
+    const rzusatz = document.getElementById('rechnung_zusatz')?.value;
+    const rstrasse = document.getElementById('rechnung_strasse')?.value;
+    const rplzort = document.getElementById('rechnung_plzort')?.value;
+    if (!rname && !rstrasse) return '';
+    return `<div class="rechnung-box">
+      <div class="rechnung-label">${t.rechnungsadresse}</div>
+      ${rname ? `<div>${rname}</div>` : ''}
+      ${rzusatz ? `<div style="color:${c.textLabel};">${rzusatz}</div>` : ''}
+      ${rstrasse ? `<div>${rstrasse}</div>` : ''}
+      ${rplzort ? `<div>${rplzort}</div>` : ''}
+    </div>`;
+  })();
+
+  // ── Gastname-Hinweis ──
+  const gastnameHint = zimmer.some(z => z.gastname)
+    ? `<p style="font-size:11px;color:#9ca3af;margin-bottom:10px;font-style:italic;">${emailLang === 'de' ? '(Besteller – Gast siehe Zimmerkonfiguration)' : '(Booker – guest see room configuration)'}</p>`
+    : '';
 
   return `
 <div class="email-inner">
   <div class="email-header-bar">
-    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:52px;width:auto;display:block;margin:0 auto 10px;">
+    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:48px;width:auto;display:block;margin:0 auto 6px;">
     <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
   </div>
-  <div style="background:${typeColor};padding:13px 28px;text-align:center;color:#ffffff;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;">
-    ${typeLabel}
-  </div>
+
+  <div class="type-banner" style="background:${typeColor};">${typeLabel}</div>
+
   <div class="email-content">
     <p class="greeting">${t.greeting(anrede, nachname)}</p>
-    ${firma ? `<p style="font-size:12px;color:#6b7280;margin-bottom:10px;">${firma}</p>` : ''}
-    ${zimmer.some(z => z.gastname) ? `<p style="font-size:11px;color:#9ca3af;margin-bottom:10px;font-style:italic;">${emailLang === 'de' ? '(Besteller – Gast siehe Zimmerkonfiguration)' : '(Booker – guest see room configuration)'}</p>` : ''}
-    ${(() => {
-      const rname = document.getElementById('rechnung_name')?.value;
-      const rzusatz = document.getElementById('rechnung_zusatz')?.value;
-      const rstrasse = document.getElementById('rechnung_strasse')?.value;
-      const rplzort = document.getElementById('rechnung_plzort')?.value;
-      if (!rname && !rstrasse) return '';
-      return `<div style="background:#ffffff;border:1px solid #e8e5de;padding:12px 16px;margin:0 0 14px;font-size:12px;color:#2d2d2d;">
-        <div style="font-size:10px;font-weight:700;color:#7a7570;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.rechnungsadresse}</div>
-        ${rname ? `<div>${rname}</div>` : ''}
-        ${rzusatz ? `<div style="color:#8a8580;">${rzusatz}</div>` : ''}
-        ${rstrasse ? `<div>${rstrasse}</div>` : ''}
-        ${rplzort ? `<div>${rplzort}</div>` : ''}
-      </div>`;
-    })()}
-    <p class="intro-text">${introText}</p>
+    ${firma ? `<p class="firma-line">${firma}</p>` : ''}
+    ${gastnameHint}
+    ${rechnungBlock}
+    <p class="intro-text">${t.intro[emailType]}</p>
 
-    <table class="booking-table">
-      <tr><th colspan="2">${t.aufenthalt}</th></tr>
-      <tr><td>${t.anreise}</td><td><strong>${formatDateDE(anreise)}</strong> ${t.anreiseZeit}</td></tr>
-      <tr><td>${t.abreise}</td><td><strong>${formatDateDE(abreise)}</strong> ${t.abreiseZeit}</td></tr>
-      <tr><td>${t.aufenthaltsdauer}</td><td><strong>${nights} ${nights!==1 ? t.naechte : t.nacht}</strong></td></tr>
+    <!-- Aufenthalt -->
+    <div class="section-header"><h3>${t.aufenthalt}</h3><div class="section-line"></div></div>
+    <table class="data-table">
+      <tbody>
+        <tr><td>${t.anreise}</td><td><strong>${formatDateDE(anreise)}</strong> ${t.anreiseZeit}</td></tr>
+        <tr><td>${t.abreise}</td><td><strong>${formatDateDE(abreise)}</strong> ${t.abreiseZeit}</td></tr>
+        <tr><td>${t.aufenthaltsdauer}</td><td><strong>${nights} ${nights!==1 ? t.naechte : t.nacht}</strong></td></tr>
+      </tbody>
     </table>
 
-    <p style="font-size:12px;font-weight:600;color:#3a3a3a;margin:14px 0 6px;">${t.zimmerConfig}</p>
-    <table class="zimmer-detail-table">
-      <tr>
-        <th>${t.kategorie}</th><th>${t.belegung}</th><th>${t.preisNacht}</th><th>${t.gesamt}</th>
-      </tr>
-      ${zimmerRows || `<tr><td colspan="4" style="color:#9ca3af;text-align:center;">${t.keineZimmer}</td></tr>`}
+    <!-- Zimmerkonfiguration -->
+    <div class="section-header"><h3>${t.zimmerConfig}</h3><div class="section-line"></div></div>
+    <table class="zimmer-table">
+      <thead>
+        <tr>
+          <th>${t.kategorie}</th>
+          <th>${t.belegung}</th>
+          <th>${t.preisNacht}</th>
+          <th>${t.gesamt}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${zimmerRowsHTML || `<tr><td colspan="4" style="color:#9ca3af;text-align:center;padding:14px 16px;">${t.keineZimmer}</td></tr>`}
+      </tbody>
     </table>
-    ${frühstückHinweis}
 
+    <!-- Preisübersicht -->
     <div class="price-summary">
-      ${zimmer.filter(z=>z.preisNacht>0).map(z=>{
-        const rn = z.nights || nights;
-        return `
-      <div class="price-row">
-        <span>${z.anzahl}x ${z.kategorie} × ${rn} ${rn!==1 ? t.naechte : t.nacht}</span>
-        <span>${formatEuro(z.anzahl * z.preisNacht * rn)}</span>
-      </div>`;}).join('')}
-      ${verpflegung === 'inkl. Frühstück' ? `
-      <div class="price-row">
-        <span>${t.fruehstueckLabel} (${zimmer.map(z => z.anzahl*z.personen + ' Pers. × ' + (z.nights||nights) + ' ' + ((z.nights||nights)!==1 ? t.naechte : t.nacht)).join(' + ')})</span>
-        <span>${formatEuro(calcFruehstueckTotal(zimmer, nights))}</span>
-      </div>` : ''}
+      ${priceRowsHTML}
+      ${fruehstueckRow}
       <div class="price-row total">
-        <span>${t.gesamtbetrag}</span>
-        <span>${formatEuro(total)}</span>
+        <span class="label">${t.gesamtbetrag}</span>
+        <span class="amount">${formatEuro(total)}</span>
       </div>
     </div>
 
     ${angebotBox}
-    ${emailType === 'angebot' ? (() => {
-      const confirmBaseURL = 'https://duemler90431.github.io/westend-tool/confirm.html';
-      const confirmData = {
-        lang: emailLang,
-        anrede: document.getElementById('anrede').value || '',
-        name: nachname,
-        vorname: vorname || '',
-        email: document.getElementById('email').value || '',
-        firma: document.getElementById('firma').value || '',
-        telefon: document.getElementById('telefon').value || '',
-        anreise: anreise,
-        abreise: abreise,
-        zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => {
-          let s = z.anzahl + 'x ' + z.kategorie + ' @' + z.preisNacht.toFixed(2);
-          if (z.gastname) s += ' [Gast: ' + z.gastname + ']';
-          return s;
-        }).join(', '),
-        gesamt: total.toFixed(2),
-        r_name: document.getElementById('rechnung_name')?.value || '',
-        r_strasse: document.getElementById('rechnung_strasse')?.value || '',
-        r_plzort: document.getElementById('rechnung_plzort')?.value || '',
-        r_zusatz: document.getElementById('rechnung_zusatz')?.value || '',
-        storno: storno
-      };
-      const confirmURL = confirmBaseURL + '?d=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(confirmData)))));
-      return `
-    <div style="text-align:center;margin:22px 0;">
-      <p style="font-size:11px;color:#8a8580;margin-bottom:14px;">${t.acceptHint}</p>
-      <a href="${confirmURL}"
-         style="display:inline-block;background:#2d6b4a;color:#ffffff;padding:14px 36px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;"
-         target="_blank">
-        ✓ ${t.acceptButton}
-      </a>
-    </div>`;
-    })() : ''}
+    ${ctaSection}
     ${hinweisBox}
     ${bemerkungenBox}
-    <div class="storno-box" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;background:#eae8e3;border:1px solid #ddd9d0;border-left:none;padding:14px 16px;">
-      <div class="storno-heading" style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;color:#2a6b7c;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">${t.stornoLabel}</div>
-      <p style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#5a5550;line-height:1.6;margin:0;">${stornoText}</p>
+
+    <!-- Stornobedingungen -->
+    <div class="storno-box">
+      <div class="storno-label">${t.stornoLabel}</div>
+      <div class="storno-title">${stornoTitle}</div>
+      <div class="storno-text">${stornoText}</div>
     </div>
 
-    <p style="font-size:13px;color:#4b4540;line-height:1.75;margin-top:20px;">
-      ${emailType==='angebot' ? t.closingAngebot : t.closingBestaetigung}
-    </p>
-    <p style="font-size:13px;color:#4b4540;margin-top:14px;line-height:1.6;">
+    <div class="divider"></div>
+
+    <p class="closing">${emailType==='angebot' ? t.closingAngebot : t.closingBestaetigung}</p>
+
+    <div class="signature">
       ${t.gruss}<br>
-      <strong style="color:#2d2d2d;">${mitarbeiter}</strong><br>
-      <span style="font-size:12px;color:#8a8580;">westendhotel nürnberg</span>
-    </p>
+      <strong>${mitarbeiter}</strong><br>
+      <span class="hotel-sig">westendhotel nürnberg</span>
+    </div>
   </div>
-  <div class="email-footer" style="background:#2d2d2d;padding:24px 28px;text-align:center;">
-    <p style="font-size:11px;color:#8a8a8a;line-height:1.8;">
-      <strong style="color:#ffffff;">westendhotel nürnberg</strong><br>
+
+  <!-- Footer -->
+  <div class="email-footer">
+    <div class="footer-hotel">westendhotel nürnberg</div>
+    <div class="footer-details">
       Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-      Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de" style="color:#8bb8c4;text-decoration:none;">info@hotelwestend.de</a> · <a href="https://www.hotelwestend.de" style="color:#8bb8c4;text-decoration:none;">www.hotelwestend.de</a><br>
-      <span style="font-size:10px;margin-top:6px;display:block;color:#666;">${t.footerRezeption}</span>
-    </p>
+      Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a><br>
+      <a href="https://www.hotelwestend.de">www.hotelwestend.de</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.hotelwestend.de">Website</a>
+      <a href="https://www.hotelwestend.de/anfahrt">Anfahrt</a>
+      <a href="mailto:info@hotelwestend.de">Kontakt</a>
+    </div>
+    <div class="impressum">
+      ${t.footerRezeption}<br>
+      MORE Hospitality GmbH · Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
+      Geschäftsführer: Daniel Dümler · HRB 41876 · AG Nürnberg
+    </div>
   </div>
 </div>`;
 }
@@ -1313,29 +1794,7 @@ async function sendEmail() {
   const t = I18N[emailLang];
   const subject = emailType === 'angebot' ? t.subjectAngebot : t.subjectBestaetigung;
 
-  const htmlBody = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <style>
-      body{font-family:'DM Sans',Arial,sans-serif;background:#e8e5de;padding:20px;}
-      .email-inner{background:#f5f3ef;max-width:560px;margin:0 auto;overflow:hidden;}
-      .email-header-bar{background:#2d2d2d;padding:28px 28px 24px;text-align:center;}
-      .hotel-name{color:white;font-family:Georgia,serif;font-size:22px;font-weight:bold;letter-spacing:1px;}
-      .hotel-sub{color:#7a7a7a;font-size:10px;margin-top:6px;letter-spacing:2.5px;text-transform:uppercase;}
-      .email-content{padding:28px 28px;}
-      .greeting{font-size:14px;margin-bottom:14px;color:#2d2d2d;line-height:1.7;}
-      .intro-text{font-size:13px;color:#3a3a3a;line-height:1.7;margin-bottom:16px;}
-      table{width:100%;border-collapse:collapse;border:1px solid #e8e5de;}
-      th{background:#2d2d2d;color:#d0cdc6;padding:10px 14px;font-size:10px;text-align:left;letter-spacing:1.5px;text-transform:uppercase;}
-      td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f0ede8;color:#2d2d2d;background:#ffffff;}
-      tr:last-child td{border-bottom:none;}
-      .price-summary{background:#2d2d2d;padding:16px 18px;border:1px solid #e8e5de;border-top:none;}
-      .price-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#a0a0a0;}
-      .price-row.total{font-weight:700;font-size:14px;color:#ffffff;border-top:1px solid #444;margin-top:6px;padding-top:10px;}
-      .storno-box{background:#eae8e3;border:1px solid #ddd9d0;padding:14px 16px;margin:14px 0;}
-      .email-footer{background:#2d2d2d;padding:24px 28px;text-align:center;}
-      .email-footer p{font-size:11px;color:#8a8a8a;line-height:1.8;}
-      .email-footer strong{color:#ffffff;}
-      .email-footer a{color:#8bb8c4;text-decoration:none;}
-    </style></head><body>${generateEmailHTML(false)}</body></html>`;
+  const htmlBody = buildEmailDocument(generateEmailHTML(false));
 
   const cc = document.getElementById('cc_email').value;
   const ccList = cc ? [{ email: cc }] : [];
@@ -1377,24 +1836,7 @@ async function sendEmail() {
 
 // ─── Copy HTML ────────────────────────────────────────────────────────────────
 function copyHTML() {
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<style>
-  body{font-family:'DM Sans',Arial,sans-serif;background:#e8e5de;padding:20px;}
-  .email-inner{background:#f5f3ef;max-width:560px;margin:0 auto;overflow:hidden;}
-  .email-header-bar{background:#2d2d2d;padding:28px 28px 24px;text-align:center;}
-  .hotel-name{color:white;font-family:Georgia,serif;font-size:22px;font-weight:bold;}
-  .hotel-sub{color:#7a7a7a;font-size:10px;margin-top:6px;}
-  .email-content{padding:28px 28px;}
-  table{width:100%;border-collapse:collapse;border:1px solid #e8e5de;}
-  th{background:#2d2d2d;color:#d0cdc6;padding:10px 14px;font-size:10px;text-align:left;letter-spacing:1.5px;text-transform:uppercase;}
-  td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f0ede8;color:#2d2d2d;background:#ffffff;}
-  .storno-box{background:#eae8e3;border:1px solid #ddd9d0;padding:14px 16px;margin:14px 0;}
-  .email-footer{background:#2d2d2d;padding:24px 28px;text-align:center;}
-  .email-footer p{font-size:11px;color:#8a8a8a;line-height:1.8;}
-  .email-footer strong{color:#ffffff;}
-  .email-footer a{color:#8bb8c4;text-decoration:none;}
-</style>
-</head><body>${generateEmailHTML(false)}</body></html>`;
+  const html = buildEmailDocument(generateEmailHTML(false));
   navigator.clipboard.writeText(html)
     .then(() => showToast('HTML in Zwischenablage kopiert!', 'success'))
     .catch(() => showToast('Kopieren nicht möglich.', 'error'));
