@@ -971,17 +971,17 @@ function getEmailStyles() {
     body{font-family:'DM Sans',Arial,sans-serif;background:${c.outer};padding:20px;margin:0;}
 
     /* Email wrapper - beige background is HERE, not on content */
-    .email-inner{background:${c.bg};max-width:620px;margin:0 auto;overflow:hidden;}
+    .email-inner{background:${c.bg};max-width:620px;width:100%;margin:0 auto;overflow:hidden;}
 
     /* Header */
-    .email-header-bar{background:${c.dark};padding:30px 40px 26px;text-align:center;}
+    .email-header-bar{background:${c.dark};padding:24px 24px 20px;text-align:center;}
     .hotel-sub{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#7a7a7a;margin-top:6px;}
 
     /* Type Banner */
     .type-banner{padding:13px 40px;text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ffffff;}
 
     /* Body - NO background color, inherits beige from .email-inner */
-    .email-content{padding:34px 40px;}
+    .email-content{padding:28px 24px;}
     .greeting{font-size:14px;color:#3a3a3a;line-height:1.75;margin-bottom:22px;}
     .firma-line{font-size:12px;color:#7a7570;margin-top:-16px;margin-bottom:24px;font-style:italic;}
     .intro-text{font-size:13px;color:#3a3a3a;line-height:1.7;margin-bottom:20px;}
@@ -992,18 +992,22 @@ function getEmailStyles() {
     .section-line{flex:1;height:1px;background:#d8d4cc;}
 
     /* Data Table (Aufenthalt) - white on beige, fixed label width */
-    .data-table{width:100%;border-collapse:collapse;background:#ffffff;border:1px solid ${c.border};}
-    .data-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid ${c.rowBorder};}
-    .data-table td:first-child{color:${c.textLabel};width:140px;font-size:12px;}
+    .data-table{width:100%;table-layout:fixed;border-collapse:collapse;background:#ffffff;border:1px solid ${c.border};}
+    .data-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid ${c.rowBorder};word-break:break-word;}
+    .data-table td:first-child{color:${c.textLabel};width:38%;font-size:12px;}
     .data-table td:last-child{color:${c.textDark};font-weight:500;}
     .data-table tr:last-child td{border-bottom:none;}
 
     /* Zimmer Table - white on beige, dark thead */
-    .zimmer-table{width:100%;border-collapse:collapse;border:1px solid ${c.border};}
-    .zimmer-table thead th{background:${c.dark};color:${c.headerText};padding:10px 16px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-align:left;}
+    .zimmer-table{width:100%;table-layout:fixed;border-collapse:collapse;border:1px solid ${c.border};}
+    .zimmer-table thead th{background:${c.dark};color:${c.headerText};padding:8px 10px;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;text-align:left;word-break:break-word;}
     .zimmer-table thead th:last-child{text-align:right;}
+    .zimmer-table thead th:nth-child(1){width:40%;}
+    .zimmer-table thead th:nth-child(2){width:18%;}
+    .zimmer-table thead th:nth-child(3){width:22%;}
+    .zimmer-table thead th:nth-child(4){width:20%;}
     .zimmer-table tbody{background:#ffffff;}
-    .zimmer-table tbody td{padding:11px 16px;font-size:13px;color:${c.textDark};border-bottom:1px solid ${c.rowBorder};}
+    .zimmer-table tbody td{padding:10px 10px;font-size:12px;color:${c.textDark};border-bottom:1px solid ${c.rowBorder};word-break:break-word;}
     .zimmer-table tbody td:last-child{text-align:right;font-weight:600;}
     .zimmer-table tbody tr:last-child td{border-bottom:none;}
     .guest-sub{font-size:11px;color:${c.textLabel};margin-top:3px;}
@@ -1053,7 +1057,7 @@ function getEmailStyles() {
     .hotel-sig{font-size:12px;color:${c.textLabel};}
 
     /* Footer */
-    .email-footer{background:${c.dark};padding:26px 40px;text-align:center;}
+    .email-footer{background:${c.dark};padding:20px 24px;text-align:center;}
     .footer-hotel{font-family:'Playfair Display',Georgia,serif;font-size:15px;color:#ffffff;margin-bottom:10px;letter-spacing:1px;}
     .footer-details{font-size:11px;color:${c.footerText};line-height:1.8;}
     .footer-details a{color:${c.footerLink};text-decoration:none;}
