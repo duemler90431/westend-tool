@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Westendhotel – Payment Test</title>
+
+  <!-- Adyen Web Drop-in -->
+  <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.css"
+        integrity="sha384-RLwlkGxnGCnAvT7bRPJSFW4HmDJj9loyMfGEFGrGbIJkkQDnLMrl1m5bnHoVsCi"
+        crossorigin="anonymous">
+  <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.js"
+          integrity="sha384-JBx6kGGMHdngJen0W3MYFPahi6PLMN94C6osGB7HPxm1S/E5M/VDY/qiccj0MBQY"
+          crossorigin="anonymous"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F5F3EF;
+      color: #3B4547;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .header {
+      background: #3B4547;
+      color: #fff;
+      padding: 24px 32px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .test-badge {
+      display: inline-block;
+      background: #B8956A;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .content {
+      padding: 32px;
+    }
+
+    .form-section {
+      margin-bottom: 24px;
+    }
+
+    .form-section h2 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #3B4547;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #E8E5DE;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #D4D0C8;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #3B4547;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #2a6b7c;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    #dropin-container {
+      min-height: 100px;
+    }
+
+    .btn-pay {
+      display: none; /* Drop-in hat eigenen Submit-Button */
+    }
+
+    /* Status Messages */
+    .status {
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status.loading {
+      display: block;
+      background: #EEF6FF;
+      color: #185FA5;
+      border: 1px solid #B5D4F4;
+    }
+
+    .status.success {
+      display: block;
+      background: #EAF3DE;
+      color: #3B6D11;
+      border: 1px solid #C0DD97;
+    }
+
+    .status.error {
+      display: block;
+      background: #FCEBEB;
+      color: #A32D2D;
+      border: 1px solid #F7C1C1;
+    }
+
+    .status h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .status pre {
+      font-size: 11px;
+      font-family: 'SF Mono', Monaco, monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 8px;
+      padding: 10px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 4px;
+    }
+
+    .test-cards {
+      margin-top: 24px;
+      padding: 16px 18px;
+      background: #F5F3EF;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .test-cards h4 {
+      font-size: 12px;
+      font-weight: 500;
+      color: #3B4547;
+      margin-bottom: 8px;
+    }
+
+    .test-cards code {
+      font-family: 'SF Mono', Monaco, monospace;
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .test-cards p {
+      margin-bottom: 4px;
+      line-height: 1.6;
+    }
+
+    .source-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border: 1px solid #D4D0C8;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .source-toggle button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .source-toggle button.active {
+      background: #2a6b7c;
+      color: #fff;
+    }
+
+    .source-toggle button:not(.active):hover {
+      background: #F5F3EF;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="test-badge">Test-Umgebung</div>
+    <h1>westendhotel – Karte hinterlegen</h1>
+    <p>Kreditkarte für spätere Belastung tokenisieren (Zero-Auth)</p>
+  </div>
+
+  <div class="content">
+    <!-- Source Toggle: Gast vs Rezeption -->
+    <div class="source-toggle">
+      <button class="active" onclick="setSource('ecommerce', this)">Gast (eCommerce)</button>
+      <button onclick="setSource('moto', this)">Rezeption (MOTO)</button>
+    </div>
+
+    <!-- Buchungsdaten -->
+    <div class="form-section">
+      <h2>Buchungsdaten</h2>
+      <div class="form-group">
+        <label>Gastname *</label>
+        <input type="text" id="guestName" placeholder="Max Mustermann" value="Test Gast">
+      </div>
+      <div class="form-group">
+        <label>E-Mail</label>
+        <input type="email" id="guestEmail" placeholder="gast@example.com" value="test@example.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Betrag (EUR) *</label>
+          <input type="number" id="chargeAmount" placeholder="129.00" value="129.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label>Belastungsdatum *</label>
+          <input type="date" id="chargeDate" value="">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Buchungsnummer (optional)</label>
+        <input type="text" id="bookingId" placeholder="Auto-generiert wenn leer">
+      </div>
+    </div>
+
+    <!-- Adyen Drop-in -->
+    <div class="form-section">
+      <h2>Kreditkarte</h2>
+      <div id="dropin-container"></div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="status"></div>
+
+    <!-- Test Cards Info -->
+    <div class="test-cards">
+      <h4>Adyen Test-Kreditkarten</h4>
+      <p><strong>Visa:</strong> <code>4111 1111 1111 1111</code></p>
+      <p><strong>Mastercard:</strong> <code>5500 0000 0000 0004</code></p>
+      <p><strong>Amex:</strong> <code>3700 0000 0000 002</code></p>
+      <p>Ablaufdatum: <code>03/30</code> · CVC: <code>737</code> (oder beliebig 3-stellig)</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────
+  const WORKER_URL = "https://westend-payment-worker.dd-f19.workers.dev";
+
+  // Diese Werte werden vom Worker /session Endpoint zurückgegeben
+  let currentSource = "ecommerce";
+  let checkoutInstance = null;
+
+  // Default chargeDate = morgen
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById("chargeDate").value = tomorrow.toISOString().split("T")[0];
+
+  // ── Source Toggle ───────────────────────────────────
+  function setSource(source, btn) {
+    currentSource = source;
+    document.querySelectorAll(".source-toggle button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  // ── Status Display ──────────────────────────────────
+  function showStatus(type, title, message, data = null) {
+    const el = document.getElementById("status");
+    el.className = `status ${type}`;
+    let html = `<h3>${title}</h3><p>${message}</p>`;
+    if (data) {
+      html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+    el.innerHTML = html;
+  }
+
+  // ── Initialize Adyen Drop-in ────────────────────────
+  async function initializeDropin() {
+    // 1. Buchungsdaten sammeln
+    const guestName = document.getElementById("guestName").value.trim();
+    const guestEmail = document.getElementById("guestEmail").value.trim();
+    const chargeAmountEur = parseFloat(document.getElementById("chargeAmount").value);
+    const chargeDate = document.getElementById("chargeDate").value;
+    const bookingId = document.getElementById("bookingId").value.trim();
+
+    if (!guestName || !chargeAmountEur || !chargeDate) {
+      showStatus("error", "Fehlende Daten", "Bitte Gastname, Betrag und Belastungsdatum ausfüllen.");
+      return;
+    }
+
+    // Betrag in Cent umrechnen
+    const chargeAmount = Math.round(chargeAmountEur * 100);
+
+    showStatus("loading", "Initialisiere...", "Erstelle Adyen Checkout Session...");
+
+    try {
+      // 2. Session vom Worker holen
+      const sessionResponse = await fetch(`${WORKER_URL}/session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          guestName,
+          guestEmail,
+          chargeAmount,
+          chargeDate,
+          bookingId: bookingId || undefined,
+          source: currentSource,
+        }),
+      });
+
+      const sessionData = await sessionResponse.json();
+
+      if (sessionData.error) {
+        showStatus("error", "Session-Fehler", sessionData.error);
+        return;
+      }
+
+      showStatus("loading", "Session erstellt", `Buchung ${sessionData.bookingId} – Drop-in wird geladen...`);
+
+      // 3. Adyen Drop-in konfigurieren
+      const configuration = {
+        environment: "test",
+        clientKey: sessionData.clientKey,
+        session: {
+          id: sessionData.sessionId,
+          sessionData: sessionData.sessionData,
+        },
+        analytics: { enabled: false },
+        // Callbacks
+        onPaymentCompleted: (result, component) => {
+          console.log("Payment completed:", result);
+          if (result.resultCode === "Authorised") {
+            showStatus("success",
+              "Karte erfolgreich hinterlegt!",
+              `Buchung ${sessionData.bookingId} – Token wird gespeichert. Die Karte wird am ${chargeDate} mit ${chargeAmountEur.toFixed(2)} EUR belastet.`,
+              { resultCode: result.resultCode, bookingId: sessionData.bookingId }
+            );
+          } else {
+            showStatus("error",
+              "Autorisierung fehlgeschlagen",
+              `Ergebnis: ${result.resultCode}`,
+              result
+            );
+          }
+        },
+        onError: (error, component) => {
+          console.error("Drop-in error:", error);
+          showStatus("error", "Fehler", error.message || "Unbekannter Fehler", error);
+        },
+        paymentMethodsConfiguration: {
+          card: {
+            hasHolderName: true,
+            holderNameRequired: true,
+            name: "Kreditkarte",
+          },
+        },
+      };
+
+      // 4. Drop-in erstellen und mounten
+      const checkout = await AdyenCheckout(configuration);
+      const dropin = checkout.create("dropin").mount("#dropin-container");
+      checkoutInstance = dropin;
+
+      // Status ausblenden wenn Drop-in geladen
+      document.getElementById("status").style.display = "none";
+
+    } catch (err) {
+      console.error("Init error:", err);
+      showStatus("error", "Verbindungsfehler",
+        `Konnte keine Verbindung zum Payment-Worker herstellen: ${err.message}`);
+    }
+  }
+
+  // ── Auto-Init ───────────────────────────────────────
+  // Drop-in wird initialisiert sobald der User auf "Karte eingeben" klicken würde
+  // Für den Test initialisieren wir direkt
+  document.addEventListener("DOMContentLoaded", () => {
+    // Kurz warten bis Adyen SDK geladen ist
+    setTimeout(initializeDropin, 500);
+  });
+</script>
+
+</body>
+</html>
