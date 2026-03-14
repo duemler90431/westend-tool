@@ -309,9 +309,15 @@
 
   // ── Source Toggle ───────────────────────────────────
   function setSource(source, btn) {
+    if (currentSource === source) return;
     currentSource = source;
     document.querySelectorAll(".source-toggle button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+    // Drop-in neu initialisieren mit korrektem Source
+    document.getElementById("dropin-container").innerHTML = "";
+    document.getElementById("status").className = "status";
+    document.getElementById("status").style.display = "none";
+    initializeDropin();
   }
 
   // ── Status Display ──────────────────────────────────
