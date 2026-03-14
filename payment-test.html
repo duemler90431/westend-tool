@@ -300,7 +300,8 @@
 
   // Diese Werte werden vom Worker /session Endpoint zurückgegeben
   let currentSource = "ecommerce";
-  let checkoutInstance = null;
+  let dropinComponent = null;
+  let checkoutObject = null;
 
   // Default chargeDate = morgen
   const tomorrow = new Date();
@@ -313,10 +314,23 @@
     currentSource = source;
     document.querySelectorAll(".source-toggle button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    // Drop-in neu initialisieren mit korrektem Source
-    document.getElementById("dropin-container").innerHTML = "";
+    // Altes Drop-in sauber zerstören
+    if (dropinComponent) {
+      try { dropinComponent.unmount(); } catch(e) {}
+      dropinComponent = null;
+    }
+    checkoutObject = null;
+    // Container komplett neu erstellen (killt alle iframes)
+    const container = document.getElementById("dropin-container");
+    const parent = container.parentNode;
+    parent.removeChild(container);
+    const newContainer = document.createElement("div");
+    newContainer.id = "dropin-container";
+    parent.appendChild(newContainer);
+    // Status zurücksetzen
     document.getElementById("status").className = "status";
     document.getElementById("status").style.display = "none";
+    // Neu initialisieren
     initializeDropin();
   }
 
@@ -415,8 +429,8 @@
 
       // 4. Drop-in erstellen und mounten
       const checkout = await AdyenCheckout(configuration);
-      const dropin = checkout.create("dropin").mount("#dropin-container");
-      checkoutInstance = dropin;
+      checkoutObject = checkout;
+      dropinComponent = checkout.create("dropin").mount("#dropin-container");
 
       // Status ausblenden wenn Drop-in geladen
       document.getElementById("status").style.display = "none";
