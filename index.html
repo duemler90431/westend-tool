@@ -862,6 +862,23 @@
       </div>
     </div>
 
+    <!-- CC-Garantie Toggle (nur im Bestätigungsmodus sichtbar) -->
+    <div class="card" id="ccToggleCard" style="display:none;">
+      <div class="card-header">
+        <div class="icon">💳</div>
+        <h2>Kreditkarten-Garantie</h2>
+      </div>
+      <div class="card-body">
+        <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;">
+          <input type="checkbox" id="ccToggle" onchange="updatePreview()" style="width:18px;height:18px;accent-color:#3B4547;cursor:pointer;">
+          <span style="font-size:13px;color:#3B4547;">CC-Link in Bestätigungs-E-Mail einfügen</span>
+        </label>
+        <p style="font-size:11px;color:#999;margin-top:8px;line-height:1.5;">
+          Der Gast erhält in der Bestätigungs-E-Mail einen Link zur Hinterlegung seiner Kreditkarte (Zero-Auth Tokenisierung über Adyen).
+        </p>
+      </div>
+    </div>
+
     <!-- Hinweise & Mitarbeiter -->
     <div class="card">
       <div class="card-header">
@@ -1357,6 +1374,7 @@ function setType(type) {
   document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
   document.querySelector(`.btn-type.${type}`).classList.add('active');
   document.getElementById('gueltig-feld').style.display = type === 'angebot' ? 'block' : 'none';
+  document.getElementById('ccToggleCard').style.display = type === 'bestaetigung' ? 'block' : 'none';
   updatePreview();
 }
 
@@ -1616,7 +1634,7 @@ function generateEmailHTML(forPreview = false) {
 
   // ── CTA Button ──
   const ctaSection = emailType === 'angebot' ? (() => {
-    const confirmBaseURL = 'https://duemler90431.github.io/westend-tool/confirm.html';
+    const confirmBaseURL = 'https://booking-hotelwestend.de/confirm.html';
     const confirmData = {
       lang: emailLang,
       anrede: document.getElementById('anrede').value || '',
@@ -1643,6 +1661,34 @@ function generateEmailHTML(forPreview = false) {
     <div class="cta-section">
       <p class="cta-hint">${t.acceptHint}</p>
       <a href="${confirmURL}" class="cta-button" target="_blank">✓ ${t.acceptButton}</a>
+    </div>`;
+  })() : '';
+
+  // ── CC-Link für Bestätigung ──
+  const ccSection = (emailType === 'bestaetigung' && document.getElementById('ccToggle')?.checked) ? (() => {
+    const bookingRef = 'BK-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
+    const payBaseURL = 'https://booking-hotelwestend.de/pay.html';
+    const payParams = new URLSearchParams({
+      id: bookingRef,
+      name: (document.getElementById('anrede').value || '') + ' ' + nachname,
+      checkin: anreise,
+      checkout: abreise,
+      amount: total.toFixed(2),
+      room: zimmer.filter(z => z.preisNacht > 0).map(z => z.anzahl + 'x ' + z.kategorie).join(', '),
+      email: document.getElementById('email').value || '',
+      lang: emailLang,
+    });
+    const payURL = payBaseURL + '?' + payParams.toString();
+    const ccTitle = emailLang === 'de' ? 'KREDITKARTEN-GARANTIE' : 'CREDIT CARD GUARANTEE';
+    const ccText = emailLang === 'de'
+      ? 'Zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Stornobedingungen belastet.'
+      : 'To secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed cancellation policy.';
+    const ccButton = emailLang === 'de' ? 'Kreditkarte hinterlegen' : 'Provide credit card';
+    return `
+    <div style="margin:24px 0;padding:20px 24px;border:1px solid #E0DDD6;border-radius:8px;background:#FAFAF8;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;color:#3B4547;margin-bottom:10px;">${ccTitle}</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px;">${ccText}</p>
+      <a href="${payURL}" target="_blank" style="display:inline-block;background:#3B4547;color:#fff;text-decoration:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:500;">💳 ${ccButton}</a>
     </div>`;
   })() : '';
 
@@ -1684,7 +1730,7 @@ function generateEmailHTML(forPreview = false) {
   return `
 <div class="email-inner">
   <div class="email-header-bar">
-    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:48px;width:auto;display:block;margin:0 auto 6px;">
+    <img src="https://booking-hotelwestend.de/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:48px;width:auto;display:block;margin:0 auto 6px;">
     <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
   </div>
 
@@ -1735,6 +1781,7 @@ function generateEmailHTML(forPreview = false) {
 
     ${angebotBox}
     ${ctaSection}
+    ${ccSection}
     ${hinweisBox}
     ${bemerkungenBox}
 
@@ -1758,7 +1805,7 @@ function generateEmailHTML(forPreview = false) {
 
   <!-- Footer -->
   <div class="email-footer">
-    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:32px;width:auto;display:block;margin:0 auto 12px;">
+    <img src="https://booking-hotelwestend.de/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:32px;width:auto;display:block;margin:0 auto 12px;">
     <div class="footer-details">
       Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
       Tel: +49 911 93986-0 · <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a><br>
