@@ -347,7 +347,7 @@
     @media (max-width: 600px) {
       .main { padding: 0 16px; margin: 20px auto; }
       .form-row, .form-row.three { grid-template-columns: 1fr; }
-      .action-cards { grid-template-columns: 1fr; }
+      .action-cards { grid-template-columns: 1fr !important; }
       .storno-options { grid-template-columns: 1fr; }
       .header { padding: 16px 20px; }
     }
@@ -454,16 +454,32 @@
       <p>Kreditkarte direkt aufnehmen oder Link an den Gast senden</p>
     </div>
     <div class="card-body">
-      <div class="action-cards">
-        <div class="action-card" id="action-moto" onclick="selectAction('moto')">
-          <div class="icon">💳</div>
-          <div class="title">CC jetzt aufnehmen</div>
-          <div class="subtitle">Kreditkartendaten am Telefon entgegennehmen (MOTO)</div>
+      <div class="action-cards" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="action-card" id="action-moto-now" onclick="selectAction('moto-now')">
+          <div class="icon">⚡</div>
+          <div class="title">CC aufnehmen & sofort belasten</div>
+          <div class="subtitle">MOTO-Eingabe, direkte Belastung nach Tokenisierung</div>
+        </div>
+        <div class="action-card" id="action-moto-later" onclick="selectAction('moto-later')">
+          <div class="icon">📅</div>
+          <div class="title">CC aufnehmen & später belasten</div>
+          <div class="subtitle">MOTO-Eingabe, automatische Belastung am gewählten Datum (z.B. vCC)</div>
         </div>
         <div class="action-card" id="action-email" onclick="selectAction('email')">
           <div class="icon">📧</div>
           <div class="title">CC-Link per E-Mail</div>
           <div class="subtitle">Gast erhält Link und gibt CC-Daten selbst ein</div>
+        </div>
+      </div>
+
+      <!-- Belastungsdatum (nur bei moto-later sichtbar) -->
+      <div id="charge-date-section" style="display:none;margin-top:16px;padding:16px;background:#FAFAF8;border:1px solid var(--border);border-radius:8px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <div class="field">
+            <label>CC belasten am <span class="req">*</span></label>
+            <input type="date" id="chargeDateInput">
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Der Cron-Job belastet die Karte automatisch an diesem Datum (z.B. Tag vor Anreise für vCC).</div>
+          </div>
         </div>
       </div>
     </div>
@@ -473,7 +489,7 @@
   <div class="card" id="moto-section">
     <div class="card-header">
       <h2>3 · Kreditkarte eingeben</h2>
-      <p>MOTO-Tokenisierung – kein 3D Secure erforderlich</p>
+      <p id="moto-section-subtitle">MOTO-Tokenisierung – kein 3D Secure erforderlich</p>
     </div>
     <div class="card-body">
       <div id="dropin-container"></div>
@@ -517,6 +533,7 @@
   let selectedAction = null;
   let selectedStorno = "regulaer";
   let currentBookingId = null;
+  let chargeImmediately = false;
 
   // ── Storno Selection ────────────────────────
   function selectStorno(el, value) {
@@ -529,14 +546,45 @@
   function selectAction(action) {
     if (!validateForm()) return;
 
+    // Extra validation for moto-later: charge date required
+    if (action === 'moto-later') {
+      const chargeDate = document.getElementById('chargeDateInput').value;
+      if (!chargeDate) {
+        // Show the charge date section first, then user must pick date and click again
+        document.getElementById('charge-date-section').style.display = 'block';
+        // Set default to checkin date
+        if (!document.getElementById('chargeDateInput').value) {
+          document.getElementById('chargeDateInput').value = document.getElementById('checkinDate').value;
+        }
+        showToast('error', 'Bitte Belastungsdatum wählen, dann nochmal klicken');
+        document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('action-moto-later').classList.add('selected');
+        document.getElementById('moto-section').style.display = 'none';
+        document.getElementById('email-section').style.display = 'none';
+        return;
+      }
+    }
+
     selectedAction = action;
+    chargeImmediately = (action === 'moto-now');
+    const isMoto = action === 'moto-now' || action === 'moto-later';
+
     document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
     document.getElementById(`action-${action}`).classList.add('selected');
 
-    document.getElementById('moto-section').style.display = action === 'moto' ? 'block' : 'none';
+    document.getElementById('moto-section').style.display = isMoto ? 'block' : 'none';
     document.getElementById('email-section').style.display = action === 'email' ? 'block' : 'none';
+    document.getElementById('charge-date-section').style.display = action === 'moto-later' ? 'block' : 'none';
 
-    if (action === 'moto') {
+    if (isMoto) {
+      // Update subtitle
+      const subtitle = document.getElementById('moto-section-subtitle');
+      if (chargeImmediately) {
+        subtitle.textContent = 'MOTO-Tokenisierung + sofortige Belastung';
+      } else {
+        const cd = formatDateDE(document.getElementById('chargeDateInput').value);
+        subtitle.textContent = `MOTO-Tokenisierung – Belastung am ${cd} (Cron)`;
+      }
       initMotoSession();
     } else {
       updateEmailPreview();
@@ -544,8 +592,9 @@
     }
 
     // Scroll to section
+    const scrollTarget = isMoto ? 'moto-section' : 'email-section';
     setTimeout(() => {
-      document.getElementById(`${action}-section`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(scrollTarget).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   }
 
@@ -591,6 +640,14 @@
 
     const data = getFormData();
 
+    // Determine charge date
+    let chargeDate = data.checkinDate; // default
+    if (selectedAction === 'moto-later') {
+      chargeDate = document.getElementById('chargeDateInput').value || data.checkinDate;
+    } else if (selectedAction === 'moto-now') {
+      chargeDate = new Date().toISOString().split('T')[0]; // today
+    }
+
     try {
       const res = await fetch(`${WORKER_URL}/session`, {
         method: 'POST',
@@ -599,7 +656,7 @@
           guestName: data.guestName,
           guestEmail: data.guestEmail,
           chargeAmount: data.amount,
-          chargeDate: data.checkinDate,
+          chargeDate: chargeDate,
           source: 'moto',
           checkinDate: data.checkinDate,
           checkoutDate: data.checkoutDate,
@@ -631,16 +688,64 @@
         },
         analytics: { enabled: false },
         locale: 'de-DE',
-        onPaymentCompleted: (result) => {
+        onPaymentCompleted: async (result) => {
           if (result.resultCode === 'Authorised') {
-            status.className = 'status show success';
-            status.innerHTML = `
-              <h4>✅ Kreditkarte erfolgreich tokenisiert</h4>
-              <p>Buchung <strong>${currentBookingId}</strong> wurde erstellt. Die Karte wird erst zum Belastungsdatum eingezogen.</p>
-              <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--success);font-weight:600;">→ Zum Dashboard</a></p>
-            `;
             document.getElementById('dropin-container').innerHTML = '';
-            showToast('success', `${currentBookingId} – CC tokenisiert`);
+
+            if (chargeImmediately) {
+              // Sofort belasten
+              status.className = 'status show loading';
+              status.innerHTML = '<h4>⏳ CC tokenisiert – Belastung wird ausgeführt...</h4>';
+
+              // Kurz warten bis Webhook den Token gesetzt hat
+              await new Promise(r => setTimeout(r, 3000));
+
+              try {
+                const chargeRes = await fetch(`${WORKER_URL}/charge`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ bookingId: currentBookingId }),
+                });
+                const chargeData = await chargeRes.json();
+
+                if (chargeData.success) {
+                  status.className = 'status show success';
+                  status.innerHTML = `
+                    <h4>✅ Kreditkarte belastet</h4>
+                    <p>Buchung <strong>${currentBookingId}</strong> – ${formatEur(chargeData.amount)} erfolgreich eingezogen.</p>
+                    <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--success);font-weight:600;">→ Zum Dashboard</a></p>
+                  `;
+                  showToast('success', `${currentBookingId} – ${formatEur(chargeData.amount)} belastet`);
+                } else {
+                  status.className = 'status show error';
+                  status.innerHTML = `
+                    <h4>⚠️ Tokenisiert, aber Belastung fehlgeschlagen</h4>
+                    <p>Grund: ${chargeData.refusalReason || chargeData.resultCode || 'Unbekannt'}</p>
+                    <p>Die Karte wurde hinterlegt. Sie können die Belastung im Dashboard erneut versuchen.</p>
+                    <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--petrol);font-weight:600;">→ Zum Dashboard</a></p>
+                  `;
+                  showToast('error', 'Belastung fehlgeschlagen – siehe Dashboard');
+                }
+              } catch (chargeErr) {
+                status.className = 'status show error';
+                status.innerHTML = `
+                  <h4>⚠️ Tokenisiert, aber Belastung konnte nicht ausgeführt werden</h4>
+                  <p>${chargeErr.message}</p>
+                  <p>Die Karte wurde hinterlegt. Belastung über das Dashboard nachholen.</p>
+                  <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--petrol);font-weight:600;">→ Zum Dashboard</a></p>
+                `;
+              }
+            } else {
+              // Später belasten (Cron)
+              const cd = formatDateDE(chargeDate);
+              status.className = 'status show success';
+              status.innerHTML = `
+                <h4>✅ Kreditkarte erfolgreich tokenisiert</h4>
+                <p>Buchung <strong>${currentBookingId}</strong> wurde erstellt. Die Karte wird automatisch am <strong>${cd}</strong> belastet.</p>
+                <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--success);font-weight:600;">→ Zum Dashboard</a></p>
+              `;
+              showToast('success', `${currentBookingId} – CC tokenisiert, Belastung am ${cd}`);
+            }
           } else {
             status.className = 'status show error';
             status.innerHTML = `<h4>Tokenisierung fehlgeschlagen</h4><p>Ergebnis: ${result.resultCode}</p>`;
@@ -807,6 +912,11 @@
     if (!str) return '–';
     const [y, m, d] = str.split('-');
     return `${d}.${m}.${y}`;
+  }
+
+  function formatEur(cents) {
+    if (!cents && cents !== 0) return '–';
+    return (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
   }
 
   function showToast(type, message) {
