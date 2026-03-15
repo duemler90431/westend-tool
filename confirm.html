@@ -53,7 +53,7 @@
 <body>
 <header>
   <div style="text-align:center;">
-    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:36px;margin-bottom:6px;">
+    <img src="https://booking-hotelwestend.de/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:36px;margin-bottom:6px;">
     <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
   </div>
 </header>
@@ -289,7 +289,7 @@ const texts = {
 };
 
 const t = texts[lang] || texts.de;
-const agbURL = 'https://duemler90431.github.io/westend-tool/AGB_westendhotel2025.pdf';
+const agbURL = 'https://booking-hotelwestend.de/AGB_westendhotel2025.pdf';
 
 function formatDateDE(str) {
   if (!str) return '–';
@@ -469,7 +469,7 @@ async function confirmBooking() {
         ${stornoBlock}
         <p style="font-size:12px;color:#6b7280;margin-top:16px;">${t.emailAgbNote}</p>
         <div style="text-align:center;margin:24px 0 8px;">
-          <a href="https://duemler90431.github.io/westend-tool/?prefill=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({
+          <a href="https://booking-hotelwestend.de/?prefill=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({
             mode: 'bestaetigung',
             anrede: anrede,
             name: name,
