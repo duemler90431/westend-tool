@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>westendhotel nürnberg – Kreditkarte hinterlegen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Adyen Web Drop-in v5 -->
+  <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.css">
+  <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F5F3EF;
+      color: #3B4547;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 560px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ── Header ─────────────────────────────── */
+    .header {
+      background: #3B4547;
+      text-align: center;
+      padding: 28px 32px 0;
+    }
+
+    .header img {
+      height: 38px;
+      margin-bottom: 16px;
+    }
+
+    .header-title {
+      background: #3B4547;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding: 10px 32px;
+      text-align: center;
+    }
+
+    .header-title span {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── Content ────────────────────────────── */
+    .content {
+      padding: 32px;
+    }
+
+    .intro {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    /* ── Booking Details Table ──────────────── */
+    .details-section {
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #3B4547;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .details-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid #E0DDD6;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .details-table tr {
+      border-bottom: 1px solid #E8E5DE;
+    }
+
+    .details-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .details-table td {
+      padding: 11px 16px;
+      vertical-align: top;
+    }
+
+    .details-table td:first-child {
+      color: #888;
+      width: 140px;
+      background: #FAFAF8;
+    }
+
+    .details-table td:last-child {
+      font-weight: 500;
+      color: #3B4547;
+    }
+
+    .amount-row td {
+      border-top: 2px solid #E0DDD6;
+    }
+
+    .amount-row td:last-child {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* ── Card Section ──────────────────────── */
+    .card-section {
+      margin-bottom: 24px;
+    }
+
+    .card-section .section-label {
+      margin-bottom: 16px;
+    }
+
+    .card-info {
+      font-size: 12px;
+      color: #888;
+      margin-top: 12px;
+      line-height: 1.5;
+      padding: 12px 16px;
+      background: #FAFAF8;
+      border-radius: 8px;
+      border: 1px solid #E8E5DE;
+    }
+
+    .card-info svg {
+      width: 14px;
+      height: 14px;
+      vertical-align: -2px;
+      margin-right: 4px;
+      fill: #888;
+    }
+
+    #dropin-container {
+      min-height: 80px;
+    }
+
+    /* ── Status Messages ───────────────────── */
+    .status {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .status.loading {
+      display: block;
+      background: #EEF6FF;
+      color: #185FA5;
+      border: 1px solid #B5D4F4;
+    }
+
+    .status.success {
+      display: block;
+      background: #EAF3DE;
+      color: #3B6D11;
+      border: 1px solid #C0DD97;
+    }
+
+    .status.error {
+      display: block;
+      background: #FCEBEB;
+      color: #A32D2D;
+      border: 1px solid #F7C1C1;
+    }
+
+    .status h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* ── Footer ─────────────────────────────── */
+    .footer {
+      padding: 20px 32px;
+      background: #FAFAF8;
+      border-top: 1px solid #E8E5DE;
+      font-size: 11px;
+      color: #999;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .footer a {
+      color: #3B4547;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Error Page ─────────────────────────── */
+    .error-page {
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    .error-page .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .error-page h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .error-page p {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* ── Success Page ──────────────────────── */
+    .success-page {
+      padding: 48px 32px;
+      text-align: center;
+      display: none;
+    }
+
+    .success-page .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .success-page h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #3B6D11;
+      margin-bottom: 8px;
+    }
+
+    .success-page p {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* ── Responsive ─────────────────────────── */
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .container { min-height: 100vh; }
+      .content { padding: 24px 20px; }
+      .details-table td:first-child { width: 110px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png"
+         alt="westendhotel nürnberg" onerror="this.style.display='none'">
+  </div>
+  <div class="header-title">
+    <span id="pageTitle">KREDITKARTE HINTERLEGEN</span>
+  </div>
+
+  <!-- Main Content (hidden until data loaded) -->
+  <div id="mainContent" class="content" style="display:none;">
+    <p class="intro" id="introText"></p>
+
+    <!-- Booking Details -->
+    <div class="details-section">
+      <div class="section-label" id="labelDetails">BUCHUNGSDETAILS</div>
+      <table class="details-table">
+        <tr id="rowName"><td id="labelName">Gastname</td><td id="valName">–</td></tr>
+        <tr id="rowCheckin"><td id="labelCheckin">Anreise</td><td id="valCheckin">–</td></tr>
+        <tr id="rowCheckout"><td id="labelCheckout">Abreise</td><td id="valCheckout">–</td></tr>
+        <tr id="rowRoom" style="display:none"><td id="labelRoom">Zimmer</td><td id="valRoom">–</td></tr>
+        <tr class="amount-row"><td id="labelAmount">Betrag</td><td id="valAmount">–</td></tr>
+      </table>
+    </div>
+
+    <!-- Card Input -->
+    <div class="card-section">
+      <div class="section-label" id="labelCard">KREDITKARTE</div>
+      <div id="dropin-container"></div>
+      <div class="card-info" id="cardInfo">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span id="cardInfoText">Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Stornobedingungen.</span>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="status"></div>
+  </div>
+
+  <!-- Success Page (shown after successful tokenization) -->
+  <div id="successPage" class="success-page">
+    <div class="icon">✓</div>
+    <h2 id="successTitle">Vielen Dank!</h2>
+    <p id="successText">Ihre Kreditkarte wurde erfolgreich hinterlegt. Sie können dieses Fenster jetzt schließen.</p>
+  </div>
+
+  <!-- Error Page (shown if no valid booking ID) -->
+  <div id="errorPage" class="error-page" style="display:none;">
+    <div class="icon">⚠</div>
+    <h2 id="errorTitle">Ungültiger Link</h2>
+    <p id="errorText">Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    westendhotel nürnberg · Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
+    <a href="tel:+499119398600">+49 911 93986-0</a> · <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a>
+  </div>
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────
+  const WORKER_URL = "https://westend-payment-worker.dd-f19.workers.dev";
+
+  // ── i18n ────────────────────────────────────────────
+  const i18n = {
+    de: {
+      pageTitle: "KREDITKARTE HINTERLEGEN",
+      introText: (name) => `Sehr geehrte/r ${name},<br><br>zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Stornobedingungen belastet.`,
+      labelDetails: "BUCHUNGSDETAILS",
+      labelName: "Gastname",
+      labelCheckin: "Anreise",
+      labelCheckout: "Abreise",
+      labelRoom: "Zimmer",
+      labelAmount: "Betrag",
+      labelCard: "KREDITKARTE",
+      cardInfoText: "Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Stornobedingungen.",
+      successTitle: "Vielen Dank!",
+      successText: "Ihre Kreditkarte wurde erfolgreich hinterlegt. Sie können dieses Fenster jetzt schließen.",
+      errorTitle: "Ungültiger Link",
+      errorText: 'Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.',
+      statusInit: "Wird geladen...",
+      statusError: "Fehler",
+      statusConnection: "Verbindungsfehler – bitte versuchen Sie es später erneut.",
+      statusAuthFail: "Die Karte konnte nicht autorisiert werden. Bitte versuchen Sie es mit einer anderen Karte.",
+    },
+    en: {
+      pageTitle: "CREDIT CARD DEPOSIT",
+      introText: (name) => `Dear ${name},<br><br>to secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed cancellation policy.`,
+      labelDetails: "BOOKING DETAILS",
+      labelName: "Guest name",
+      labelCheckin: "Check-in",
+      labelCheckout: "Check-out",
+      labelRoom: "Room",
+      labelAmount: "Amount",
+      labelCard: "CREDIT CARD",
+      cardInfoText: "Your credit card is stored for security purposes only. Charges will only apply according to the agreed cancellation policy.",
+      successTitle: "Thank you!",
+      successText: "Your credit card has been stored successfully. You may close this window now.",
+      errorTitle: "Invalid link",
+      errorText: 'This payment link is invalid or expired. Please contact us at <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a> or <a href="tel:+499119398600">+49 911 93986-0</a>.',
+      statusInit: "Loading...",
+      statusError: "Error",
+      statusConnection: "Connection error – please try again later.",
+      statusAuthFail: "The card could not be authorised. Please try a different card.",
+    }
+  };
+
+  // ── Parse URL Parameters ────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const bookingId = params.get('id');
+  const lang = (params.get('lang') || 'de').toLowerCase();
+  const t = i18n[lang] || i18n.de;
+
+  // Optional pre-filled data via URL params
+  const urlName = params.get('name') || '';
+  const urlCheckin = params.get('checkin') || '';
+  const urlCheckout = params.get('checkout') || '';
+  const urlRoom = params.get('room') || '';
+  const urlAmount = params.get('amount') || '';
+  const urlEmail = params.get('email') || '';
+
+  // Set HTML lang
+  document.documentElement.lang = lang === 'en' ? 'en' : 'de';
+  document.title = lang === 'en'
+    ? 'westendhotel nürnberg – Credit Card Deposit'
+    : 'westendhotel nürnberg – Kreditkarte hinterlegen';
+
+  // ── Apply i18n ──────────────────────────────────────
+  function applyLanguage() {
+    document.getElementById('pageTitle').textContent = t.pageTitle;
+    document.getElementById('labelDetails').textContent = t.labelDetails;
+    document.getElementById('labelName').textContent = t.labelName;
+    document.getElementById('labelCheckin').textContent = t.labelCheckin;
+    document.getElementById('labelCheckout').textContent = t.labelCheckout;
+    document.getElementById('labelRoom').textContent = t.labelRoom;
+    document.getElementById('labelAmount').textContent = t.labelAmount;
+    document.getElementById('labelCard').textContent = t.labelCard;
+    document.getElementById('cardInfoText').textContent = t.cardInfoText;
+    document.getElementById('successTitle').textContent = t.successTitle;
+    document.getElementById('successText').textContent = t.successText;
+    document.getElementById('errorTitle').textContent = t.errorTitle;
+    document.getElementById('errorText').innerHTML = t.errorText;
+  }
+
+  // ── Format Date ─────────────────────────────────────
+  function formatDate(dateStr) {
+    if (!dateStr) return '–';
+    try {
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'de-DE', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+    } catch { return dateStr; }
+  }
+
+  // ── Format Amount ───────────────────────────────────
+  function formatAmount(amount) {
+    if (!amount) return '–';
+    const num = parseFloat(amount);
+    if (isNaN(num)) return amount;
+    return num.toLocaleString(lang === 'en' ? 'en-GB' : 'de-DE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + ' €';
+  }
+
+  // ── Show Status ─────────────────────────────────────
+  function showStatus(type, title, message) {
+    const el = document.getElementById('status');
+    el.className = `status ${type}`;
+    el.innerHTML = `<h3>${title}</h3><p>${message}</p>`;
+  }
+
+  // ── Populate Booking Details ────────────────────────
+  function populateDetails() {
+    if (urlName) {
+      document.getElementById('valName').textContent = urlName;
+      document.getElementById('introText').innerHTML = t.introText(urlName);
+    } else {
+      document.getElementById('introText').innerHTML = t.introText(lang === 'en' ? 'Guest' : 'Gast');
+    }
+
+    if (urlCheckin) document.getElementById('valCheckin').textContent = formatDate(urlCheckin);
+    if (urlCheckout) document.getElementById('valCheckout').textContent = formatDate(urlCheckout);
+
+    if (urlRoom) {
+      document.getElementById('valRoom').textContent = urlRoom;
+      document.getElementById('rowRoom').style.display = '';
+    }
+
+    if (urlAmount) document.getElementById('valAmount').textContent = formatAmount(urlAmount);
+  }
+
+  // ── Initialize ──────────────────────────────────────
+  async function init() {
+    applyLanguage();
+
+    // Validate: bookingId is required
+    if (!bookingId) {
+      document.getElementById('errorPage').style.display = 'block';
+      return;
+    }
+
+    // Show main content
+    document.getElementById('mainContent').style.display = 'block';
+    populateDetails();
+
+    // Determine charge amount in cents
+    const chargeAmountEur = parseFloat(urlAmount) || 0;
+    const chargeAmount = Math.round(chargeAmountEur * 100);
+
+    showStatus('loading', t.statusInit, '');
+
+    try {
+      // Get session from worker
+      const response = await fetch(`${WORKER_URL}/session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guestName: urlName || 'Guest',
+          guestEmail: urlEmail || '',
+          chargeAmount: chargeAmount,
+          chargeDate: urlCheckin || new Date().toISOString().split('T')[0],
+          bookingId: bookingId,
+          source: 'ecommerce',
+        }),
+      });
+
+      const sessionData = await response.json();
+
+      if (sessionData.error) {
+        showStatus('error', t.statusError, sessionData.error);
+        return;
+      }
+
+      // Configure Adyen Drop-in
+      const configuration = {
+        environment: 'test',
+        clientKey: sessionData.clientKey,
+        session: {
+          id: sessionData.sessionId,
+          sessionData: sessionData.sessionData,
+        },
+        analytics: { enabled: false },
+        locale: lang === 'en' ? 'en-US' : 'de-DE',
+        onPaymentCompleted: (result) => {
+          if (result.resultCode === 'Authorised') {
+            // Hide main content, show success
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+          } else {
+            showStatus('error', t.statusError, t.statusAuthFail);
+          }
+        },
+        onError: (error) => {
+          console.error('Adyen error:', error);
+          showStatus('error', t.statusError, error.message || t.statusConnection);
+        },
+        paymentMethodsConfiguration: {
+          card: {
+            hasHolderName: true,
+            holderNameRequired: true,
+            name: lang === 'en' ? 'Credit card' : 'Kreditkarte',
+          },
+        },
+      };
+
+      const checkout = await AdyenCheckout(configuration);
+      checkout.create('dropin').mount('#dropin-container');
+
+      // Hide loading status
+      document.getElementById('status').style.display = 'none';
+
+    } catch (err) {
+      console.error('Init error:', err);
+      showStatus('error', t.statusError, t.statusConnection);
+    }
+  }
+
+  // ── Start ───────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(init, 300);
+  });
+</script>
+
+</body>
+</html>
