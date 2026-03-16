@@ -6,9 +6,9 @@
   <title>westendhotel – MOTO Kreditkarte</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Adyen Web Drop-in v5 (TEST) -->
-  <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.css">
-  <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.65.0/adyen.js"></script>
+  <!-- Adyen Web Drop-in v5 (LIVE) -->
+  <link rel="stylesheet" href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0/adyen.css">
+  <script src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0/adyen.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -680,7 +680,7 @@
 
       // Configure Adyen Drop-in for MOTO
       const configuration = {
-        environment: 'test',
+        environment: 'live',
         clientKey: session.clientKey,
         session: {
           id: session.sessionId,
