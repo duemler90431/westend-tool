@@ -309,7 +309,7 @@
       <div id="dropin-container"></div>
       <div class="card-info" id="cardInfo">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-        <span id="cardInfoText">Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Stornobedingungen.</span>
+        <span id="cardInfoText">Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Buchungs- und Stornobedingungen.</span>
       </div>
     </div>
 
@@ -328,17 +328,17 @@
   <div id="errorPage" class="error-page" style="display:none;">
     <div class="icon">⚠</div>
     <h2 id="errorTitle">Ungültiger Link</h2>
-    <p id="errorText">Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.</p>
+    <p id="errorText">Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="/cdn-cgi/l/email-protection#99f0f7fff6d9f1f6edfcf5eefceaedfcf7fdb7fdfc"><span class="__cf_email__" data-cfemail="e58c8b838aa58d8a91808992809691808b81cb8180">[email&#160;protected]</span></a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.</p>
   </div>
 
   <!-- Footer -->
   <div class="footer">
     westendhotel nürnberg · Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-    <a href="tel:+499119398600">+49 911 93986-0</a> · <a href="mailto:info@hotelwestend.de">info@hotelwestend.de</a>
+    <a href="tel:+499119398600">+49 911 93986-0</a> · <a href="/cdn-cgi/l/email-protection#274e494148674f4853424b50425453424943094342"><span class="__cf_email__" data-cfemail="c8a1a6aea788a0a7bcada4bfadbbbcada6ace6acad">[email&#160;protected]</span></a>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── Config ──────────────────────────────────────────
   const WORKER_URL = "https://westend-payment-worker.dd-f19.workers.dev";
 
@@ -346,7 +346,7 @@
   const i18n = {
     de: {
       pageTitle: "KREDITKARTE HINTERLEGEN",
-      introText: (name) => `Sehr geehrte/r ${name},<br><br>zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Stornobedingungen belastet.`,
+      introText: (name) => `Sehr geehrte/r ${name},<br><br>zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Buchungs- und Stornobedingungen belastet.`,
       labelDetails: "BUCHUNGSDETAILS",
       labelName: "Gastname",
       labelCheckin: "Anreise",
@@ -354,7 +354,7 @@
       labelRoom: "Zimmer",
       labelAmount: "Betrag",
       labelCard: "KREDITKARTE",
-      cardInfoText: "Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Stornobedingungen.",
+      cardInfoText: "Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Buchungs- und Stornobedingungen.",
       successTitle: "Vielen Dank!",
       successText: "Ihre Kreditkarte wurde erfolgreich hinterlegt. Sie können dieses Fenster jetzt schließen.",
       errorTitle: "Ungültiger Link",
@@ -366,7 +366,7 @@
     },
     en: {
       pageTitle: "CREDIT CARD DEPOSIT",
-      introText: (name) => `Dear ${name},<br><br>to secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed cancellation policy.`,
+      introText: (name) => `Dear ${name},<br><br>to secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed booking and cancellation policy.`,
       labelDetails: "BOOKING DETAILS",
       labelName: "Guest name",
       labelCheckin: "Check-in",
@@ -374,7 +374,7 @@
       labelRoom: "Room",
       labelAmount: "Amount",
       labelCard: "CREDIT CARD",
-      cardInfoText: "Your credit card is stored for security purposes only. Charges will only apply according to the agreed cancellation policy.",
+      cardInfoText: "Your credit card is stored for security purposes only. Charges will only apply according to the agreed booking and cancellation policy.",
       successTitle: "Thank you!",
       successText: "Your credit card has been stored successfully. You may close this window now.",
       errorTitle: "Invalid link",
@@ -552,17 +552,4 @@
       // Hide loading status
       document.getElementById('status').style.display = 'none';
 
-    } catch (err) {
-      console.error('Init error:', err);
-      showStatus('error', t.statusError, t.statusConnection);
-    }
-  }
-
-  // ── Start ───────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(init, 300);
-  });
-</script>
-
-</body>
-</html>
+    } catch (err

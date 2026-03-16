@@ -1256,8 +1256,8 @@ function generateEmailHTML(forPreview = false) {
     const payURL = payBaseURL + '?' + payParams.toString();
     const ccTitle = emailLang === 'de' ? 'KREDITKARTEN-GARANTIE' : 'CREDIT CARD GUARANTEE';
     const ccText = emailLang === 'de'
-      ? 'Zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Stornobedingungen belastet.'
-      : 'To secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed cancellation policy.';
+      ? 'Zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Buchungs- und Stornobedingungen belastet.'
+      : 'To secure your booking, we kindly ask you to provide a credit card. Your card will only be stored for security purposes and charged according to the agreed booking and cancellation policy.';
     const ccButton = emailLang === 'de' ? 'Kreditkarte hinterlegen' : 'Provide credit card';
     return `
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
@@ -1488,6 +1488,48 @@ async function sendEmail() {
 
     if (res.ok) {
       showToast(`E-Mail erfolgreich an ${email} gesendet!`, 'success');
+
+      // ── D1-Integration: Buchung im Worker erstellen (non-blocking) ──
+      try {
+        const zimmer = getZimmerData();
+        const nights = getNights();
+        const total = calcTotal(zimmer, nights);
+        const requireCC = emailType === 'bestaetigung' && document.getElementById('ccToggle')?.checked;
+
+        const d1Payload = {
+          guestName: (document.getElementById('anrede').value || '') + ' ' + nachname,
+          guestEmail: email,
+          guestFirma: document.getElementById('firma').value || '',
+          guestTelefon: document.getElementById('telefon').value || '',
+          checkinDate: document.getElementById('anreise').value,
+          checkoutDate: document.getElementById('abreise').value,
+          zimmer: zimmer.filter(z => z.preisNacht > 0).map(z => z.anzahl + 'x ' + z.kategorie).join(', '),
+          gesamtBetrag: total,
+          stornoTyp: getSelectedStorno(),
+          rName: document.getElementById('rechnung_name')?.value || '',
+          rStrasse: document.getElementById('rechnung_strasse')?.value || '',
+          rPlzort: document.getElementById('rechnung_plzort')?.value || '',
+          rZusatz: document.getElementById('rechnung_zusatz')?.value || '',
+          emailType: emailType,
+          angebotStatus: emailType === 'angebot' ? 'offer_sent' : 'confirmed',
+          requireCC: requireCC,
+        };
+
+        const d1Res = await fetch('https://westend-payment-worker.dd-f19.workers.dev/bookings/from-offer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(d1Payload),
+        });
+        const d1Data = await d1Res.json();
+        if (d1Data.success) {
+          console.log('D1 Buchung erstellt:', d1Data.bookingId, '→', d1Data.status);
+        } else {
+          console.warn('D1 Buchung Fehler:', d1Data.error);
+        }
+      } catch (d1err) {
+        console.warn('D1-Integration nicht erreichbar:', d1err.message);
+        // Non-blocking: E-Mail wurde trotzdem gesendet
+      }
     } else {
       const err = await res.json();
       showToast(`Fehler: ${err.message || 'Unbekannter Fehler'}`, 'error');
