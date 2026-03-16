@@ -328,17 +328,17 @@
   <div id="errorPage" class="error-page" style="display:none;">
     <div class="icon">⚠</div>
     <h2 id="errorTitle">Ungültiger Link</h2>
-    <p id="errorText">Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="/cdn-cgi/l/email-protection#99f0f7fff6d9f1f6edfcf5eefceaedfcf7fdb7fdfc"><span class="__cf_email__" data-cfemail="e58c8b838aa58d8a91808992809691808b81cb8180">[email&#160;protected]</span></a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.</p>
+    <p id="errorText">Dieser Zahlungslink ist ungültig oder abgelaufen. Bitte kontaktieren Sie uns unter <a href="mailto:&#105;&#110;&#102;&#111;&#64;&#104;&#111;&#116;&#101;&#108;&#119;&#101;&#115;&#116;&#101;&#110;&#100;&#46;&#100;&#101;">&#105;&#110;&#102;&#111;&#64;&#104;&#111;&#116;&#101;&#108;&#119;&#101;&#115;&#116;&#101;&#110;&#100;&#46;&#100;&#101;</a> oder <a href="tel:+499119398600">+49 911 93986-0</a>.</p>
   </div>
 
   <!-- Footer -->
   <div class="footer">
     westendhotel nürnberg · Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-    <a href="tel:+499119398600">+49 911 93986-0</a> · <a href="/cdn-cgi/l/email-protection#274e494148674f4853424b50425453424943094342"><span class="__cf_email__" data-cfemail="c8a1a6aea788a0a7bcada4bfadbbbcada6ace6acad">[email&#160;protected]</span></a>
+    <a href="tel:+499119398600">+49 911 93986-0</a> · <a href="mailto:&#105;&#110;&#102;&#111;&#64;&#104;&#111;&#116;&#101;&#108;&#119;&#101;&#115;&#116;&#101;&#110;&#100;&#46;&#100;&#101;">&#105;&#110;&#102;&#111;&#64;&#104;&#111;&#116;&#101;&#108;&#119;&#101;&#115;&#116;&#101;&#110;&#100;&#46;&#100;&#101;</a>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── Config ──────────────────────────────────────────
   const WORKER_URL = "https://westend-payment-worker.dd-f19.workers.dev";
 
@@ -552,4 +552,15 @@
       // Hide loading status
       document.getElementById('status').style.display = 'none';
 
-    } catch (err
+    } catch (err) {
+      console.error('Session error:', err);
+      showStatus('error', t.statusError, t.statusConnection);
+    }
+  }
+
+  // ── Start ───────────────────────────────────────────
+  init();
+</script>
+
+</body>
+</html>
