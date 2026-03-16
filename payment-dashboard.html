@@ -296,6 +296,9 @@
     .status-cancelled .status-dot { background: #999; }
     .status-cancelled { background: #f0f0f0; color: #888; }
 
+    .status-expired .status-dot { background: #B8860B; }
+    .status-expired { background: #FDF6E3; color: #8B6914; }
+
     .status-tokenization_failed .status-dot { background: var(--error); }
     .status-tokenization_failed { background: var(--error-bg); color: var(--error); }
 
@@ -508,7 +511,7 @@
   </div>
   <div class="header-right">
     <button class="btn btn-secondary" onclick="loadBookings()">↻ Aktualisieren</button>
-    <button class="btn btn-primary" onclick="window.open('moto.html','_blank')">+ Neue Buchung</button>
+    <button class="btn btn-primary" onclick="window.open('payment-test.html','_blank')">+ Neue Buchung</button>
   </div>
 </div>
 
@@ -544,6 +547,7 @@
   <button class="filter-btn" onclick="setFilter('charged', this)">Belastet</button>
   <button class="filter-btn" onclick="setFilter('failed', this)">Fehlgeschlagen</button>
   <button class="filter-btn" onclick="setFilter('cancelled', this)">Storniert</button>
+  <button class="filter-btn" onclick="setFilter('expired', this)">Abgelaufen</button>
   <input type="text" class="search-input" placeholder="Suche nach Name oder ID..." oninput="setSearch(this.value)">
 </div>
 
@@ -605,6 +609,7 @@
     charged: "Belastet",
     failed: "Fehlgeschlagen",
     cancelled: "Storniert",
+    expired: "Abgelaufen",
     tokenization_failed: "Token-Fehler",
     refunded: "Erstattet",
     refund_pending: "Erstattung läuft",
