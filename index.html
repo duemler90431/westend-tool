@@ -838,6 +838,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bemField) bemField.value = pf.bemerkungen;
       }
 
+      // Verpflegung setzen
+      if (pf.verpflegung === 'inkl. Frühstück') {
+        const frRadio = document.querySelector('input[name="verpflegung"][value="inkl. Frühstück"]');
+        if (frRadio) {
+          frRadio.checked = true;
+          document.querySelectorAll('.verpflegung-option').forEach(o => o.classList.remove('selected'));
+          frRadio.closest('.verpflegung-option')?.classList.add('selected');
+        }
+      }
+
       // Zimmer parsen: "1x BASIC ROOM @89.00 [Gast: Hugo], 2x MORE ROOM @109.00"
       if (pf.zimmer) {
         // Erste Standard-Zeile entfernen
@@ -1220,6 +1230,7 @@ function generateEmailHTML(forPreview = false) {
         return s;
       }).join(', '),
       gesamt: total.toFixed(2),
+      verpflegung: verpflegung,
       r_name: document.getElementById('rechnung_name')?.value || '',
       r_strasse: document.getElementById('rechnung_strasse')?.value || '',
       r_plzort: document.getElementById('rechnung_plzort')?.value || '',
@@ -1231,8 +1242,8 @@ function generateEmailHTML(forPreview = false) {
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:18px;">
       <tr><td align="center" style="padding:4px 0;">
         <table cellpadding="0" cellspacing="0" border="0">
-          <tr><td style="background:${c.cardBg};border-radius:10px;padding:14px 40px;text-align:center;">
-            <a href="${confirmURL}" target="_blank" class="sib-no-tracking" style="font-size:14px;font-weight:bold;color:${c.textDark};letter-spacing:0.3px;font-family:Arial,sans-serif;text-decoration:none;">✓ ${t.acceptButton}</a>
+          <tr><td style="background:${c.accentGreen};border-radius:10px;padding:16px 40px;text-align:center;">
+            <a href="${confirmURL}" target="_blank" class="sib-no-tracking" style="font-size:14px;font-weight:bold;color:#ffffff;letter-spacing:0.5px;font-family:Arial,sans-serif;text-decoration:none;">✓ ${t.acceptButton}</a>
           </td></tr>
         </table>
       </td></tr>

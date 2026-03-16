@@ -344,6 +344,7 @@ const r_zusatz = data.r_zusatz || '';
 const r_strasse = data.r_strasse || '';
 const r_plzort = data.r_plzort || '';
 const storno = data.storno || 'regulaer';
+const verpflegung = data.verpflegung || 'ohne Frühstück';
 const stornoTitle = (STORNO_TITLES[lang] || STORNO_TITLES.de)[storno] || '';
 const stornoText = (STORNO_TEXTS[lang] || STORNO_TEXTS.de)[storno] || '';
 
@@ -486,7 +487,8 @@ async function confirmBooking() {
             r_strasse: r_strasse,
             r_plzort: r_plzort,
             r_zusatz: r_zusatz,
-            bemerkungen: remarkText
+            bemerkungen: remarkText,
+            verpflegung: verpflegung
           })))))}" style="display:inline-block;background:#2d6b4a;color:#ffffff;padding:12px 28px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:bold;letter-spacing:0.5px;" target="_blank">
             📋 Buchungsbestätigung erstellen
           </a>
