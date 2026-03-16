@@ -284,6 +284,12 @@
     .status-pending .status-dot { background: var(--warning); }
     .status-pending { background: var(--warning-bg); color: var(--warning); }
 
+    .status-offer_sent .status-dot { background: #6B7280; }
+    .status-offer_sent { background: #F3F4F6; color: #6B7280; }
+
+    .status-confirmed .status-dot { background: #2A6B7C; }
+    .status-confirmed { background: #E8F4F7; color: #2A6B7C; }
+
     .status-pending_tokenization .status-dot { background: #999; }
     .status-pending_tokenization { background: #f0f0f0; color: #666; }
 
@@ -511,7 +517,7 @@
   </div>
   <div class="header-right">
     <button class="btn btn-secondary" onclick="loadBookings()">↻ Aktualisieren</button>
-    <button class="btn btn-primary" onclick="window.open('payment-test.html','_blank')">+ Neue Buchung</button>
+    <button class="btn btn-primary" onclick="window.open('moto.html','_blank')">+ Neue Buchung</button>
   </div>
 </div>
 
@@ -604,6 +610,8 @@
 
   // ── Status Labels ───────────────────────────
   const STATUS_LABELS = {
+    offer_sent: "Angebot gesendet",
+    confirmed: "Bestätigt",
     pending: "Ausstehend",
     pending_tokenization: "Warte auf Karte",
     charged: "Belastet",
