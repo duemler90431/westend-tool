@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>westend_tool</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #3B4547;
@@ -72,10 +72,10 @@
   .logo-badge {
     width: 42px; height: 42px; background: var(--petrol);
     border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 700; color: #fff;
   }
   .logo-text { color: var(--white); }
-  .logo-text .name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+  .logo-text .name { font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
   .logo-text .sub { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 1px; text-transform: uppercase; }
   .header-actions { display: flex; gap: 10px; align-items: center; }
   .btn-type {
@@ -109,7 +109,7 @@
     border-radius: 8px; display: flex; align-items: center; justify-content: center;
     color: var(--petrol); font-size: 16px;
   }
-  .card-header h2 { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--navy); }
+  .card-header h2 { font-family: 'DM Sans', sans-serif; font-size: 17px; color: var(--navy); }
   .card-body { padding: 24px 28px; }
 
   /* ── Form Elements ── */
@@ -183,7 +183,7 @@
     display: flex; justify-content: space-between; align-items: center;
   }
   .zimmer-summary .info { font-size: 12px; color: rgba(255,255,255,0.6); }
-  .zimmer-summary .total { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--petrol-light); }
+  .zimmer-summary .total { font-family: 'DM Sans', sans-serif; font-size: 22px; color: var(--petrol-light); }
   .zimmer-summary .total-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
 
   /* ── Verpflegung Radio ── */
@@ -216,7 +216,7 @@
   /* ── Preview Panel ── */
   .preview-panel { position: sticky; top: 90px; }
   .preview-header { background: var(--navy); padding: 20px 24px; }
-  .preview-header h3 { color: var(--white); font-family: 'Playfair Display', serif; font-size: 16px; }
+  .preview-header h3 { color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 16px; }
   .preview-header p { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 3px; }
   .preview-body { padding: 0; max-height: 70vh; overflow-y: auto; }
 
@@ -274,23 +274,6 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success .toast-icon { color: #4ade80; }
   .toast.error .toast-icon { color: #f87171; }
-
-  /* ── Brevo info ── */
-  .brevo-notice {
-    background: linear-gradient(135deg, rgba(26,39,68,0.04), rgba(42,107,124,0.06));
-    border: 1px solid rgba(42,107,124,0.25); border-radius: var(--radius-sm);
-    padding: 14px 16px; margin-top: 12px;
-    font-size: 12px; color: var(--gray-600); line-height: 1.6;
-  }
-  .brevo-notice strong { color: var(--navy); }
-  .brevo-api-row { display: flex; gap: 8px; margin-top: 8px; }
-  .brevo-api-row input { flex: 1; font-size: 12px; padding: 7px 10px; }
-  .brevo-api-row button {
-    padding: 7px 14px; background: var(--navy); color: white; border: none;
-    border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif;
-    transition: background 0.2s;
-  }
-  .brevo-api-row button:hover { background: var(--navy-light); }
 
   /* ── Angebot-Gültigkeit ── */
   .angebot-validity-field { display: none; }
@@ -598,16 +581,6 @@
     <div class="preview-body">
       <div class="email-preview" id="emailPreview"></div>
     </div>
-    <div style="padding:16px 20px;border-top:1px solid var(--gray-200);">
-      <div class="brevo-notice">
-        <strong>🚀 E-Mail versenden via Brevo</strong><br>
-        Trage einmalig deinen Brevo API-Key ein (kostenlos bis 300 Mails/Tag, DSGVO-konform).
-        <div class="brevo-api-row">
-          <input type="password" id="brevoKey" placeholder="xkeysib-..." autocomplete="off">
-          <button onclick="saveBrevoKey()">Speichern</button>
-        </div>
-      </div>
-    </div>
     <div class="action-bar">
       <button class="btn-primary" onclick="sendEmail()">
         <span>✉</span> E-Mail senden
@@ -672,7 +645,6 @@ function buildEmailDocument(bodyHTML) {
 let emailType = 'angebot';
 let emailLang = 'de';
 let zimmerRows = [];
-let brevoKey = ''; // Wird vom Nutzer eingegeben und im Browser gespeichert
 
 const KATEGORIEN = ['BASIC ROOM', 'MORE ROOM', 'Studio mit Kitchenette'];
 
@@ -812,15 +784,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Angebot gültig bis: in 7 Tagen
   const in7 = new Date(today); in7.setDate(in7.getDate()+7);
   document.getElementById('gueltig_bis').value = formatDate(in7);
-  if (brevoKey) document.getElementById('brevoKey').value = brevoKey;
-  // Gespeicherten Brevo-Key aus localStorage laden
-  try {
-    const savedKey = localStorage.getItem('westend_brevo_key');
-    if (savedKey) {
-      brevoKey = savedKey;
-      document.getElementById('brevoKey').value = savedKey;
-    }
-  } catch(e) {}
   addZimmerRow();
 
   // ─── URL-Parameter auslesen und Felder vorausfüllen ───
@@ -1534,12 +1497,6 @@ async function sendEmail() {
   if (!mitarbeiter) { showToast('Bitte Mitarbeiter auswählen.', 'error'); return; }
   if (getNights() <= 0) { showToast('Abreise muss nach Anreise liegen.', 'error'); return; }
 
-  const key = document.getElementById('brevoKey').value || brevoKey;
-  if (!key || key.trim() === '') {
-    showToast('Bitte zuerst Brevo API-Key eingeben und speichern.', 'error');
-    return;
-  }
-
   const t = I18N[emailLang];
   const subject = emailType === 'angebot' ? t.subjectAngebot : t.subjectBestaetigung;
 
@@ -1631,16 +1588,6 @@ function copyHTML() {
   navigator.clipboard.writeText(html)
     .then(() => showToast('HTML in Zwischenablage kopiert!', 'success'))
     .catch(() => showToast('Kopieren nicht möglich.', 'error'));
-}
-
-// ─── Brevo Key ────────────────────────────────────────────────────────────────
-function saveBrevoKey() {
-  const key = document.getElementById('brevoKey').value;
-  if (key) {
-    brevoKey = key;
-    try { localStorage.setItem('westend_brevo_key', key); } catch(e) {}
-    showToast('API-Key gespeichert!', 'success');
-  }
 }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
