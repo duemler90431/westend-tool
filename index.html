@@ -226,7 +226,7 @@
   .email-preview {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
-    background: #2C2D2E;
+    background: #EEECEA;
     padding: 16px;
   }
   /* The preview renders table-based HTML directly, so we style the table elements */
@@ -598,27 +598,31 @@
 <script>
 // ─── Design Tokens (E-Mail) ───────────────────────────────────────────────────
 const EMAIL_COLORS = {
-  // ── Dark Design (Mews-inspired) ──
-  outer:       '#2C2D2E',   // Äußerer E-Mail-Background
+  // ── Light Design (hell, Outlook-kompatibel) ──
+  outer:       '#EEECEA',   // Äußerer E-Mail-Background (hellgrau)
   headerBg:    '#3B4547',   // Header + Footer (Pantone 433)
   petrol:      '#2A6B7C',   // Akzent-Farbe (Petrol)
   cardBg:      '#ffffff',   // Weiße Cards
+  cardBorder:  '#E0DDD6',   // Card-Border
   cardRadius:  '12px',      // Border-Radius für Cards
-  textDark:    '#3B4547',   // Haupttext auf weißen Cards
-  textLabel:   '#999999',   // Label-Farbe (erste Spalte)
-  textWhite:   '#ffffff',   // Text auf dunklen Flächen
-  textWhiteSub:'rgba(255,255,255,0.55)', // Sub-Text auf dunklem Hintergrund
-  textWhiteMuted:'rgba(255,255,255,0.35)', // Sehr dezenter Text auf dunkel
-  rowBorder:   '#f5f5f5',   // Zeilen-Trennlinie in Cards
-  sectionBorder:'#f0f0f0',  // Section-Header Border in Cards
-  accentGreen: '#2d6b4a',   // Bestätigungs-Farbe
+  textDark:    '#3B4547',   // Haupttext
+  textLabel:   '#888888',   // Label-Farbe (erste Spalte)
+  textWhite:   '#ffffff',   // Text auf dunklen Flächen (Header/Footer/Total)
+  textWhiteSub:'rgba(255,255,255,0.55)', // Sub-Text auf Header/Footer
+  textWhiteMuted:'rgba(255,255,255,0.35)', // Dezenter Text auf Header/Footer
+  rowBorder:   '#F0EDE8',   // Zeilen-Trennlinie in Cards
+  sectionBorder:'#E8E6E0',  // Section-Header Border in Cards
+  accentGreen: '#2d6b4a',   // Bestätigungs-Farbe (CTA)
   tagBg:       '#E8F4F7',   // Zimmer-Tag Hintergrund
   tagText:     '#2A6B7C',   // Zimmer-Tag Text
-  stornoBg:    'rgba(255,255,255,0.06)', // Storno-Box auf dunklem Bg
+  stornoBg:    '#ffffff',   // Storno-Box (weiß auf hellgrau)
   stornoBorder:'#2A6B7C',   // Storno-Box linker Rand
-  footerMuted: 'rgba(255,255,255,0.35)', // Footer-Adresse
-  footerTiny:  'rgba(255,255,255,0.2)',  // Impressum
-  footerLine:  'rgba(255,255,255,0.08)', // Footer-Trennlinie
+  stornoLabel: '#2A6B7C',   // Storno-Label-Farbe
+  stornoTitle: '#3B4547',   // Storno-Titel
+  stornoText:  '#888888',   // Storno-Beschreibung
+  footerMuted: 'rgba(255,255,255,0.5)', // Footer-Adresse
+  footerTiny:  'rgba(255,255,255,0.3)',  // Impressum
+  footerLine:  'rgba(255,255,255,0.12)', // Footer-Trennlinie
 };
 
 // ─── E-Mail CSS Helper (Dark Design – table-based for email clients) ─────────
@@ -638,7 +642,8 @@ function getEmailStyles() {
 
 // ─── Build complete email document (table-based for email clients) ────────────
 function buildEmailDocument(bodyHTML) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>westendhotel</title></head><body style="font-family:Arial,Helvetica,sans-serif;background:#2C2D2E;margin:0;padding:0;"><table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#2C2D2E;"><tr><td align="center" style="padding:20px;">${bodyHTML}</td></tr></table></body></html>`;
+  const c = EMAIL_COLORS;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>westendhotel</title></head><body style="font-family:Arial,Helvetica,sans-serif;background:${c.outer};margin:0;padding:0;"><table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:${c.outer};"><tr><td align="center" style="padding:20px;">${bodyHTML}</td></tr></table></body></html>`;
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -1308,10 +1313,10 @@ function generateEmailHTML(forPreview = false) {
     const ccButton = emailLang === 'de' ? 'Kreditkarte hinterlegen' : 'Provide credit card';
     return `
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-      <tr><td style="background:rgba(255,255,255,0.06);border-radius:12px;border-left:3px solid ${c.petrol};padding:16px 20px;">
-        <div style="font-size:10px;font-weight:bold;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">${ccTitle}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;margin-bottom:14px;">${ccText}</div>
-        <a href="${payURL}" target="_blank" class="sib-no-tracking" style="display:inline-block;background:${c.cardBg};color:${c.textDark};text-decoration:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;">💳 ${ccButton}</a>
+      <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};border-left:3px solid ${c.petrol};padding:16px 20px;">
+        <div style="font-size:10px;font-weight:bold;color:${c.petrol};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">${ccTitle}</div>
+        <div style="font-size:12px;color:${c.textLabel};line-height:1.55;margin-bottom:14px;">${ccText}</div>
+        <a href="${payURL}" target="_blank" class="sib-no-tracking" style="display:inline-block;background:${c.headerBg};color:#ffffff;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;">💳 ${ccButton}</a>
       </td></tr>
     </table>`;
   })() : '';
@@ -1319,7 +1324,7 @@ function generateEmailHTML(forPreview = false) {
   // ── Bemerkungen ──
   const bemerkungenHTML = bemerkungen ? `
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-      <tr><td style="background:${c.cardBg};border-radius:12px;border-left:3px solid ${c.accentGreen};padding:16px 20px;">
+      <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};border-left:3px solid ${c.accentGreen};padding:16px 20px;">
         <div style="font-size:10px;font-weight:bold;color:${c.accentGreen};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.bemerkungenLabel}</div>
         <div style="font-size:12px;color:${c.textDark};line-height:1.6;">${bemerkungen.replace(/\n/g,'<br>')}</div>
       </td></tr>
@@ -1334,7 +1339,7 @@ function generateEmailHTML(forPreview = false) {
     if (!rname && !rstrasse) return '';
     return `
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-      <tr><td style="background:${c.cardBg};border-radius:12px;padding:16px 20px;">
+      <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};padding:16px 20px;">
         <div style="font-size:10px;font-weight:bold;color:${c.textLabel};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.rechnungsadresse}</div>
         ${rname ? `<div style="font-size:13px;color:${c.textDark};">${rname}</div>` : ''}
         ${rzusatz ? `<div style="font-size:12px;color:${c.textLabel};">${rzusatz}</div>` : ''}
@@ -1350,7 +1355,7 @@ function generateEmailHTML(forPreview = false) {
     : '';
 
   // ════════════════════════════════════════════════════════
-  // DARK DESIGN – TABLE-BASED EMAIL HTML
+  // LIGHT DESIGN – TABLE-BASED EMAIL HTML
   // ════════════════════════════════════════════════════════
   return `
 <table cellpadding="0" cellspacing="0" border="0" width="580" style="max-width:580px;font-family:Arial,Helvetica,sans-serif;">
@@ -1370,13 +1375,13 @@ function generateEmailHTML(forPreview = false) {
     </td>
   </tr>
 
-  <!-- Body (dark background, white cards) -->
+  <!-- Body (light background, white cards) -->
   <tr>
     <td style="background:${c.outer};padding:24px;">
 
       <!-- Greeting Card -->
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:${c.cardBg};border-radius:12px;padding:22px 20px;">
+        <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};padding:22px 20px;">
           <p style="font-size:14px;color:${c.textDark};line-height:1.6;margin:0;">${t.greeting(anrede, nachname)}</p>
           ${firma ? `<p style="font-size:12px;color:${c.textLabel};margin:4px 0 0;font-style:italic;">${firma}</p>` : ''}
           ${gastnameHint}
@@ -1388,7 +1393,7 @@ function generateEmailHTML(forPreview = false) {
 
       <!-- Aufenthalt Card -->
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:${c.cardBg};border-radius:12px;overflow:hidden;">
+        <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};overflow:hidden;">
           <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr><td style="padding:13px 20px;border-bottom:1px solid ${c.sectionBorder};">
               <span style="font-size:10px;font-weight:bold;color:${c.textDark};letter-spacing:1.5px;text-transform:uppercase;">${t.aufenthalt}</span>
@@ -1413,7 +1418,7 @@ function generateEmailHTML(forPreview = false) {
 
       <!-- Zimmer Card -->
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:${c.cardBg};border-radius:12px;overflow:hidden;">
+        <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};overflow:hidden;">
           <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr><td style="padding:13px 20px;border-bottom:1px solid ${c.sectionBorder};">
               <span style="font-size:10px;font-weight:bold;color:${c.textDark};letter-spacing:1.5px;text-transform:uppercase;">${t.zimmerConfig}</span>
@@ -1446,16 +1451,16 @@ function generateEmailHTML(forPreview = false) {
 
       <!-- Storno -->
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:${c.stornoBg};border-radius:12px;border-left:3px solid ${c.stornoBorder};padding:16px 20px;">
-          <div style="font-size:10px;font-weight:bold;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.stornoLabel}</div>
-          <div style="font-size:12px;font-weight:bold;color:#ffffff;margin-bottom:3px;">${stornoTitle}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;">${stornoText}</div>
+        <tr><td style="background:${c.stornoBg};border-radius:12px;border:1px solid ${c.cardBorder};border-left:3px solid ${c.stornoBorder};padding:16px 20px;">
+          <div style="font-size:10px;font-weight:bold;color:${c.stornoLabel};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${t.stornoLabel}</div>
+          <div style="font-size:12px;font-weight:bold;color:${c.stornoTitle};margin-bottom:3px;">${stornoTitle}</div>
+          <div style="font-size:12px;color:${c.stornoText};line-height:1.55;">${stornoText}</div>
         </td></tr>
       </table>
 
       <!-- Closing Card -->
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:0;">
-        <tr><td style="background:${c.cardBg};border-radius:12px;padding:20px;">
+        <tr><td style="background:${c.cardBg};border-radius:12px;border:1px solid ${c.cardBorder};padding:20px;">
           <p style="font-size:13px;color:${c.textDark};line-height:1.6;margin:0 0 10px;">${emailType==='angebot' ? t.closingAngebot : t.closingBestaetigung}</p>
           <p style="font-size:13px;color:${c.textDark};margin:0;">${t.gruss}<br><strong>${mitarbeiter}</strong><br><span style="color:${c.textLabel};font-size:12px;">westendhotel nürnberg</span></p>
         </td></tr>
