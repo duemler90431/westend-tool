@@ -719,12 +719,42 @@
             document.getElementById('dropin-container').innerHTML = '';
 
             if (chargeImmediately) {
-              // Sofort belasten
+              // Sofort belasten – mit Retry-Polling auf Token warten
               status.className = 'status show loading';
-              status.innerHTML = '<h4>⏳ CC tokenisiert – Belastung wird ausgeführt...</h4>';
+              status.innerHTML = '<h4>⏳ CC tokenisiert – warte auf Zahlungstoken...</h4>';
 
-              // Kurz warten bis Webhook den Token gesetzt hat
-              await new Promise(r => setTimeout(r, 3000));
+              // Poll bis Webhook den Token gesetzt hat (max 5 Versuche, je 2s)
+              const MAX_RETRIES = 5;
+              const RETRY_DELAY = 2000;
+              let tokenReady = false;
+
+              for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                await new Promise(r => setTimeout(r, RETRY_DELAY));
+                try {
+                  const checkRes = await fetch(`${WORKER_URL}/bookings/${currentBookingId}`);
+                  const checkData = await checkRes.json();
+                  if (checkData.hasToken) {
+                    tokenReady = true;
+                    break;
+                  }
+                  status.innerHTML = `<h4>⏳ Warte auf Token... (Versuch ${attempt}/${MAX_RETRIES})</h4>`;
+                } catch (e) {
+                  // Netzwerkfehler ignorieren, weiter versuchen
+                }
+              }
+
+              if (!tokenReady) {
+                status.className = 'status show error';
+                status.innerHTML = `
+                  <h4>⚠️ Tokenisiert, aber Token noch nicht verfügbar</h4>
+                  <p>Der Webhook von Adyen hat den Token noch nicht geliefert. Bitte versuchen Sie die Belastung in 1–2 Minuten über das Dashboard.</p>
+                  <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--petrol);font-weight:600;">→ Zum Dashboard</a></p>
+                `;
+                showToast('error', 'Token noch nicht verfügbar – später über Dashboard belasten');
+                return;
+              }
+
+              status.innerHTML = '<h4>⏳ Token erhalten – Belastung wird ausgeführt...</h4>';
 
               try {
                 const chargeRes = await fetch(`${WORKER_URL}/charge`, {
