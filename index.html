@@ -1561,7 +1561,7 @@ async function sendEmail() {
           requireCC: requireCC,
         };
 
-        const d1Res = await fetch('https://westend-payment-worker.dd-f19.workers.dev/bookings/from-offer', {
+        const d1Res = await fetch('https://westend-payment-worker-staging.dd-f19.workers.dev/bookings/from-offer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(d1Payload),
