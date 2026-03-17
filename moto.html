@@ -39,6 +39,27 @@
       min-height: 100vh;
     }
 
+    /* ── Site Nav ── */
+    .site-nav {
+      background: #323b3d;
+      padding: 6px 32px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .site-nav a, .site-nav span {
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      color: rgba(255,255,255,0.45);
+      margin: 0 8px;
+    }
+    .site-nav a:hover { color: #ffffff; }
+    .site-nav .nav-active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .site-nav .nav-sep { color: rgba(255,255,255,0.2); }
+
     /* ── Header ─────────────────────────────── */
     .header {
       background: var(--dark);
@@ -362,8 +383,13 @@
     <p>westendhotel Nürnberg · Rezeptionstool</p>
   </div>
   <div class="header-right">
-    <a href="payment-dashboard.html" class="btn btn-secondary">← Dashboard</a>
   </div>
+</div>
+<div class="site-nav">
+  <a href="portal.html">Portal</a><span class="nav-sep">·</span>
+  <a href="index.html">Angebotstool</a><span class="nav-sep">·</span>
+  <span class="nav-active">MOTO</span><span class="nav-sep">·</span>
+  <a href="payment-dashboard.html">Dashboard</a>
 </div>
 
 <div class="main">

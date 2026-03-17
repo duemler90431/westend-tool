@@ -10,8 +10,8 @@
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: #F5F3EF;
-      color: #3B4547;
+      background: #3B4547;
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -33,22 +33,22 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 22px;
       font-weight: 600;
-      color: #3B4547;
+      color: #ffffff;
       letter-spacing: 3px;
       text-transform: uppercase;
     }
 
     .logo-area p {
       font-size: 13px;
-      color: #7A7F80;
+      color: rgba(255,255,255,0.55);
       margin-top: 4px;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 20px;
-      max-width: 620px;
+      max-width: 820px;
       width: 100%;
       padding: 0 24px;
     }
@@ -87,6 +87,7 @@
 
     .card.angebot .icon { background: rgba(201,152,58,0.12); }
     .card.payment .icon { background: rgba(42,107,124,0.1); }
+    .card.dashboard .icon { background: rgba(42,107,124,0.1); }
 
     .card h2 {
       font-size: 16px;
@@ -103,7 +104,7 @@
     .footer {
       margin-top: 48px;
       font-size: 11px;
-      color: #bbb;
+      color: rgba(255,255,255,0.35);
       text-align: center;
     }
 
@@ -116,7 +117,7 @@
 
   <div class="logo-area">
     <img src="wh-logo_weiss_transparent.png" alt="westendhotel"
-         style="height:44px;background:#3B4547;padding:10px 18px;border-radius:8px;">
+         style="height:44px;">
     <h1>Rezeption</h1>
     <p>Internes Toolportal</p>
   </div>
@@ -130,8 +131,14 @@
 
     <a class="card payment" href="moto.html">
       <div class="icon">💳</div>
-      <h2>Payment Dashboard</h2>
-      <p>Kreditkarten verwalten, MOTO-Eingabe, CC-Links versenden, Belastungen</p>
+      <h2>MOTO</h2>
+      <p>Kreditkarten­erfassung per Telefon/Mail-Order, CC-Links versenden</p>
+    </a>
+
+    <a class="card dashboard" href="payment-dashboard.html">
+      <div class="icon">📊</div>
+      <h2>Dashboard</h2>
+      <p>Buchungen & Zahlungen verwalten, Belastungen auslösen, Erstattungen</p>
     </a>
   </div>
 

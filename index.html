@@ -35,6 +35,27 @@
     min-height: 100vh;
   }
 
+  /* ── Site Nav ── */
+  .site-nav {
+    background: #323b3d;
+    padding: 6px 32px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .site-nav a, .site-nav span {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    color: rgba(255,255,255,0.45);
+    margin: 0 8px;
+  }
+  .site-nav a:hover { color: #ffffff; }
+  .site-nav .nav-active {
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .site-nav .nav-sep { color: rgba(255,255,255,0.2); }
+
   /* ── Header ── */
   header {
     background: #3B4547;
@@ -317,6 +338,12 @@
       <button class="btn-type angebot active" onclick="setType('angebot')">📋 Angebot</button>
       <button class="btn-type bestaetigung" onclick="setType('bestaetigung')">✅ Bestätigung</button>
     </div>
+  </div>
+  <div class="site-nav">
+    <a href="portal.html">Portal</a><span class="nav-sep">·</span>
+    <span class="nav-active">Angebotstool</span><span class="nav-sep">·</span>
+    <a href="moto.html">MOTO</a><span class="nav-sep">·</span>
+    <a href="payment-dashboard.html">Dashboard</a>
   </div>
 </header>
 

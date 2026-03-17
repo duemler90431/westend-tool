@@ -37,6 +37,27 @@
       min-height: 100vh;
     }
 
+    /* ── Site Nav ── */
+    .site-nav {
+      background: #323b3d;
+      padding: 6px 32px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .site-nav a, .site-nav span {
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      color: rgba(255,255,255,0.45);
+      margin: 0 8px;
+    }
+    .site-nav a:hover { color: #ffffff; }
+    .site-nav .nav-active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .site-nav .nav-sep { color: rgba(255,255,255,0.2); }
+
     /* ── Header ─────────────────────────────── */
     .header {
       background: var(--dark);
@@ -519,6 +540,12 @@
     <button class="btn btn-secondary" onclick="loadBookings()">↻ Aktualisieren</button>
     <button class="btn btn-primary" onclick="window.open('moto.html','_blank')">+ Neue Buchung</button>
   </div>
+</div>
+<div class="site-nav">
+  <a href="portal.html">Portal</a><span class="nav-sep">·</span>
+  <a href="index.html">Angebotstool</a><span class="nav-sep">·</span>
+  <a href="moto.html">MOTO</a><span class="nav-sep">·</span>
+  <span class="nav-active">Dashboard</span>
 </div>
 
 <!-- ── Stats ───────────────────────────────── -->
