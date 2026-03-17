@@ -649,6 +649,25 @@ let brevoKey = ''; // Wird vom Nutzer eingegeben und im Browser gespeichert
 
 const KATEGORIEN = ['BASIC ROOM', 'MORE ROOM', 'Studio mit Kitchenette'];
 
+// Zimmerbilder + Größen für E-Mail-Template
+const ROOM_CONFIG = {
+  'BASIC ROOM': {
+    img: 'https://raw.githubusercontent.com/duemler90431/westend-tool/main/basic-room.jpg',
+    position: 'center 75%',
+    size: '~12–14 m²',
+  },
+  'MORE ROOM': {
+    img: 'https://raw.githubusercontent.com/duemler90431/westend-tool/main/more-room.jpg',
+    position: 'center 66%',
+    size: '~20–30 m²',
+  },
+  'Studio mit Kitchenette': {
+    img: 'https://raw.githubusercontent.com/duemler90431/westend-tool/main/studio-zimmer.jpg',
+    position: 'center 55%',
+    size: '~20–30 m²',
+  },
+};
+
 // ─── i18n Texts ──────────────────────────────────────────────────────────────
 const I18N = {
   de: {
@@ -1151,19 +1170,46 @@ function generateEmailHTML(forPreview = false) {
   };
   const stornoTitle = STORNO_TITLES[emailLang][storno] || '';
 
-  // ── Zimmer-Rows (table-based) ──
-  const zimmerRowsHTML = zimmer.filter(z => z.preisNacht > 0 || z.anzahl > 0).map(z => {
+  // ── Zimmer-Rows (table-based, mit Zimmerbild) ──
+  // Gruppiere Zimmer nach Kategorie, um Bild nur 1x pro Kategorie zu zeigen
+  const filteredZimmer = zimmer.filter(z => z.preisNacht > 0 || z.anzahl > 0);
+  const seenCategories = new Set();
+
+  const zimmerRowsHTML = filteredZimmer.map(z => {
     const rowNights = z.nights || nights;
     const subtotal = z.anzahl * z.preisNacht * rowNights;
     const dateInfo = z.hasCustomDates
       ? `<div style="font-size:11px;color:#999;margin-top:3px;">${formatDateDE(z.anreise)} – ${formatDateDE(z.abreise)} (${rowNights} ${rowNights!==1 ? t.naechte : t.nacht})</div>`
       : '';
     const gastSub = z.gastname ? `<div style="font-size:11px;color:#999;margin-top:3px;">↳ Gast: ${z.gastname}</div>` : '';
-    return `
+
+    const rc = ROOM_CONFIG[z.kategorie] || {};
+    const sizeLabel = rc.size || '~20–30 m²';
+
+    // Zimmerbild nur beim ersten Auftreten einer Kategorie anzeigen
+    let imgRow = '';
+    if (rc.img && !seenCategories.has(z.kategorie)) {
+      seenCategories.add(z.kategorie);
+      imgRow = `
+      <tr>
+        <td colspan="2" style="padding:0;border-bottom:1px solid ${c.rowBorder};">
+          <div style="width:100%;height:140px;overflow:hidden;border-radius:0;">
+            <!--[if mso]>
+            <img src="${rc.img}" width="540" height="140" alt="${z.kategorie}" style="width:100%;height:140px;display:block;" />
+            <![endif]-->
+            <!--[if !mso]><!-->
+            <img src="${rc.img}" alt="${z.kategorie}" style="width:100%;height:140px;display:block;object-fit:cover;object-position:${rc.position};" />
+            <!--<![endif]-->
+          </div>
+        </td>
+      </tr>`;
+    }
+
+    return `${imgRow}
       <tr>
         <td style="padding:12px 20px;font-size:13px;font-weight:bold;color:${c.textDark};border-bottom:1px solid ${c.rowBorder};">
           ${z.anzahl}× ${z.kategorie}
-          <span style="display:inline-block;background:${c.tagBg};color:${c.tagText};font-size:9px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">~20–30 m²</span>
+          <span style="display:inline-block;background:${c.tagBg};color:${c.tagText};font-size:9px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">${sizeLabel}</span>
           ${gastSub}${dateInfo}
         </td>
         <td style="padding:12px 20px;font-size:13px;font-weight:bold;color:${c.textDark};border-bottom:1px solid ${c.rowBorder};text-align:right;">${formatEuro(z.preisNacht)}/${t.nacht}</td>
