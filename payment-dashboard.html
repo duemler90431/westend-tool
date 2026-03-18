@@ -124,6 +124,9 @@
     .btn-success { background: var(--success-bg); color: var(--success); }
     .btn-success:hover { background: #d4ecd9; }
 
+    .btn-petrol { background: #E8F4F7; color: #2A6B7C; }
+    .btn-petrol:hover { background: #d4ecf1; }
+
     .btn-outline {
       background: transparent;
       color: var(--text);
@@ -627,9 +630,10 @@
 <!-- ── Toast ────────────────────────────────── -->
 <div class="toast" id="toast"></div>
 
+<script src="config.js"></script>
 <script>
   // ── Config ──────────────────────────────────
-  const WORKER_URL = "https://westend-payment-worker-staging.dd-f19.workers.dev";
+  const WORKER_URL = CONFIG.workerURL;
 
   let allBookings = [];
   let currentFilter = "all";
@@ -735,6 +739,7 @@
         <td>
           <div class="actions-cell" onclick="event.stopPropagation()">
             ${b.status === "pending" && b.hasToken ? `<button class="btn btn-success btn-sm" onclick="chargeBooking('${b.bookingId}')">Belasten</button>` : ""}
+            ${(b.status === "pending_tokenization" || b.status === "tokenization_failed") && b.guestEmail ? `<button class="btn btn-petrol btn-sm" onclick="sendReminder('${b.bookingId}')">Erinnern</button>` : ""}
             ${b.status === "pending" || b.status === "pending_tokenization" || b.status === "failed" ? `<button class="btn btn-danger btn-sm" onclick="cancelBooking('${b.bookingId}')">Storno</button>` : ""}
             ${b.status === "charged" ? `<button class="btn btn-outline btn-sm" onclick="refundBooking('${b.bookingId}')">Erstatten</button>` : ""}
           </div>
@@ -776,6 +781,7 @@
       ${b.chargedAt ? `<div class="detail-row"><span class="detail-label">Belastet am</span><span class="detail-value">${formatDateTime(b.chargedAt)}</span></div>` : ""}
       ${b.pspReference ? `<div class="detail-row"><span class="detail-label">PSP Reference</span><span class="detail-value" style="font-family:monospace;font-size:11px">${b.pspReference}</span></div>` : ""}
       ${b.lastError ? `<div class="detail-row"><span class="detail-label">Letzter Fehler</span><span class="detail-value" style="color:var(--error)">${esc(b.lastError)}</span></div>` : ""}
+      ${b.reminderSentAt ? `<div class="detail-row"><span class="detail-label">Erinnerung gesendet</span><span class="detail-value">${formatDateTime(b.reminderSentAt)}</span></div>` : ""}
 
       ${b.status === "pending" || b.status === "failed" ? `
         <div class="edit-group">
@@ -791,6 +797,9 @@
     let actions = "";
     if (b.status === "pending" && b.hasToken) {
       actions += `<button class="btn btn-success" onclick="chargeBooking('${b.bookingId}')">Jetzt belasten</button>`;
+    }
+    if ((b.status === "pending_tokenization" || b.status === "tokenization_failed") && b.guestEmail) {
+      actions += `<button class="btn btn-petrol" onclick="sendReminder('${b.bookingId}')">Erinnerung senden</button>`;
     }
     if (b.status === "charged") {
       actions += `<button class="btn btn-outline" onclick="refundBooking('${b.bookingId}')">Erstatten</button>`;
@@ -860,6 +869,26 @@
         showToast("success", `Erstattung für ${bookingId} eingeleitet`);
       } else {
         showToast("error", data.error || "Erstattung fehlgeschlagen");
+      }
+    } catch (err) {
+      showToast("error", `Fehler: ${err.message}`);
+    }
+    closeModal();
+    loadBookings();
+  }
+
+  async function sendReminder(bookingId) {
+    if (!confirm(`Erinnerungsmail für Buchung ${bookingId} senden?`)) return;
+    try {
+      const res = await fetch(`${WORKER_URL}/bookings/${bookingId}/remind`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("success", `Erinnerung für ${bookingId} gesendet`);
+      } else {
+        showToast("error", data.error || "Erinnerung fehlgeschlagen");
       }
     } catch (err) {
       showToast("error", `Fehler: ${err.message}`);
