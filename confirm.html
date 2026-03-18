@@ -4,36 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Angebot bestätigen – westendhotel nürnberg</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #2a6b7c; --green: #2d6b4a; --navy: #3a3a3a; }
+  :root { --accent: #2a6b7c; --green: #2d6b4a; --dark: #3B4547; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #faf8f4; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-  header { background: #3a3a3a; width: 100%; padding: 18px 32px; text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
-  .hotel-sub { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+  body { font-family: 'DM Sans', sans-serif; background: #EEECEA; color: #3B4547; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+  header { background: #3B4547; width: 100%; padding: 22px 32px; text-align: center; }
+  .hotel-sub { color: rgba(255,255,255,0.45); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; }
   .container { max-width: 560px; width: 100%; margin: 32px auto; padding: 0 16px; }
-  .card { background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); overflow: hidden; }
+  .card { background: white; border-radius: 12px; border: 1px solid #E0DDD6; overflow: hidden; }
   .card + .card { margin-top: 16px; }
-  .card-header { background: linear-gradient(135deg, #f8f6f0, #f0ede4); padding: 20px 28px; border-bottom: 1px solid #e5e7eb; }
-  .card-header h2 { font-size: 18px; color: var(--navy); }
-  .card-header p { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .card-header { background: #ffffff; padding: 20px 28px; border-bottom: 1px solid #E8E6E0; }
+  .card-header h2 { font-size: 18px; color: var(--dark); }
+  .card-header p { font-size: 12px; color: #888; margin-top: 4px; }
   .card-body { padding: 24px 28px; }
-  .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+  .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F0EDE8; font-size: 13px; }
   .detail-row:last-child { border-bottom: none; }
-  .detail-label { color: #6b7280; }
-  .detail-value { font-weight: 600; color: var(--navy); text-align: right; max-width: 60%; word-break: break-word; }
-  .total-row { background: #f8f6f0; margin: 16px -28px -24px; padding: 16px 28px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; }
-  .total-row .amount { color: var(--accent); font-size: 18px; }
+  .detail-label { color: #888; }
+  .detail-value { font-weight: 600; color: var(--dark); text-align: right; max-width: 60%; word-break: break-word; }
+  .total-row { background: #3B4547; margin: 16px -28px -24px; padding: 16px 28px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: #ffffff; }
+  .total-row .amount { color: #ffffff; font-size: 18px; }
   .section-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; padding: 14px 0 4px; }
   .remark-section { margin-top: 16px; }
-  .remark-section label { display: block; font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px; }
-  .remark-section textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1f2937; resize: vertical; transition: border-color 0.2s; }
+  .remark-section label { display: block; font-size: 13px; color: #3B4547; font-weight: 600; margin-bottom: 6px; }
+  .remark-section textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #E0DDD6; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #3B4547; resize: vertical; transition: border-color 0.2s; }
   .remark-section textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42,107,124,0.1); }
-  .remark-section .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-  .agb-section { margin-top: 16px; padding: 20px 28px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(26,39,68,0.10); }
+  .remark-section .hint { font-size: 11px; color: #999; margin-top: 4px; }
+  .agb-section { margin-top: 16px; padding: 20px 28px; background: white; border-radius: 12px; border: 1px solid #E0DDD6; }
   .agb-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .agb-check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
-  .agb-check label { font-size: 13px; color: #374151; line-height: 1.5; cursor: pointer; }
+  .agb-check label { font-size: 13px; color: #3B4547; line-height: 1.5; cursor: pointer; }
   .agb-check a { color: var(--accent); font-weight: 600; }
   .btn-confirm { display: block; width: 100%; margin-top: 20px; padding: 16px; background: #d1d5db; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: not-allowed; transition: all 0.3s; font-family: 'DM Sans', sans-serif; }
   .btn-confirm.enabled { background: var(--green); cursor: pointer; box-shadow: 0 4px 16px rgba(22,163,74,0.3); }
@@ -41,19 +41,19 @@
   .success-card { display: none; text-align: center; padding: 40px 28px; }
   .success-icon { font-size: 56px; margin-bottom: 16px; }
   .success-title { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
-  .success-text { font-size: 13px; color: #6b7280; line-height: 1.6; }
+  .success-text { font-size: 13px; color: #888; line-height: 1.6; }
   .error-card { display: none; text-align: center; padding: 40px 28px; }
   .error-icon { font-size: 56px; margin-bottom: 16px; }
   .error-title { font-size: 20px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
   .loading { display: none; text-align: center; padding: 40px; }
-  .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #E0DDD6; border-top: 4px solid var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 <header>
   <div style="text-align:center;">
-    <img src="https://booking-hotelwestend.de/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:36px;margin-bottom:6px;">
+    <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:36px;margin-bottom:6px;">
     <div class="hotel-sub">Nürnberg · Karl-Martell-Str. 42–44</div>
   </div>
 </header>
@@ -119,10 +119,10 @@
         <span class="amount" id="val_gesamt">–</span>
       </div>
       <!-- STORNO SECTION -->
-      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#eae8e3;border-left:3px solid #2a6b7c;border-radius:0 6px 6px 0;">
-        <div style="font-size:10px;font-weight:bold;color:#3B4547;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
-        <div style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:2px;" id="val_storno_title">–</div>
-        <div style="font-size:12px;color:#4b5563;line-height:1.5;" id="val_storno_text">–</div>
+      <div id="stornoSection" style="margin:16px -28px -24px;padding:14px 28px;background:#ffffff;border-left:3px solid #2a6b7c;border-top:1px solid #E0DDD6;">
+        <div style="font-size:10px;font-weight:bold;color:#2a6b7c;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="lbl_storno">Stornobedingungen</div>
+        <div style="font-size:12px;font-weight:600;color:#3B4547;margin-bottom:2px;" id="val_storno_title">–</div>
+        <div style="font-size:12px;color:#888;line-height:1.5;" id="val_storno_text">–</div>
       </div>
     </div>
   </div>
@@ -151,7 +151,7 @@
 
   <div class="loading" id="loadingState">
     <div class="spinner"></div>
-    <p id="loadingText" style="color:#6b7280;font-size:13px;">Buchung wird bestätigt...</p>
+    <p id="loadingText" style="color:#888;font-size:13px;">Buchung wird bestätigt...</p>
   </div>
 
   <div class="card success-card" id="successCard">

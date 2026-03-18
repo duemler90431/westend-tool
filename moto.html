@@ -931,15 +931,15 @@
     const betrag = (data.amount / 100).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €';
 
     return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="font-family:Arial,Helvetica,sans-serif;background:#2C2D2E;margin:0;padding:0;">
-<table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#2C2D2E;">
+<body style="font-family:Arial,Helvetica,sans-serif;background:#EEECEA;margin:0;padding:0;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#EEECEA;">
 <tr><td align="center" style="padding:20px;">
 
-<table cellpadding="0" cellspacing="0" border="0" width="580" style="max-width:580px;">
+<table cellpadding="0" cellspacing="0" border="0" width="580" style="max-width:580px;border-radius:12px;overflow:hidden;">
 
   <!-- Header (Pantone 433) -->
   <tr>
-    <td style="background:#3B4547;padding:28px 24px 22px;text-align:center;border-radius:12px 12px 0 0;">
+    <td style="background:#3B4547;padding:28px 24px 22px;text-align:center;">
       <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:38px;display:block;margin:0 auto 8px;">
       <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2.5px;">NÜRNBERG · KARL-MARTELL-STR. 42–44</div>
     </td>
@@ -952,38 +952,38 @@
     </td>
   </tr>
 
-  <!-- Body -->
+  <!-- Body (weißer Hintergrund) -->
   <tr>
-    <td style="background:#2C2D2E;padding:24px;">
+    <td style="background:#ffffff;padding:24px;">
 
-      <!-- Greeting Card -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:#ffffff;border-radius:12px;padding:22px 20px;">
+      <!-- Greeting -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:20px;">
+        <tr><td style="padding:0 4px;">
           <p style="font-size:14px;color:#3B4547;line-height:1.6;margin:0;">Sehr geehrte/r ${data.guestName},</p>
           <p style="font-size:14px;color:#3B4547;line-height:1.65;margin:14px 0 0;">zur Absicherung Ihrer Buchung bitten wir Sie, eine Kreditkarte zu hinterlegen. Die Karte wird nur zur Sicherheit gespeichert und erst gemäß den vereinbarten Buchungs- und Stornobedingungen belastet.</p>
         </td></tr>
       </table>
 
       <!-- Buchungs-Details Card -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:#ffffff;border-radius:12px;overflow:hidden;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:16px;">
+        <tr><td style="border:1px solid #E0DDD6;border-radius:12px;overflow:hidden;">
           <table cellpadding="0" cellspacing="0" border="0" width="100%">
-            <tr><td style="padding:13px 20px;border-bottom:1px solid #f0f0f0;">
+            <tr><td style="padding:13px 20px;border-bottom:1px solid #E8E6E0;">
               <span style="font-size:10px;font-weight:bold;color:#3B4547;letter-spacing:1.5px;text-transform:uppercase;">BUCHUNGSDETAILS</span>
             </td></tr>
           </table>
           <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="padding:11px 20px;font-size:13px;color:#999;border-bottom:1px solid #f5f5f5;width:140px;">Anreise</td>
-              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #f5f5f5;text-align:right;">${checkin}</td>
+              <td style="padding:11px 20px;font-size:13px;color:#888;border-bottom:1px solid #F0EDE8;width:140px;">Anreise</td>
+              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #F0EDE8;text-align:right;">${checkin}</td>
             </tr>
             <tr>
-              <td style="padding:11px 20px;font-size:13px;color:#999;border-bottom:1px solid #f5f5f5;">Abreise</td>
-              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #f5f5f5;text-align:right;">${checkout}</td>
+              <td style="padding:11px 20px;font-size:13px;color:#888;border-bottom:1px solid #F0EDE8;">Abreise</td>
+              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #F0EDE8;text-align:right;">${checkout}</td>
             </tr>
             ${data.zimmer ? `<tr>
-              <td style="padding:11px 20px;font-size:13px;color:#999;border-bottom:1px solid #f5f5f5;">Zimmer</td>
-              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #f5f5f5;text-align:right;">${data.zimmer}</td>
+              <td style="padding:11px 20px;font-size:13px;color:#888;border-bottom:1px solid #F0EDE8;">Zimmer</td>
+              <td style="padding:11px 20px;font-size:13px;font-weight:bold;color:#3B4547;border-bottom:1px solid #F0EDE8;text-align:right;">${data.zimmer}</td>
             </tr>` : ''}
           </table>
           <!-- Total Row -->
@@ -1003,26 +1003,26 @@
       </table>
 
       <!-- CTA Button -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:16px;">
         <tr><td align="center" style="padding:4px 0;">
           <table cellpadding="0" cellspacing="0" border="0">
-            <tr><td style="background:#ffffff;border-radius:10px;padding:14px 40px;text-align:center;">
-              <a href="${payURL}" target="_blank" class="sib-no-tracking" style="font-size:14px;font-weight:bold;color:#3B4547;letter-spacing:0.3px;text-decoration:none;">💳 Kreditkarte hinterlegen</a>
+            <tr><td style="background:#3B4547;border-radius:8px;padding:12px 36px;text-align:center;">
+              <a href="${payURL}" target="_blank" class="sib-no-tracking" style="font-size:14px;font-weight:bold;color:#ffffff;letter-spacing:0.3px;text-decoration:none;">💳 Kreditkarte hinterlegen</a>
             </td></tr>
           </table>
         </td></tr>
       </table>
 
       <!-- Hinweis -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;">
-        <tr><td style="background:rgba(255,255,255,0.06);border-radius:12px;border-left:3px solid #2A6B7C;padding:16px 20px;">
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;">Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Buchungs- und Stornobedingungen.</div>
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:16px;">
+        <tr><td style="border:1px solid #E0DDD6;border-left:3px solid #2A6B7C;border-radius:12px;padding:16px 20px;">
+          <div style="font-size:12px;color:#888;line-height:1.55;">Ihre Kreditkarte wird nur zur Sicherheit hinterlegt. Eine Belastung erfolgt erst gemäß den vereinbarten Buchungs- und Stornobedingungen.</div>
         </td></tr>
       </table>
 
-      <!-- Closing Card -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr><td style="background:#ffffff;border-radius:12px;padding:20px;">
+      <!-- Closing -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px;">
+        <tr><td style="padding:0 4px;">
           <p style="font-size:13px;color:#3B4547;line-height:1.6;margin:0;">Mit freundlichen Grüßen,<br><strong>westendhotel nürnberg</strong></p>
         </td></tr>
       </table>
@@ -1032,14 +1032,14 @@
 
   <!-- Footer (Pantone 433) -->
   <tr>
-    <td style="background:#3B4547;padding:20px 24px;text-align:center;border-radius:0 0 12px 12px;">
+    <td style="background:#3B4547;padding:20px 24px;text-align:center;">
       <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:28px;display:block;margin:0 auto 10px;">
-      <div style="font-size:11px;color:rgba(255,255,255,0.35);line-height:1.8;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.8;">
         Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
         Tel: +49 911 93986-0 · info@hotelwestend.de<br>
         www.hotelwestend.de
       </div>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);font-size:9px;color:rgba(255,255,255,0.2);line-height:1.6;">
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);font-size:9px;color:rgba(255,255,255,0.3);line-height:1.6;">
         MORE Hospitality GmbH · Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
         Geschäftsführer: Daniel Dümler · HRB 41876 · AG Nürnberg
       </div>
