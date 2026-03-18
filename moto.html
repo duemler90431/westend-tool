@@ -7,12 +7,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Adyen Web Drop-in v5 (loaded dynamically from config.js) -->
-  <link id="adyen-css" rel="stylesheet" href="">
-  <script id="adyen-js" src=""></script>
   <script src="config.js"></script>
   <script>
-    document.getElementById('adyen-css').href = CONFIG.adyenSDK + '/adyen.css';
-    document.getElementById('adyen-js').src = CONFIG.adyenSDK + '/adyen.js';
+    // Dynamisch CSS laden
+    const adyenCSS = document.createElement('link');
+    adyenCSS.rel = 'stylesheet';
+    adyenCSS.href = CONFIG.adyenSDK + '/adyen.css';
+    document.head.appendChild(adyenCSS);
+
+    // Dynamisch JS laden
+    const adyenJS = document.createElement('script');
+    adyenJS.src = CONFIG.adyenSDK + '/adyen.js';
+    document.head.appendChild(adyenJS);
   </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -824,6 +830,22 @@
           },
         },
       };
+
+      // Warten bis Adyen SDK geladen ist (falls noch nicht fertig)
+      if (typeof AdyenCheckout === 'undefined') {
+        status.className = 'status show loading';
+        status.innerHTML = '<h4>⏳ Adyen SDK wird geladen...</h4>';
+        await new Promise((resolve, reject) => {
+          const maxWait = 10000;
+          const start = Date.now();
+          const check = () => {
+            if (typeof AdyenCheckout !== 'undefined') return resolve();
+            if (Date.now() - start > maxWait) return reject(new Error('Adyen SDK konnte nicht geladen werden'));
+            setTimeout(check, 200);
+          };
+          check();
+        });
+      }
 
       const checkout = await AdyenCheckout(configuration);
       checkout.create('dropin').mount('#dropin-container');
