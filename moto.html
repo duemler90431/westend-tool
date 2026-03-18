@@ -9,16 +9,8 @@
   <!-- Adyen Web Drop-in v5 (loaded dynamically from config.js) -->
   <script src="config.js"></script>
   <script>
-    // Dynamisch CSS laden
-    const adyenCSS = document.createElement('link');
-    adyenCSS.rel = 'stylesheet';
-    adyenCSS.href = CONFIG.adyenSDK + '/adyen.css';
-    document.head.appendChild(adyenCSS);
-
-    // Dynamisch JS laden
-    const adyenJS = document.createElement('script');
-    adyenJS.src = CONFIG.adyenSDK + '/adyen.js';
-    document.head.appendChild(adyenJS);
+    document.write('<link rel="stylesheet" href="' + CONFIG.adyenSDK + '/adyen.css">');
+    document.write('<scr' + 'ipt src="' + CONFIG.adyenSDK + '/adyen.js"></scr' + 'ipt>');
   </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
