@@ -174,7 +174,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="config.js"></script><script>
 const params = new URLSearchParams(window.location.search);
 
 // Decode data: try new Base64 format first, fall back to legacy URL params
@@ -544,7 +544,7 @@ async function confirmBooking() {
 
   try {
     // E-Mail-Versand über Cloudflare Worker Proxy (Brevo API-Key serverseitig geschützt)
-    const WORKER_URL = 'https://westend-brevo-proxy.dd-f19.workers.dev';
+    const WORKER_URL = CONFIG.brevoProxyURL;
 
     const res = await fetch(WORKER_URL, {
       method: 'POST',
