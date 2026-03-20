@@ -203,6 +203,7 @@
     }
 
     .search-input {
+      margin-left: auto;
       font-family: inherit;
       font-size: 13px;
       padding: 7px 14px;
@@ -210,51 +211,10 @@
       border-radius: 6px;
       background: var(--white);
       color: var(--text);
-      width: 260px;
+      width: 220px;
     }
     .search-input:focus { outline: none; border-color: var(--petrol); }
     .search-input::placeholder { color: #bbb; }
-
-    .filter-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ── View Toggle ─────────────────────────── */
-    .view-toggle {
-      display: inline-flex;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-      background: var(--white);
-    }
-
-    .view-toggle button {
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 7px 14px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .view-toggle button:not(:last-child) {
-      border-right: 1px solid var(--border);
-    }
-
-    .view-toggle button:hover { color: var(--petrol); }
-    .view-toggle button.active {
-      background: var(--petrol);
-      color: #fff;
-    }
 
     /* ── Table ───────────────────────────────── */
     .table-wrap {
@@ -327,7 +287,6 @@
 
     .source-badge.ecommerce { background: var(--petrol-pale); color: var(--petrol); }
     .source-badge.moto { background: #F0EBF5; color: #6B4FA0; }
-    .source-badge.angebotstool { background: #FFF8E7; color: #8B6914; }
 
     /* ── Status Badges ──────────────────────── */
     .status-badge {
@@ -560,201 +519,6 @@
     .toast.success { background: var(--success); color: #fff; }
     .toast.error { background: var(--error); color: #fff; }
 
-    /* ── Day View ─────────────────────────────── */
-    .day-view {
-      margin: 16px 32px 32px;
-      display: none;
-    }
-
-    .day-view.active { display: block; }
-
-    .day-nav {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .day-nav-btn {
-      font-family: inherit;
-      font-size: 18px;
-      font-weight: 500;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--white);
-      color: var(--text);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-
-    .day-nav-btn:hover {
-      border-color: var(--petrol);
-      color: var(--petrol);
-    }
-
-    .day-date {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-      min-width: 220px;
-      text-align: center;
-    }
-
-    .day-date .weekday {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .today-btn {
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--white);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .today-btn:hover { border-color: var(--petrol); color: var(--petrol); }
-
-    .day-picker {
-      font-family: inherit;
-      font-size: 13px;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--text);
-      cursor: pointer;
-    }
-    .day-picker:focus { outline: none; border-color: var(--petrol); }
-
-    .day-section {
-      margin-bottom: 16px;
-    }
-
-    .day-section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px 10px 0 0;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .day-section-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .day-section-icon.checkin { background: var(--success-bg); }
-    .day-section-icon.checkout { background: var(--info-bg); }
-    .day-section-icon.charge { background: var(--warning-bg); }
-    .day-section-icon.cc-pending { background: var(--error-bg); }
-
-    .day-section-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .day-section-count {
-      font-size: 11px;
-      font-weight: 600;
-      background: var(--bg);
-      color: var(--text-muted);
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .day-section-toggle {
-      margin-left: auto;
-      font-size: 14px;
-      color: var(--text-muted);
-      transition: transform 0.2s;
-    }
-
-    .day-section.collapsed .day-section-toggle { transform: rotate(-90deg); }
-
-    .day-section-body {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 10px 10px;
-      overflow: hidden;
-    }
-
-    .day-section.collapsed .day-section-body { display: none; }
-    .day-section.collapsed .day-section-header {
-      border-radius: 10px;
-    }
-
-    .day-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.1s;
-    }
-
-    .day-card:last-child { border-bottom: none; }
-    .day-card:hover { background: #FAFAF8; }
-
-    .day-card-main {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .day-card-guest {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .day-card-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .day-card-amount {
-      font-size: 14px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .day-card-actions {
-      display: flex;
-      gap: 4px;
-    }
-
     /* ── Responsive ──────────────────────────── */
     @media (max-width: 768px) {
       .header { padding: 16px 20px; }
@@ -762,11 +526,8 @@
       .stat-card { min-width: 45%; }
       .filter-bar { margin: 16px 20px 0; }
       .table-wrap { margin: 12px 20px 20px; overflow-x: auto; }
-      .day-view { margin: 12px 20px 20px; }
       table { min-width: 700px; }
-      .search-input { width: 100%; }
-      .filter-right { margin-left: 0; width: 100%; margin-top: 8px; }
-      .day-nav { flex-wrap: wrap; }
+      .search-input { width: 100%; margin-left: 0; margin-top: 8px; }
     }
   </style>
 </head>
@@ -823,17 +584,11 @@
   <button class="filter-btn" onclick="setFilter('failed', this)">Fehlgeschlagen</button>
   <button class="filter-btn" onclick="setFilter('cancelled', this)">Storniert</button>
   <button class="filter-btn" onclick="setFilter('expired', this)">Abgelaufen</button>
-  <div class="filter-right">
-    <input type="text" class="search-input" placeholder="Name, ID, E-Mail, Betrag, Datum..." oninput="setSearch(this.value)">
-    <div class="view-toggle">
-      <button class="active" onclick="setView('table', this)" title="Tabellenansicht">☰ Tabelle</button>
-      <button onclick="setView('day', this)" title="Tagesansicht">📅 Tag</button>
-    </div>
-  </div>
+  <input type="text" class="search-input" placeholder="Suche nach Name oder ID..." oninput="setSearch(this.value)">
 </div>
 
-<!-- ── Table View ─────────────────────────── -->
-<div class="table-wrap" id="table-view">
+<!-- ── Table ───────────────────────────────── -->
+<div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -860,18 +615,6 @@
   </table>
 </div>
 
-<!-- ── Day View ───────────────────────────── -->
-<div class="day-view" id="day-view">
-  <div class="day-nav">
-    <button class="day-nav-btn" onclick="dayOffset(-1)">‹</button>
-    <div class="day-date" id="day-date-label"></div>
-    <button class="day-nav-btn" onclick="dayOffset(+1)">›</button>
-    <button class="today-btn" onclick="goToday()">Heute</button>
-    <input type="date" class="day-picker" id="day-picker" onchange="goToDate(this.value)">
-  </div>
-  <div id="day-sections"></div>
-</div>
-
 <!-- ── Detail Modal ────────────────────────── -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -887,7 +630,7 @@
 <!-- ── Toast ────────────────────────────────── -->
 <div class="toast" id="toast"></div>
 
-<script src="config.js"></script>
+<script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay.html"};</script>
 <script>
   // ── Config ──────────────────────────────────
   const WORKER_URL = CONFIG.workerURL;
@@ -895,8 +638,6 @@
   let allBookings = [];
   let currentFilter = "all";
   let currentSearch = "";
-  let currentView = "table";
-  let selectedDate = new Date();
 
   // ── Status Labels ───────────────────────────
   const STATUS_LABELS = {
@@ -921,7 +662,6 @@
       allBookings = data.bookings || [];
       updateStats();
       renderTable();
-      if (currentView === "day") renderDayView();
     } catch (err) {
       document.getElementById("bookings-table").innerHTML = `
         <tr><td colspan="8">
@@ -950,45 +690,6 @@
     document.getElementById("stat-volume").textContent = formatEur(volume);
   }
 
-  // ── Enhanced Search ─────────────────────────
-  function matchesSearch(b, q) {
-    if (!q) return true;
-    const term = q.toLowerCase().trim();
-
-    // Direct field matches
-    if ((b.bookingId || "").toLowerCase().includes(term)) return true;
-    if ((b.guestName || "").toLowerCase().includes(term)) return true;
-    if ((b.guestEmail || "").toLowerCase().includes(term)) return true;
-    if ((b.guestFirma || "").toLowerCase().includes(term)) return true;
-    if ((b.zimmer || "").toLowerCase().includes(term)) return true;
-    if ((b.source || "").toLowerCase().includes(term)) return true;
-
-    // Status label match (e.g. "belastet", "ausstehend")
-    const statusLabel = (STATUS_LABELS[b.status] || b.status || "").toLowerCase();
-    if (statusLabel.includes(term)) return true;
-
-    // Amount match — "150" matches €150,00
-    if (b.amount) {
-      const eurStr = (b.amount / 100).toFixed(2);
-      const eurComma = eurStr.replace(".", ",");
-      if (eurStr.includes(term) || eurComma.includes(term)) return true;
-    }
-
-    // Date match — DD.MM.YYYY, DD.MM., YYYY-MM-DD
-    const dates = [b.chargeDate, b.checkinDate, b.checkoutDate];
-    for (const d of dates) {
-      if (!d) continue;
-      if (d.includes(term)) return true;
-      const parts = d.split("-");
-      if (parts.length === 3) {
-        const german = `${parts[2]}.${parts[1]}.${parts[0]}`;
-        if (german.includes(term)) return true;
-      }
-    }
-
-    return false;
-  }
-
   // ── Render Table ───────────────────────────
   function renderTable() {
     let filtered = allBookings;
@@ -998,7 +699,12 @@
     }
 
     if (currentSearch) {
-      filtered = filtered.filter(b => matchesSearch(b, currentSearch));
+      const q = currentSearch.toLowerCase();
+      filtered = filtered.filter(b =>
+        (b.bookingId || "").toLowerCase().includes(q) ||
+        (b.guestName || "").toLowerCase().includes(q) ||
+        (b.guestEmail || "").toLowerCase().includes(q)
+      );
     }
 
     const tbody = document.getElementById("bookings-table");
@@ -1042,183 +748,6 @@
     `).join("");
   }
 
-  // ── View Toggle ────────────────────────────
-  function setView(view, btn) {
-    currentView = view;
-    document.querySelectorAll(".view-toggle button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    document.getElementById("table-view").style.display = view === "table" ? "" : "none";
-    const dayView = document.getElementById("day-view");
-    if (view === "day") {
-      dayView.classList.add("active");
-      renderDayView();
-    } else {
-      dayView.classList.remove("active");
-    }
-  }
-
-  // ── Day View ───────────────────────────────
-  function toISO(date) {
-    return date.getFullYear() + "-" +
-      String(date.getMonth() + 1).padStart(2, "0") + "-" +
-      String(date.getDate()).padStart(2, "0");
-  }
-
-  function dayOffset(n) {
-    selectedDate.setDate(selectedDate.getDate() + n);
-    renderDayView();
-  }
-
-  function goToday() {
-    selectedDate = new Date();
-    renderDayView();
-  }
-
-  function goToDate(val) {
-    if (!val) return;
-    selectedDate = new Date(val + "T00:00:00");
-    renderDayView();
-  }
-
-  const WEEKDAYS_DE = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-
-  function renderDayView() {
-    const dateStr = toISO(selectedDate);
-    const todayStr = toISO(new Date());
-
-    // Update header label
-    const label = document.getElementById("day-date-label");
-    const isToday = dateStr === todayStr;
-    const weekday = WEEKDAYS_DE[selectedDate.getDay()];
-    const formatted = selectedDate.toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" });
-    label.innerHTML = `<span class="weekday">${weekday}${isToday ? " · Heute" : ""}</span><br>${formatted}`;
-
-    // Update date picker
-    document.getElementById("day-picker").value = dateStr;
-
-    // Build 4 sections from booking data
-    const sections = [
-      {
-        id: "checkin",
-        icon: "checkin",
-        emoji: "🟢",
-        title: "Anreisen",
-        items: allBookings.filter(b =>
-          b.checkinDate === dateStr &&
-          !["cancelled", "expired"].includes(b.status)
-        ),
-      },
-      {
-        id: "checkout",
-        icon: "checkout",
-        emoji: "🔵",
-        title: "Abreisen",
-        items: allBookings.filter(b =>
-          b.checkoutDate === dateStr &&
-          !["cancelled", "expired"].includes(b.status)
-        ),
-      },
-      {
-        id: "charge",
-        icon: "charge",
-        emoji: "💳",
-        title: "Fällige Belastungen",
-        items: allBookings.filter(b =>
-          b.chargeDate === dateStr &&
-          b.status === "pending" &&
-          b.hasToken
-        ),
-      },
-      {
-        id: "cc-pending",
-        icon: "cc-pending",
-        emoji: "⏳",
-        title: "Ausstehende Kreditkarten",
-        // Show all pending CC regardless of day, sorted by check-in
-        items: allBookings.filter(b =>
-          ["pending_tokenization", "tokenization_failed"].includes(b.status)
-        ).sort((a, b) => (a.checkinDate || "z").localeCompare(b.checkinDate || "z")),
-        // Only show this section on "today" view
-        showOnlyToday: true,
-      },
-    ];
-
-    const container = document.getElementById("day-sections");
-
-    // Filter out section 4 unless we're viewing today
-    const visibleSections = sections.filter(s => {
-      if (s.showOnlyToday && dateStr !== todayStr) return false;
-      return s.items.length > 0;
-    });
-
-    if (visibleSections.length === 0) {
-      container.innerHTML = `
-        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:48px 20px;text-align:center;">
-          <div style="font-size:32px;margin-bottom:12px;opacity:0.3">📋</div>
-          <p style="font-size:14px;color:var(--text-muted)">Keine relevanten Buchungen für diesen Tag</p>
-        </div>`;
-      return;
-    }
-
-    container.innerHTML = visibleSections.map(s => {
-      const cards = s.items.map(b => {
-        const meta = [];
-        if (b.zimmer) meta.push(b.zimmer);
-        if (b.checkinDate && b.checkoutDate && s.id !== "checkin" && s.id !== "checkout") {
-          meta.push(`${formatDate(b.checkinDate)} → ${formatDate(b.checkoutDate)}`);
-        }
-        if (s.id === "checkin" && b.checkoutDate) {
-          meta.push(`bis ${formatDate(b.checkoutDate)}`);
-        }
-        if (s.id === "checkout" && b.checkinDate) {
-          meta.push(`seit ${formatDate(b.checkinDate)}`);
-        }
-        if (s.id === "cc-pending" && b.checkinDate) {
-          meta.push(`Check-in: ${formatDate(b.checkinDate)}`);
-        }
-        if (b.guestFirma) meta.push(b.guestFirma);
-
-        let actions = "";
-        if (s.id === "charge") {
-          actions = `<div class="day-card-actions" onclick="event.stopPropagation()">
-            <button class="btn btn-success btn-sm" onclick="chargeBooking('${b.bookingId}')">Belasten</button>
-          </div>`;
-        }
-        if (s.id === "cc-pending" && b.guestEmail) {
-          actions = `<div class="day-card-actions" onclick="event.stopPropagation()">
-            <button class="btn btn-petrol btn-sm" onclick="sendReminder('${b.bookingId}')">Erinnern</button>
-          </div>`;
-        }
-
-        return `
-          <div class="day-card" onclick="openDetail('${b.bookingId}')">
-            <div class="day-card-main">
-              <div class="day-card-guest">${esc(b.guestName)}</div>
-              <div class="day-card-meta">
-                <span>${b.bookingId}</span>
-                ${meta.map(m => `<span>${esc(m)}</span>`).join("")}
-              </div>
-            </div>
-            <span class="status-badge status-${b.status}"><span class="status-dot"></span>${STATUS_LABELS[b.status] || b.status}</span>
-            <span class="day-card-amount">${formatEur(b.amount)}</span>
-            ${actions}
-          </div>`;
-      }).join("");
-
-      return `
-        <div class="day-section" id="section-${s.id}">
-          <div class="day-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-            <div class="day-section-icon ${s.icon}">${s.emoji}</div>
-            <span class="day-section-title">${s.title}</span>
-            <span class="day-section-count">${s.items.length}</span>
-            <span class="day-section-toggle">▾</span>
-          </div>
-          <div class="day-section-body">${cards}</div>
-        </div>`;
-    }).join("");
-  }
-
   // ── Filters ────────────────────────────────
   function setFilter(filter, btn) {
     currentFilter = filter;
@@ -1242,13 +771,8 @@
     document.getElementById("modal-body").innerHTML = `
       <div class="detail-row"><span class="detail-label">Gast</span><span class="detail-value">${esc(b.guestName)}</span></div>
       <div class="detail-row"><span class="detail-label">E-Mail</span><span class="detail-value">${esc(b.guestEmail || "–")}</span></div>
-      ${b.guestFirma ? `<div class="detail-row"><span class="detail-label">Firma</span><span class="detail-value">${esc(b.guestFirma)}</span></div>` : ""}
-      ${b.guestTelefon ? `<div class="detail-row"><span class="detail-label">Telefon</span><span class="detail-value">${esc(b.guestTelefon)}</span></div>` : ""}
       <div class="detail-row"><span class="detail-label">Betrag</span><span class="detail-value">${formatEur(b.amount)}</span></div>
       <div class="detail-row"><span class="detail-label">Währung</span><span class="detail-value">${b.currency || "EUR"}</span></div>
-      ${b.checkinDate ? `<div class="detail-row"><span class="detail-label">Check-in</span><span class="detail-value">${formatDate(b.checkinDate)}</span></div>` : ""}
-      ${b.checkoutDate ? `<div class="detail-row"><span class="detail-label">Check-out</span><span class="detail-value">${formatDate(b.checkoutDate)}</span></div>` : ""}
-      ${b.zimmer ? `<div class="detail-row"><span class="detail-label">Zimmer</span><span class="detail-value">${esc(b.zimmer)}</span></div>` : ""}
       <div class="detail-row"><span class="detail-label">Belastungsdatum</span><span class="detail-value">${formatDate(b.chargeDate)}</span></div>
       <div class="detail-row"><span class="detail-label">Source</span><span class="detail-value"><span class="source-badge ${b.source || 'ecommerce'}">${(b.source || "ecommerce").toUpperCase()}</span></span></div>
       <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="status-badge status-${b.status}"><span class="status-dot"></span>${STATUS_LABELS[b.status] || b.status}</span></span></div>

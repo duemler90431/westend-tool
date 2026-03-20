@@ -7,10 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Adyen Web Drop-in v5 (loaded dynamically from config.js) -->
-  <script src="config.js"></script>
+  <link id="adyen-css" rel="stylesheet" href="">
+  <script id="adyen-js" src=""></script>
+  <script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay.html"};</script>
   <script>
-    document.write('<link rel="stylesheet" href="' + CONFIG.adyenSDK + '/adyen.css">');
-    document.write('<scr' + 'ipt src="' + CONFIG.adyenSDK + '/adyen.js"></scr' + 'ipt>');
+    document.getElementById('adyen-css').href = CONFIG.adyenSDK + '/adyen.css';
+    document.getElementById('adyen-js').src = CONFIG.adyenSDK + '/adyen.js';
   </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -822,22 +824,6 @@
           },
         },
       };
-
-      // Warten bis Adyen SDK geladen ist (falls noch nicht fertig)
-      if (typeof AdyenCheckout === 'undefined') {
-        status.className = 'status show loading';
-        status.innerHTML = '<h4>⏳ Adyen SDK wird geladen...</h4>';
-        await new Promise((resolve, reject) => {
-          const maxWait = 10000;
-          const start = Date.now();
-          const check = () => {
-            if (typeof AdyenCheckout !== 'undefined') return resolve();
-            if (Date.now() - start > maxWait) return reject(new Error('Adyen SDK konnte nicht geladen werden'));
-            setTimeout(check, 200);
-          };
-          check();
-        });
-      }
 
       const checkout = await AdyenCheckout(configuration);
       checkout.create('dropin').mount('#dropin-container');
