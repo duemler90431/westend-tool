@@ -451,60 +451,95 @@ async function confirmBooking() {
         <p style="font-size:12px;color:#888;margin:0;line-height:1.5;">${stornoText}</p>
       </div>`;
 
-  const confirmHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="font-family:Arial,sans-serif;background:#EEECEA;padding:12px;margin:0;">
-    <div style="max-width:560px;width:100%;margin:0 auto;">
+  const confirmHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="font-family:Arial,sans-serif;background:#EEECEA;padding:0;margin:0;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#EEECEA;">
+<tr><td align="center" style="padding:20px;">
 
-      <!-- Header (Pantone 433) -->
-      <div style="background:#3B4547;padding:20px;text-align:center;border-radius:10px 10px 0 0;">
-        <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:32px;display:block;margin:0 auto 6px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;">NÜRNBERG · KARL-MARTELL-STR. 42–44</div>
-      </div>
+<table cellpadding="0" cellspacing="0" border="0" width="560" style="max-width:560px;border-radius:12px;overflow:hidden;">
 
-      <!-- Type Banner (Green) -->
-      <div style="background:#2d6b4a;padding:12px 20px;text-align:center;">
-        <div style="color:white;font-size:12px;font-weight:bold;letter-spacing:2px;">✅ ${t.emailSubject}</div>
-      </div>
+  <!-- Header (Pantone 433) -->
+  <tr>
+    <td style="background:#3B4547;padding:28px 24px 22px;text-align:center;">
+      <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" width="180" height="38" style="display:block;margin:0 auto 8px;width:180px;height:38px;">
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2.5px;">N&#220;RNBERG &#183; KARL-MARTELL-STR. 42&#8211;44</div>
+    </td>
+  </tr>
 
-      <!-- Body -->
-      <div style="background:#EEECEA;padding:20px;">
+  <!-- Type Banner (Green) -->
+  <tr>
+    <td style="background:#2d6b4a;padding:10px 24px;text-align:center;">
+      <span style="font-size:11px;font-weight:bold;color:#fff;letter-spacing:3px;">&#9989; ${t.emailSubject}</span>
+    </td>
+  </tr>
 
-        <!-- Intro Card -->
-        <div style="background:#ffffff;border:1px solid #E0DDD6;border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+  <!-- Body (weißer Hintergrund) -->
+  <tr>
+    <td style="background:#ffffff;padding:24px;">
+
+      <!-- Intro -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:20px;">
+        <tr><td style="padding:0 4px;">
           <p style="font-size:13px;margin:0;line-height:1.6;color:#3B4547;"><strong>${fullName}</strong> (${email}) ${t.emailBody}.</p>
-        </div>
+        </td></tr>
+      </table>
 
-        <!-- Guest Card -->
-        <div style="background:#ffffff;border:1px solid #E0DDD6;border-radius:10px;overflow:hidden;margin-bottom:14px;">
-          <div style="background:#3B4547;padding:9px 16px;">
-            <span style="color:white;font-size:11px;font-weight:bold;letter-spacing:1px;">${t.emailGuest}</span>
-          </div>
+      <!-- Guest Card -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:16px;">
+        <tr><td style="border:1px solid #E0DDD6;border-radius:12px;overflow:hidden;">
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr><td style="padding:11px 20px;border-bottom:1px solid #E8E6E0;">
+              <span style="font-size:10px;font-weight:bold;color:#3B4547;letter-spacing:1.5px;text-transform:uppercase;">${t.emailGuest}</span>
+            </td></tr>
+          </table>
           <table style="width:100%;table-layout:fixed;border-collapse:collapse;">
             ${guestRows}
           </table>
-        </div>
+        </td></tr>
+      </table>
 
-        <!-- Details Card -->
-        <div style="background:#ffffff;border:1px solid #E0DDD6;border-radius:10px;overflow:hidden;margin-bottom:14px;">
-          <div style="background:#3B4547;padding:9px 16px;">
-            <span style="color:white;font-size:11px;font-weight:bold;letter-spacing:1px;">${t.emailDetails}</span>
-          </div>
-          <table style="width:100%;table-layout:fixed;border-collapse:collapse;">
-            <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;width:42%;">${t.checkin}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${formatDateDE(anreise)}</td></tr>
-            <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;width:42%;">${t.checkout}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${formatDateDE(abreise)}</td></tr>
-            <tr><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;width:42%;">${t.rooms}</td><td style="padding:8px 12px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${zimmerDisplay}</td></tr>
-            <tr><td style="padding:8px 12px;font-size:12px;color:#888;width:42%;">${t.total}</td><td style="padding:8px 12px;font-size:14px;font-weight:bold;color:#3B4547;">€ ${parseFloat(gesamt).toFixed(2).replace('.', ',')}</td></tr>
+      <!-- Details Card -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:16px;">
+        <tr><td style="border:1px solid #E0DDD6;border-radius:12px;overflow:hidden;">
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr><td style="padding:11px 20px;border-bottom:1px solid #E8E6E0;">
+              <span style="font-size:10px;font-weight:bold;color:#3B4547;letter-spacing:1.5px;text-transform:uppercase;">${t.emailDetails}</span>
+            </td></tr>
           </table>
-        </div>
+          <table style="width:100%;table-layout:fixed;border-collapse:collapse;">
+            <tr><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;width:42%;">${t.checkin}</td><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${formatDateDE(anreise)}</td></tr>
+            <tr><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;">${t.checkout}</td><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${formatDateDE(abreise)}</td></tr>
+            <tr><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;color:#888;">${t.rooms}</td><td style="padding:10px 20px;font-size:12px;border-bottom:1px solid #F0EDE8;font-weight:600;color:#3B4547;">${zimmerDisplay}</td></tr>
+          </table>
+          <!-- Total Row -->
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr><td style="background:#3B4547;padding:12px 20px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td style="font-size:12px;font-weight:bold;color:rgba(255,255,255,0.65);">${t.total}</td>
+                  <td style="font-size:16px;font-weight:bold;color:#ffffff;text-align:right;">&#8364; ${parseFloat(gesamt).toFixed(2).replace('.', ',')}</td>
+                </tr>
+              </table>
+            </td></tr>
+          </table>
+        </td></tr>
+      </table>
 
-        ${billingBlock}
-        ${remarkBlock}
-        ${stornoBlock}
+      ${billingBlock}
+      ${remarkBlock}
+      ${stornoBlock}
 
-        <p style="font-size:12px;color:#888;margin-top:14px;">${t.emailAgbNote}</p>
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:4px;margin-bottom:16px;">
+        <tr><td style="padding:0 4px;">
+          <p style="font-size:12px;color:#888;margin:0;">${t.emailAgbNote}</p>
+        </td></tr>
+      </table>
 
-        <!-- CTA Button -->
-        <div style="text-align:center;margin:20px 0 8px;">
-          <a href="https://booking-hotelwestend.de/?prefill=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({
+      <!-- CTA Button -->
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:8px;">
+        <tr><td align="center" style="padding:4px 0;">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="background:#2d6b4a;border-radius:8px;padding:12px 28px;text-align:center;">
+              <a href="https://booking-hotelwestend.de/?prefill=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({
             mode: 'bestaetigung',
             anrede: anrede,
             name: name,
@@ -523,24 +558,38 @@ async function confirmBooking() {
             r_zusatz: r_zusatz,
             bemerkungen: remarkText,
             verpflegung: verpflegung
-          })))))}" style="display:inline-block;background:#2d6b4a;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;letter-spacing:0.5px;" target="_blank">
-            📋 Buchungsbestätigung erstellen
-          </a>
-          <p style="font-size:11px;color:#999;margin-top:8px;">Öffnet das Angebotstool mit vorausgefüllten Daten</p>
-        </div>
+          })))))}" style="font-size:13px;font-weight:bold;color:#ffffff;letter-spacing:0.5px;text-decoration:none;" target="_blank">
+                &#128203; Buchungsbest&#228;tigung erstellen
+              </a>
+            </td></tr>
+          </table>
+          <p style="font-size:11px;color:#999;margin-top:8px;">&#214;ffnet das Angebotstool mit vorausgef&#252;llten Daten</p>
+        </td></tr>
+      </table>
 
+    </td>
+  </tr>
+
+  <!-- Footer (Pantone 433) -->
+  <tr>
+    <td style="background:#3B4547;padding:20px 24px;text-align:center;">
+      <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" width="140" height="28" style="display:block;margin:0 auto 10px;width:140px;height:28px;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.8;">
+        Karl-Martell-Str. 42&#8211;44 &#183; 90431 N&#252;rnberg<br>
+        Tel: +49 911 93986-0 &#183; inf&#111;&#64;hotelwestend&#46;de<br>
+        www.hotelwestend.de
       </div>
-
-      <!-- Footer (Pantone 433) -->
-      <div style="background:#3B4547;padding:16px 20px;text-align:center;border-radius:0 0 10px 10px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.4);line-height:1.8;">
-          Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-          Tel: +49 911 93986-0 · inf&#111;&#64;hotelwestend&#46;de
-        </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);font-size:9px;color:rgba(255,255,255,0.3);line-height:1.6;">
+        MORE Hospitality GmbH &#183; Karl-Martell-Str. 42&#8211;44 &#183; 90431 N&#252;rnberg<br>
+        Gesch&#228;ftsf&#252;hrer: Daniel D&#252;mler &#183; HRB 41876 &#183; AG N&#252;rnberg
       </div>
+    </td>
+  </tr>
 
-    </div>
-  </body></html>`;
+</table>
+</td></tr>
+</table>
+</body></html>`;
 
   try {
     // E-Mail-Versand über Cloudflare Worker Proxy (Brevo API-Key serverseitig geschützt)
