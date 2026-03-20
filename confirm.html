@@ -535,7 +535,7 @@ async function confirmBooking() {
       <div style="background:#3B4547;padding:16px 20px;text-align:center;border-radius:0 0 10px 10px;">
         <div style="font-size:10px;color:rgba(255,255,255,0.4);line-height:1.8;">
           Karl-Martell-Str. 42–44 · 90431 Nürnberg<br>
-          Tel: +49 911 93986-0 · info@hotelwestend.de
+          Tel: +49 911 93986-0 · inf&#111;&#64;hotelwestend&#46;de
         </div>
       </div>
 
@@ -550,8 +550,8 @@ async function confirmBooking() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        sender: { name: "westendhotel nürnberg – Angebotsannahme", email: "info@hotelwestend.de" },
-        to: [{ email: "info@hotelwestend.de", name: "Westendhotel Rezeption" }],
+        sender: { name: "westendhotel n\u00fcrnberg \u2013 Angebotsannahme", email: "inf\u006f\u0040hotelwestend\u002ede" },
+        to: [{ email: "inf\u006f\u0040hotelwestend\u002ede", name: "Westendhotel Rezeption" }],
         replyTo: { email: email, name: fullName },
         subject: `${t.emailSubject}: ${fullName} – ${formatDateDE(anreise)} bis ${formatDateDE(abreise)}`,
         htmlContent: confirmHTML
