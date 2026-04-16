@@ -37,26 +37,14 @@
       min-height: 100vh;
     }
 
-    /* ── Site Nav ── */
-    .site-nav {
-      background: #323b3d;
-      padding: 6px 32px;
-      text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .site-nav a, .site-nav span {
-      font-size: 11px;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-      color: rgba(255,255,255,0.45);
-      margin: 0 8px;
-    }
-    .site-nav a:hover { color: #ffffff; }
-    .site-nav .nav-active {
-      color: #ffffff;
-      font-weight: 600;
-    }
-    .site-nav .nav-sep { color: rgba(255,255,255,0.2); }
+    /* ── PMS Header + Nav ── */
+    .pms-header { background: #2B3A42; color: white; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .pms-header-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+    .pms-header-staging { color: rgba(255,255,255,0.5); font-size: 13px; }
+    .pms-nav { display: flex; gap: 0; background: #fff; border-bottom: 1px solid #E0DDD6; padding: 0 24px; overflow-x: auto; }
+    .pms-nav a { padding: 10px 16px; font-size: 13px; font-weight: 500; color: #7A7F80; text-decoration: none; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+    .pms-nav a:hover { color: #1A6B7A; }
+    .pms-nav a.active { color: #1A6B7A; border-bottom-color: #1A6B7A; font-weight: 600; }
 
     /* ── Header ─────────────────────────────── */
     .header {
@@ -533,7 +521,25 @@
 </head>
 <body>
 
-<!-- ── Header ──────────────────────────────── -->
+<!-- PMS Header + Nav -->
+<div class="pms-header">
+  <div class="pms-header-logo">westendhotel PMS</div>
+  <div class="pms-header-staging">Staging</div>
+</div>
+<nav class="pms-nav">
+  <a href="portal.html">Portal</a>
+  <a href="zimmerplan.html">Zimmerplan</a>
+  <a href="buchung.html">Buchung</a>
+  <a href="gaeste.html">Gastdaten</a>
+  <a href="rechnungen.html">Rechnungen</a>
+  <a href="raten.html">Raten</a>
+  <a href="einstellungen.html">Einstellungen</a>
+  <a href="index.html">Angebotstool</a>
+  <a href="moto.html">MOTO</a>
+  <a href="payment-dashboard.html" class="active">Dashboard</a>
+</nav>
+
+<!-- ── Page Header ──────────────────────────────── -->
 <div class="header">
   <div class="header-left">
     <h1>Payment Dashboard</h1>
@@ -543,12 +549,6 @@
     <button class="btn btn-secondary" onclick="loadBookings()">↻ Aktualisieren</button>
     <button class="btn btn-primary" onclick="window.open('moto.html','_blank')">+ Neue Buchung</button>
   </div>
-</div>
-<div class="site-nav">
-  <a href="portal.html">Portal</a><span class="nav-sep">·</span>
-  <a href="index.html">Angebotstool</a><span class="nav-sep">·</span>
-  <a href="moto.html">MOTO</a><span class="nav-sep">·</span>
-  <span class="nav-active">Dashboard</span>
 </div>
 
 <!-- ── Stats ───────────────────────────────── -->
