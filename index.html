@@ -43,6 +43,7 @@
   .pms-nav a { padding: 10px 16px; font-size: 13px; font-weight: 500; color: #7A7F80; text-decoration: none; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
   .pms-nav a:hover { color: #1A6B7A; }
   .pms-nav a.active { color: #1A6B7A; border-bottom-color: #1A6B7A; font-weight: 600; }
+    .pms-nav span.disabled { padding: 10px 16px; font-size: 13px; font-weight: 500; color: #C8C8C8; cursor: default; white-space: nowrap; }
 
   /* ── Header ── */
   header {
@@ -295,17 +296,17 @@
 
 <!-- PMS Header + Nav -->
 <div class="pms-header">
-  <div class="pms-header-logo">westendhotel PMS</div>
-  <div class="pms-header-staging">Staging</div>
+  <div class="pms-header-logo">westendhotel</div>
+  <div class="pms-header-staging"></div>
 </div>
 <nav class="pms-nav">
   <a href="portal.html">Portal</a>
-  <a href="zimmerplan.html">Zimmerplan</a>
-  <a href="buchung.html">Buchung</a>
-  <a href="gaeste.html">Gastdaten</a>
-  <a href="rechnungen.html">Rechnungen</a>
-  <a href="raten.html">Raten</a>
-  <a href="einstellungen.html">Einstellungen</a>
+  <span class="disabled">Zimmerplan</span>
+  <span class="disabled">Buchung</span>
+  <span class="disabled">Gastdaten</span>
+  <span class="disabled">Rechnungen</span>
+  <span class="disabled">Raten</span>
+  <span class="disabled">Einstellungen</span>
   <a href="index.html" class="active">Angebotstool</a>
   <a href="moto.html">MOTO</a>
   <a href="payment-dashboard.html">Dashboard</a>
