@@ -188,6 +188,7 @@
   .vopt-label { font-size: 13px; font-weight: 600; color: var(--navy); }
   .verpflegung-option.selected .vopt-label { color: var(--petrol); }
   .vopt-price { font-size: 11px; color: var(--gray-600); }
+  .vopt-hint { font-size: 10px; color: var(--gray-600); font-style: italic; margin-top: 1px; }
 
   /* ── Stornobedingungen ── */
   .storno-options { display: flex; flex-direction: column; gap: 8px; }
@@ -436,8 +437,9 @@
               </label>
               <label class="verpflegung-option" onclick="selectVerpflegung(this)">
                 <input type="radio" name="verpflegung" value="inkl. Frühstück" onchange="updatePreview()">
-                <span class="vopt-label">inkl. Frühstück</span>
+                <span class="vopt-label">zzgl. Frühstück</span>
                 <span class="vopt-price">+ € 15,00 / Pers. / Nacht</span>
+                <span class="vopt-hint">wird zum Zimmerpreis addiert</span>
               </label>
             </div>
           </div>
