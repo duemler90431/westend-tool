@@ -634,7 +634,8 @@
 <script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay.html"};</script>
 <script>
   // ── Config ──────────────────────────────────
-  const WORKER_URL = CONFIG.workerURL;
+  // v2.5.0: Staff-Zugriff same-origin über den /api-Proxy (Server-Key serverseitig injiziert)
+  const WORKER_URL = '/api';
 
   let allBookings = [];
   let currentFilter = "all";
@@ -783,6 +784,8 @@
       ${b.pspReference ? `<div class="detail-row"><span class="detail-label">PSP Reference</span><span class="detail-value" style="font-family:monospace;font-size:11px">${b.pspReference}</span></div>` : ""}
       ${b.lastError ? `<div class="detail-row"><span class="detail-label">Letzter Fehler</span><span class="detail-value" style="color:var(--error)">${esc(b.lastError)}</span></div>` : ""}
       ${b.reminderSentAt ? `<div class="detail-row"><span class="detail-label">Erinnerung gesendet</span><span class="detail-value">${formatDateTime(b.reminderSentAt)}</span></div>` : ""}
+      <div class="detail-row"><span class="detail-label">Zweck</span><span class="detail-value">${b.purpose === 'charge_scheduled' ? '📅 Belastung geplant' : b.purpose === 'guarantee' ? '🛡️ Garantie (keine Auto-Belastung)' : '–'}</span></div>
+      ${typeof b.reminderCount === 'number' ? `<div class="detail-row"><span class="detail-label">Erinnerungen</span><span class="detail-value">${b.reminderCount}${b.reminderCount >= 2 ? ' ⚠️ (Gast-Max erreicht — nur noch intern)' : ''}</span></div>` : ""}
 
       ${["pending", "pending_tokenization", "tokenization_failed", "failed", "offer_sent", "confirmed"].includes(b.status) ? `
         <div class="edit-group">
@@ -797,7 +800,13 @@
 
     let actions = "";
     if (b.status === "pending" && b.hasToken) {
-      actions += `<button class="btn btn-success" onclick="chargeBooking('${b.bookingId}')">Jetzt belasten</button>`;
+      if (b.purpose === "guarantee") {
+        // Garantiekarte: keine Voll-Auto-Belastung — nur manuelle Einlösung mit freiem Betrag
+        actions += `<button class="btn btn-success" onclick="chargeAmountPrompt('${b.bookingId}')">🛡️ Garantie einlösen (Betrag)…</button>`;
+      } else {
+        actions += `<button class="btn btn-success" onclick="chargeBooking('${b.bookingId}')">Jetzt belasten</button>`;
+        actions += `<button class="btn btn-outline" onclick="chargeAmountPrompt('${b.bookingId}')">Betrag belasten…</button>`;
+      }
     }
     if ((b.status === "pending_tokenization" || b.status === "tokenization_failed") && b.guestEmail) {
       actions += `<button class="btn btn-petrol" onclick="sendReminder('${b.bookingId}')">Erinnerung senden</button>`;
@@ -819,6 +828,42 @@
   }
 
   // ── API Actions ────────────────────────────
+  // v2.5.0: Belastung mit freiem Betrag (Garantie-Einlösung / Teilbetrag) via /charge-amount.
+  // Läuft über den /api-Proxy (Server-Key), daher kein Key im Browser.
+  async function chargeAmountPrompt(bookingId) {
+    const b = allBookings.find(x => x.bookingId === bookingId);
+    const suggested = b ? (b.amount / 100).toFixed(2) : "";
+    const input = prompt(`Betrag zum Belasten für ${bookingId} (EUR):`, suggested);
+    if (input === null) return;
+    const eur = parseFloat(String(input).replace(",", "."));
+    if (!(eur > 0)) { showToast("error", "Ungültiger Betrag"); return; }
+    const cents = Math.round(eur * 100);
+    if (!confirm(`${bookingId} mit ${formatEur(cents)} belasten?`)) return;
+    try {
+      const res = await fetch(`${WORKER_URL}/charge-amount`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId,
+          amount: cents,
+          currency: b && b.currency ? b.currency : "EUR",
+          reference: `manual-${bookingId}-${Date.now()}`,
+          chargedBy: "dashboard",
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("success", `${bookingId} belastet – ${formatEur(data.amount || cents)}`);
+      } else {
+        showToast("error", `Belastung fehlgeschlagen: ${data.refusalReason || data.resultCode || data.error || "unbekannt"}`);
+      }
+    } catch (err) {
+      showToast("error", `Fehler: ${err.message}`);
+    }
+    closeModal();
+    loadBookings();
+  }
+
   async function chargeBooking(bookingId) {
     if (!confirm(`Buchung ${bookingId} jetzt belasten?`)) return;
     try {

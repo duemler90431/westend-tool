@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# westend-tool — Worker mit Static Assets + API-Proxy (ENTWURF v2.5.0)
+# Ziel: im Repo-Root als wrangler.toml, main-Branch (LIVE booking-hotelwestend.de)
+#
+# ⚠️ LESSON (wie Payment-Worker): `wrangler deploy` überschreibt Remote-Config mit
+#    der lokalen. VOR echtem Deploy `--dry-run` und den Override-Diff prüfen —
+#    darf Custom Domain, workers.dev-Route und Observability NICHT still ändern.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name = "westend-tool"
+main = "tool-proxy.js"
+
+# Verifiziert 09.07.2026 am Live-Worker (Settings → Runtime):
+compatibility_date = "2026-04-23"
+compatibility_flags = ["nodejs_compat"]   # war live gesetzt — MUSS mit, sonst entfernt der Deploy es
+
+# ⚠️ SICHERHEIT: workers.dev + Preview-URLs AUS. CF Access schützt nur die Custom
+# Domain — über workers.dev/Preview würde der /api-Proxy den Server-Key injizieren
+# OHNE Access davor (offenes Gateway zum Payment-Worker). Einziger Zugang = die
+# Access-geschützte Custom Domain booking-hotelwestend.de.
+workers_dev = false
+preview_urls = false
+
+# ── Static Assets ────────────────────────────────────────────────────
+[assets]
+directory = "public"            # NUR Assets — Code/Config/State liegen außerhalb (kein Leak möglich)
+binding = "ASSETS"
+run_worker_first = ["/api/*"]   # /api/* immer durchs Worker-Script (Proxy), Rest direkt aus Assets
+# html_handling = "auto-trailing-slash" (Default) → /pay serviert pay.html
+
+# ── Custom Domain(s) — MÜSSEN deklariert werden, sonst entfernt der Deploy sie ──
+# ⚠️ Exakte Domain(s) aus dem Dashboard eintragen (die "+1 weitere" der Access-Apps
+#    nicht vergessen), sonst reißt der Deploy den Live-Zugang ab.
+[[routes]]
+pattern = "booking-hotelwestend.de"
+custom_domain = true
+# Hinweis: die workers.dev-Route (westend-tool.dd-f19.workers.dev) gehört NICHT
+# in [[routes]] — sie bleibt über workers_dev/Dashboard erhalten.
+
+# ── Nicht-geheim: Payment-Worker-Basis (per-Branch: main→Live, staging→Staging) ──
+[vars]
+PAYMENT_WORKER_BASE = "https://westend-payment-worker.dd-f19.workers.dev"
+
+# ── Observability: falls am Live-Worker aktiv, hier spiegeln (Override-Diff prüfen!) ──
+[observability]
+enabled = true
+
+# SECRET (NICHT in die toml): PAYMENT_WORKER_API_KEY
+#   → wrangler secret put PAYMENT_WORKER_API_KEY --name westend-tool   (gleicher Wert wie am Payment-Worker)

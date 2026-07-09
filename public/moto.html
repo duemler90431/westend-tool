@@ -9,7 +9,7 @@
   <!-- Adyen Web Drop-in v5 (loaded dynamically from config.js) -->
   <link id="adyen-css" rel="stylesheet" href="">
   <script id="adyen-js" src=""></script>
-  <script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay.html"};</script>
+  <script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay"};</script>
   <script>
     document.getElementById('adyen-css').href = CONFIG.adyenSDK + '/adyen.css';
     document.getElementById('adyen-js').src = CONFIG.adyenSDK + '/adyen.js';
@@ -486,7 +486,7 @@
       <p>Kreditkarte direkt aufnehmen oder Link an den Gast senden</p>
     </div>
     <div class="card-body">
-      <div class="action-cards" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div class="action-cards" style="grid-template-columns: 1fr 1fr;">
         <div class="action-card" id="action-moto-now" onclick="selectAction('moto-now')">
           <div class="icon">⚡</div>
           <div class="title">CC aufnehmen & sofort belasten</div>
@@ -497,10 +497,15 @@
           <div class="title">CC aufnehmen & später belasten</div>
           <div class="subtitle">MOTO-Eingabe, automatische Belastung am gewählten Datum (z.B. vCC)</div>
         </div>
+        <div class="action-card" id="action-moto-guarantee" onclick="selectAction('moto-guarantee')">
+          <div class="icon">🛡️</div>
+          <div class="title">Nur Garantie — keine Belastung</div>
+          <div class="subtitle">MOTO-Eingabe, Karte nur zur Absicherung. Belastung ausschließlich manuell (z.B. No-Show/Stornogebühr)</div>
+        </div>
         <div class="action-card" id="action-email" onclick="selectAction('email')">
           <div class="icon">📧</div>
           <div class="title">CC-Link per E-Mail</div>
-          <div class="subtitle">Gast erhält Link und gibt CC-Daten selbst ein</div>
+          <div class="subtitle">Gast erhält Link und gibt CC-Daten selbst ein (Zweck unten wählbar)</div>
         </div>
       </div>
 
@@ -544,6 +549,14 @@
           <span id="preview-name">–</span> wird gebeten, eine Kreditkarte für den Aufenthalt vom <span id="preview-dates">–</span> zu hinterlegen.
         </div>
       </div>
+      <!-- v2.5.0: Zweck der Karte beim CC-Link -->
+      <div style="margin-bottom:16px;padding:12px;background:#FAFAF8;border:1px solid var(--border);border-radius:8px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">ZWECK DER KARTE</div>
+        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="radio" name="emailPurpose" value="guarantee" checked onchange="toggleEmailChargeDate()"> 🛡️ Nur Garantie — keine automatische Belastung</label>
+        <label style="display:block;cursor:pointer;"><input type="radio" name="emailPurpose" value="charge_scheduled" onchange="toggleEmailChargeDate()"> 📅 Belastung geplant am
+          <input type="date" id="emailChargeDateInput" disabled style="margin-left:6px;padding:2px 6px;">
+        </label>
+      </div>
       <button class="btn-action btn-email" id="btn-send-email" onclick="sendCCLinkEmail()" disabled>
         📧 CC-Link per E-Mail senden
       </button>
@@ -558,9 +571,10 @@
 
 <script>
   // ── Config ──────────────────────────────────
-  const WORKER_URL = CONFIG.workerURL;
+  // v2.5.0: Staff-Zugriff same-origin über den /api-Proxy (Server-Key serverseitig injiziert)
+  const WORKER_URL = '/api';
   const BREVO_PROXY_URL = CONFIG.brevoProxyURL;
-  const PAY_BASE_URL = CONFIG.payBaseURL;
+  const PAY_BASE_URL = CONFIG.payBaseURL;  // jetzt .../pay (inline oben umgestellt)
 
   let selectedAction = null;
   let selectedStorno = "regulaer";
@@ -599,7 +613,7 @@
 
     selectedAction = action;
     chargeImmediately = (action === 'moto-now');
-    const isMoto = action === 'moto-now' || action === 'moto-later';
+    const isMoto = action === 'moto-now' || action === 'moto-later' || action === 'moto-guarantee';
 
     document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
     document.getElementById(`action-${action}`).classList.add('selected');
@@ -613,6 +627,8 @@
       const subtitle = document.getElementById('moto-section-subtitle');
       if (chargeImmediately) {
         subtitle.textContent = 'MOTO-Tokenisierung + sofortige Belastung';
+      } else if (action === 'moto-guarantee') {
+        subtitle.textContent = 'MOTO-Tokenisierung – nur Garantie, KEINE automatische Belastung';
       } else {
         const cd = formatDateDE(document.getElementById('chargeDateInput').value);
         subtitle.textContent = `MOTO-Tokenisierung – Belastung am ${cd} (Cron)`;
@@ -672,12 +688,18 @@
 
     const data = getFormData();
 
-    // Determine charge date
-    let chargeDate = data.checkinDate; // default
-    if (selectedAction === 'moto-later') {
-      chargeDate = document.getElementById('chargeDateInput').value || data.checkinDate;
-    } else if (selectedAction === 'moto-now') {
-      chargeDate = new Date().toISOString().split('T')[0]; // today
+    // v2.5.0: Zweck + explizites Belastungsdatum je Aktion (kein stiller Check-in-Default mehr)
+    let purpose = 'charge_scheduled';
+    let chargeDate = null;
+    if (selectedAction === 'moto-now') {
+      purpose = 'charge_scheduled';
+      chargeDate = new Date().toISOString().split('T')[0]; // heute
+    } else if (selectedAction === 'moto-later') {
+      purpose = 'charge_scheduled';
+      chargeDate = document.getElementById('chargeDateInput').value || null;
+    } else if (selectedAction === 'moto-guarantee') {
+      purpose = 'guarantee';
+      chargeDate = null; // reine Garantiekarte — keine automatische Belastung
     }
 
     try {
@@ -689,6 +711,7 @@
           guestEmail: data.guestEmail,
           chargeAmount: data.amount,
           chargeDate: chargeDate,
+          purpose: purpose,
           source: 'moto',
           checkinDate: data.checkinDate,
           checkoutDate: data.checkoutDate,
@@ -846,6 +869,12 @@
     document.getElementById('preview-dates').textContent = `${checkin} bis ${checkout}`;
   }
 
+  // v2.5.0: Datumsfeld nur bei "Belastung geplant" aktiv
+  function toggleEmailChargeDate() {
+    const val = document.querySelector('input[name="emailPurpose"]:checked').value;
+    document.getElementById('emailChargeDateInput').disabled = (val !== 'charge_scheduled');
+  }
+
   // ── Send CC Link Email ──────────────────────
   async function sendCCLinkEmail() {
     const btn = document.getElementById('btn-send-email');
@@ -858,6 +887,12 @@
 
     const data = getFormData();
 
+    // v2.5.0: Zweck + explizites Datum aus der Auswahl (Default: guarantee)
+    const emailPurpose = document.querySelector('input[name="emailPurpose"]:checked').value;
+    const emailChargeDate = emailPurpose === 'charge_scheduled'
+      ? (document.getElementById('emailChargeDateInput').value || null)
+      : null;
+
     try {
       // Step 1: Create booking in D1 via payment worker
       const sessionRes = await fetch(`${WORKER_URL}/session`, {
@@ -867,7 +902,8 @@
           guestName: data.guestName,
           guestEmail: data.guestEmail,
           chargeAmount: data.amount,
-          chargeDate: data.checkinDate,
+          chargeDate: emailChargeDate,
+          purpose: emailPurpose,
           source: 'ecommerce',
           checkinDate: data.checkinDate,
           checkoutDate: data.checkoutDate,

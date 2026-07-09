@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# westend-payment-worker — wrangler.toml (ENTWURF v2.5.0, 08.07.2026)
+#
+# ⚠️ LIVE-Zahlungs-Engine. Erster `wrangler deploy` ersetzt Bindings VOLLSTÄNDIG.
+#    Secrets überleben, aber D1/KV/Service/Cron NUR wenn hier vollständig gelistet.
+#    (Lesson 08.07.: fehlende Bindings in der toml werden beim Deploy entfernt.)
+#    Vor dem ersten Deploy: diese Datei gegen das Dashboard 1:1 abgeglichen.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name = "westend-payment-worker"
+main = "westend-payment-worker.js"          # v2.5.0 — im Repo versioniert (Ende Quick-Edit-Ära 09.07.2026)
+# Verifiziert 09.07.2026 gegen Dashboard → Settings → Runtime (identisch zum Live-Wert,
+# keine stillen Runtime-Änderungen im Bug-Fix-Deploy).
+compatibility_date = "2026-03-13"
+
+# ── D1: Live-Zahlungs-DB ─────────────────────────────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "westend-bookings"
+database_id = "170c7443-0ee1-4188-825c-0be8c5816a4f"
+
+# ── KV: Altlast (aktuell ungenutzt im Code) — MUSS gelistet bleiben, ─────
+#    damit der Deploy sie nicht entfernt. Entfernung später als bewusster Schritt.
+[[kv_namespaces]]
+binding = "BOOKINGS"
+id = "8bcb742b292547c1a36a72e709b2eec6"
+
+# ── Service-Binding: PMS-Worker (email_log etc.) ─────────────────────
+#    Standard-Environment → ohne `environment`-Angabe.
+[[services]]
+binding = "PMS"
+service = "westend-pms-worker"
+
+# ── Observability: Workers-Logs — MUSS aktiv bleiben (war live an; wird u.a. ──
+#    für die HMAC-Log-Phase gebraucht). Ohne diesen Block hätte der Deploy sie
+#    still deaktiviert.
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+
+# ── Cron: Night-Job (01:00 UTC = 03:00 MESZ) ────────────────────────
+[triggers]
+crons = ["0 1 * * *"]
+
+# ── Nicht-geheime Variablen ─────────────────────────────────────────
+[vars]
+HMAC_MODE = "log"                                          # nach 2–3 Tagen sauberem Log → "enforce"
+ALLOWED_ORIGINS = "https://booking-hotelwestend.de"        # Gast-Origin für /session-CORS (komma-sep.; Staging-Origin ergänzen)
+# Gast-Link-Basis — decoupled vom Code-Deploy, damit die /pay-Umstellung EXAKT
+# mit der Pages-Migration (Schritt 4) aktiviert wird. Falls der Worker VOR der
+# Pages-Migration live geht und die Static-Site /pay noch nicht serviert, hier
+# übergangsweise auf ".../pay.html" bzw. ".../confirm.html" setzen und erst mit
+# Schritt 4 auf die extension-losen Pfade umstellen.
+GUEST_PAY_URL = "https://booking-hotelwestend.de/pay"
+GUEST_CONFIRM_URL = "https://booking-hotelwestend.de/confirm"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECRETS — NICHT hier eintragen. Via `wrangler secret put <NAME>` oder Dashboard.
+# Bestand (5, vorhanden):
+#   ADYEN_API_KEY
+#   ADYEN_CLIENT_KEY
+#   ADYEN_MERCHANT_ACCOUNT
+#   BREVO_API_KEY
+#   PMS_API_KEY
+# NEU (2, vor Deploy anlegen):
+#   PAYMENT_WORKER_API_KEY   # dediziertes Server-zu-Server-Secret (westendOS)
+#   ADYEN_HMAC_KEY           # hex, aus Adyen CA Webhook-Config
+# ─────────────────────────────────────────────────────────────────────────────
