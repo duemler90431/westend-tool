@@ -116,8 +116,15 @@
  */
 
 // ── Config ─────────────────────────────────────────────
-// LIVE: Adyen Live-Umgebung
-const ADYEN_BASE_URL = "https://55f5f21b555bf6d7-HotelWestendNuernberg-checkout-live.adyenpayments.com/checkout/v71";
+// Adyen Checkout-Base. LIVE-Default = Merchant-Prefix-Endpoint. Override via
+// [vars] ADYEN_BASE_URL (env). Live-toml setzt exakt diese URL (Selbstdoku);
+// Staging setzt die TEST-URL "https://checkout-test.adyen.com/v71" — ACHTUNG:
+// TEST hat KEINEN Merchant-Prefix und KEIN /checkout-Segment (vgl. CF-Error-11012-
+// Lesson: falscher Host/Prefix → 11012). env.ADYEN_BASE_URL gewinnt, sonst Fallback.
+const ADYEN_BASE_URL_DEFAULT = "https://55f5f21b555bf6d7-HotelWestendNuernberg-checkout-live.adyenpayments.com/checkout/v71";
+function adyenBase(env) {
+  return (env && env.ADYEN_BASE_URL) || ADYEN_BASE_URL_DEFAULT;
+}
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 const CORS_HEADERS = {
@@ -201,13 +208,18 @@ function authenticateCaller(request, env) {
 }
 
 // ── Helper: Adyen API Call ─────────────────────────────
-async function adyenRequest(url, apiKey, body) {
+async function adyenRequest(url, apiKey, body, idempotencyKey) {
+  const headers = {
+    "Content-Type": "application/json",
+    "X-API-Key": apiKey,
+  };
+  // Adyen-Idempotenz: gleicher Key → Adyen verarbeitet den Call nur EINMAL und
+  // liefert bei Wiederholung dasselbe Ergebnis (dedupliziert Doppel-Belastungen
+  // an der Quelle, unabhängig vom DB-Claim). Nur setzen, wenn übergeben.
+  if (idempotencyKey) headers["Idempotency-Key"] = idempotencyKey;
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": apiKey,
-    },
+    headers,
     body: JSON.stringify(body),
   });
   const data = await response.json();
@@ -406,7 +418,7 @@ async function handleCreateSession(request, env) {
   }
 
   const result = await adyenRequest(
-    `${ADYEN_BASE_URL}/sessions`,
+    `${adyenBase(env)}/sessions`,
     env.ADYEN_API_KEY,
     sessionPayload
   );
@@ -634,7 +646,7 @@ async function handleCharge(request, env) {
   );
 
   const result = await adyenRequest(
-    `${ADYEN_BASE_URL}/payments`,
+    `${adyenBase(env)}/payments`,
     env.ADYEN_API_KEY,
     paymentPayload
   );
@@ -705,10 +717,13 @@ async function handleChargeAmount(request, env) {
     reference
   );
 
+  // Idempotency-Key aus der (eindeutigen) Rechnungsreferenz → schützt vor
+  // Doppel-Belastung bei Doppelklick/Retry im Dashboard mit gleicher reference.
   const result = await adyenRequest(
-    `${ADYEN_BASE_URL}/payments`,
+    `${adyenBase(env)}/payments`,
     env.ADYEN_API_KEY,
-    paymentPayload
+    paymentPayload,
+    `manual-${bookingId}-${reference}`
   );
 
   const success = result.data.resultCode === "Authorised";
@@ -801,7 +816,7 @@ async function handlePaymentLink(request, env) {
   };
 
   const result = await adyenRequest(
-    `${ADYEN_BASE_URL}/paymentLinks`,
+    `${adyenBase(env)}/paymentLinks`,
     env.ADYEN_API_KEY,
     linkPayload
   );
@@ -1135,7 +1150,7 @@ async function handleRefund(bookingId, request, env) {
   };
 
   const result = await adyenRequest(
-    `${ADYEN_BASE_URL}/payments/${row.psp_reference}/refunds`,
+    `${adyenBase(env)}/payments/${row.psp_reference}/refunds`,
     env.ADYEN_API_KEY,
     refundPayload
   );
@@ -1440,39 +1455,59 @@ async function handleScheduled(event, env) {
 
   let charged = 0;
   let failed = 0;
+  let claim_lost = 0;   // Läufe, die den atomaren Claim verloren (paralleler/doppelter Cron)
 
   for (const booking of results || []) {
+    // ── Atomarer Claim VOR dem Adyen-Call — schließt das Race-Fenster ──
+    // Nur der Lauf, der 'pending'→'charging' schafft (changes=1), belastet.
+    // Ein zweiter/überlappender Cron (CF-Retry, Deploy-Übergang) sieht changes=0
+    // und überspringt → kein Doppel-Charge. Der Guard wandert damit vom stale
+    // SELECT in einen primary-seitigen bedingten Write (konsistent, race-frei).
+    // Hinweis: Bricht der Worker zwischen Claim und Abschluss ab, bleibt die
+    // Buchung in 'charging' hängen (NIE erneut belastet — sichere Fehlerseite;
+    // stale 'charging' ggf. per Monitor/manuell auf 'failed' zurücksetzen).
+    const claim = await env.DB.prepare(
+      "UPDATE bookings SET status='charging', updated_at=datetime('now') WHERE booking_id=? AND status='pending'"
+    ).bind(booking.booking_id).run();
+    if ((claim.meta?.changes || 0) !== 1) { claim_lost++; continue; }
+
     console.log(`Cron: Belaste ${booking.booking_id} – ${booking.amount} ${booking.currency}`);
 
-    const paymentPayload = buildMITPayload(
-      env.ADYEN_MERCHANT_ACCOUNT,
-      booking,
-      `${booking.booking_id}-charge`
-    );
+    const reference = `${booking.booking_id}-charge`;
+    const paymentPayload = buildMITPayload(env.ADYEN_MERCHANT_ACCOUNT, booking, reference);
+    // Deterministischer Idempotency-Key (booking+charge_date) → Adyen dedupliziert
+    // selbst, falls trotz Claim je zwei Calls durchkämen (Defense-in-Depth).
+    const idemKey = `cron-${booking.booking_id}-${booking.charge_date}`;
 
+    let resultCode = "ERROR", pspRef = null, refusal = null;
     try {
       const result = await adyenRequest(
-        `${ADYEN_BASE_URL}/payments`,
+        `${adyenBase(env)}/payments`,
         env.ADYEN_API_KEY,
-        paymentPayload
+        paymentPayload,
+        idemKey
       );
+      resultCode = result.data.resultCode || "ERROR";
+      pspRef = result.data.pspReference || null;
+      refusal = result.data.refusalReason || null;
 
-      if (result.data.resultCode === "Authorised") {
+      if (resultCode === "Authorised") {
         await env.DB.prepare(`
           UPDATE bookings SET status = 'charged', charged_at = datetime('now'),
             psp_reference = ?, updated_at = datetime('now')
           WHERE booking_id = ?
-        `).bind(result.data.pspReference, booking.booking_id).run();
+        `).bind(pspRef, booking.booking_id).run();
         charged++;
       } else {
         await env.DB.prepare(`
           UPDATE bookings SET status = 'failed',
             last_error = ?, updated_at = datetime('now')
           WHERE booking_id = ?
-        `).bind(result.data.refusalReason || result.data.resultCode, booking.booking_id).run();
+        `).bind(refusal || resultCode, booking.booking_id).run();
         failed++;
       }
     } catch (err) {
+      refusal = err.message;
       await env.DB.prepare(`
         UPDATE bookings SET status = 'failed',
           last_error = ?, updated_at = datetime('now')
@@ -1480,6 +1515,17 @@ async function handleScheduled(event, env) {
       `).bind(err.message, booking.booking_id).run();
       failed++;
     }
+
+    // ── GoBD-Audit-Trail AUCH für Cron-Belastungen (bisher nur /charge-amount) ──
+    // Der automatische Pfad bekommt die beste Spur, nicht die schwächste.
+    await env.DB.prepare(`
+      INSERT INTO charge_log
+        (booking_id, amount, currency, reference, psp_reference, result_code, refusal_reason, charged_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      booking.booking_id, booking.amount, booking.currency, reference,
+      pspRef, resultCode, refusal, 'cron'
+    ).run();
   }
 
   const expireResult = await env.DB.prepare(`
@@ -1495,7 +1541,7 @@ async function handleScheduled(event, env) {
     "SELECT COUNT(*) as cnt FROM bookings WHERE status NOT IN ('pending', 'pending_tokenization')"
   ).first()).cnt;
 
-  console.log(`Cron fertig: ${charged} belastet, ${failed} fehlgeschlagen, ${expired} expired, ${skipped} übersprungen`);
+  console.log(`Cron fertig: ${charged} belastet, ${failed} fehlgeschlagen, ${expired} expired, ${skipped} übersprungen, ${claim_lost} claim-verloren`);
 
   // ── Step 3: Automatische Erinnerungsmails ───────────
   // Kriterien: status pending_tokenization oder tokenization_failed,

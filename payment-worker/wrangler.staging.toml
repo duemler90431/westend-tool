@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# westend-payment-worker-STAGING — dedizierte Staging-Config (v2.5.0-Test)
+# KEIN Live-Recycling. Eigener Name, eigene D1 (westend-bookings-staging),
+# Adyen-TEST-Secrets (bereits am Worker), workers.dev AN als Test-Zugang.
+#
+# Deploy-Toolchain: installierte wrangler 4.74.0 (npx wrangler, OHNE @latest) —
+# gleiche Version wie der Live-Deploy heute.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name = "westend-payment-worker-staging"
+main = "westend-payment-worker.js"          # identischer v2.5.0-Code wie Live — nur andere Bindings/Env
+compatibility_date = "2026-03-13"            # Parität zum Live-v2.5.0 (gleiches Runtime-Verhalten testen)
+
+# workers.dev bewusst AN: Der Staging-Worker liegt NICHT hinter Access und ist
+# durch das API-Key-Gate geschützt. Der Test ruft ihn direkt über
+# westend-payment-worker-staging.dd-f19.workers.dev mit X-API-Key an (wie der Proxy).
+
+# ── D1: Staging-Zahlungs-DB ─────────────────────────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "westend-bookings-staging"
+database_id = "1ac4da04-50d5-4187-bd5d-7578c42b13b4"
+
+# ── KV: bewusst WEGGELASSEN — env.BOOKINGS wird im Code nicht genutzt (Altlast).
+#    Staging startet mit sauberer, minimaler Bindungsmenge.
+# ── Service-Binding PMS: bewusst WEGGELASSEN — env.PMS ist im Code guarded
+#    (Zeile 1337: `if (!env.PMS ...) return`), email_log wird fire-and-forget
+#    übersprungen. Kein Binden an den Live-PMS aus Staging heraus.
+
+# ── Observability: an (u.a. für die Cron-/Charge-Logs im Test) ──────
+[observability]
+enabled = true
+[observability.logs]
+enabled = true
+
+# ── Cron: gleiche Definition wie Live; im Test via `wrangler dev --remote
+#    --test-scheduled` + /__scheduled manuell getriggert. ──
+[triggers]
+crons = ["0 1 * * *"]
+
+# ── Nicht-geheime Variablen (Staging-Werte) ─────────────────────────
+[vars]
+HMAC_MODE = "log"                                                    # Webhook nicht im Testfokus
+# Adyen-TEST-Checkout-Base: KEIN Merchant-Prefix, KEIN /checkout-Segment (anders als Live).
+ADYEN_BASE_URL = "https://checkout-test.adyen.com/v71"
+ALLOWED_ORIGINS = "https://westend-payment-worker-staging.dd-f19.workers.dev"
+GUEST_PAY_URL = "https://westend-payment-worker-staging.dd-f19.workers.dev/pay"
+GUEST_CONFIRM_URL = "https://westend-payment-worker-staging.dd-f19.workers.dev/confirm"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECRETS am Staging-Worker:
+#   Vorhanden (4): ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT, BREVO_API_KEY  (Adyen-TEST)
+#   NEU vor dem Test zu setzen (1): PAYMENT_WORKER_API_KEY  (Gate für /charge-amount-Test)
+#   NICHT nötig für den Test: ADYEN_HMAC_KEY (HMAC_MODE=log), PMS_API_KEY (keine Grace-Tests)
+# ─────────────────────────────────────────────────────────────────────────────

@@ -47,6 +47,9 @@ crons = ["0 1 * * *"]
 # ── Nicht-geheime Variablen ─────────────────────────────────────────
 [vars]
 HMAC_MODE = "log"                                          # nach 2–3 Tagen sauberem Log → "enforce"
+# Adyen Checkout-Base explizit (Selbstdoku). Identisch zum Code-Default → Live-
+# Verhalten unverändert. Nachziehen beim nächsten Live-Deploy (mit HMAC-enforce).
+ADYEN_BASE_URL = "https://55f5f21b555bf6d7-HotelWestendNuernberg-checkout-live.adyenpayments.com/checkout/v71"
 ALLOWED_ORIGINS = "https://booking-hotelwestend.de"        # Gast-Origin für /session-CORS (komma-sep.; Staging-Origin ergänzen)
 # Gast-Link-Basis — decoupled vom Code-Deploy, damit die /pay-Umstellung EXAKT
 # mit der Pages-Migration (Schritt 4) aktiviert wird. Falls der Worker VOR der
