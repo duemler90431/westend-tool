@@ -1220,7 +1220,7 @@ function buildReminderEmail(booking, payURL, isFailed = false) {
 
   <tr>
     <td style="background:#3B4547;padding:28px 24px 22px;text-align:center;">
-      <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:38px;display:block;margin:0 auto 8px;">
+      <img src="https://duemler90431.github.io/westend-tool/public/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:38px;display:block;margin:0 auto 8px;">
       <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2.5px;">N&#220;RNBERG &#183; KARL-MARTELL-STR. 42&#8211;44</div>
     </td>
   </tr>
@@ -1304,7 +1304,7 @@ function buildReminderEmail(booking, payURL, isFailed = false) {
 
   <tr>
     <td style="background:#3B4547;padding:20px 24px;text-align:center;">
-      <img src="https://duemler90431.github.io/westend-tool/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:28px;display:block;margin:0 auto 10px;">
+      <img src="https://duemler90431.github.io/westend-tool/public/wh-logo_weiss_transparent.png" alt="westendhotel" style="height:28px;display:block;margin:0 auto 10px;">
       <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.8;">
         Karl-Martell-Str. 42&#8211;44 &#183; 90431 N&#252;rnberg<br>
         Tel: +49 911 93986-0 &#183; info&#64;hotelwestend.de<br>
