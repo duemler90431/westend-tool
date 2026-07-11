@@ -1,12 +1,28 @@
 /**
- /**
- * westend-payment-worker v2.5.0
+ * westend-payment-worker v2.5.1
  * Cloudflare Worker für tokenisierte Kreditkartenzahlungen
  * westendhotel Nürnberg – MORE Hospitality GmbH
  *
  * ⚠️ LIVE-VERSION
  *
  * BACKEND: Cloudflare D1 (SQL)
+ *
+ * CHANGELOG v2.5.1 (11.07.2026) – Härtungen aus dem Staging-Adyen-TEST-Testplan (v2.5.0-Verifikation).
+ *   Live-Verhalten unverändert; Deploy fährt den v2.5.0-Code mit diesen Fixes nach.
+ *   - ENV: ADYEN_BASE_URL env-fähig — const ADYEN_BASE_URL_DEFAULT (Live-Prefix) +
+ *     adyenBase(env); env.ADYEN_BASE_URL gewinnt an allen 6 Call-Sites. Live-toml
+ *     setzt die Live-URL (= Default, kein Verhaltenswechsel), Staging-toml die
+ *     TEST-URL (checkout-test.adyen.com/v71). Ohne die Trennung schickte der
+ *     Staging-Worker (TEST-Key) an den LIVE-Endpoint → kein testbarer Charge.
+ *   - FIX (Race): Cron-Doppel-Charge gefixt (im Staging-Test entdeckt). Atomarer
+ *     Claim VOR dem Adyen-Call: UPDATE ... SET status='charging' WHERE status='pending';
+ *     nur changes=1 belastet, paralleler/doppelter Cron sieht changes=0 → skip.
+ *     Zusätzlich deterministischer Adyen-Idempotency-Key (cron-<booking>-<charge_date>,
+ *     Defense-in-Depth) + Zähler claim_lost im Cron-Summary. Bewiesen: 2 Trigger → 1 Charge.
+ *   - AUDIT: GoBD-Audit-Trail auch für Cron-Belastungen (charge_log-Insert im Cron).
+ *   - LOG: Webhook schreibt bei gültiger Signatur eine explizite Erfolgszeile
+ *     ("Webhook HMAC ok ...") mit merchantReference + pspReference → positiver
+ *     HMAC-Nachweis direkt ablesbar (statt nur über Abwesenheit der Fehlerzeile).
  *
  * CHANGELOG v2.5.0 (08.07.2026) – Zweck-Trennung, Reminder-Staffel, Security, westendOS-Integration:
  *   - FIX (Bug): Garantiekarten wurden vom Cron am Check-in automatisch belastet.
@@ -901,6 +917,10 @@ async function handleWebhook(request, env) {
         return new Response("[unauthorized]", { status: 401, headers: { "Content-Type": "text/plain" } });
       }
       // log-Modus: bewusst weiterverarbeiten (nur protokolliert)
+    } else {
+      // v2.5.1: expliziter Positiv-Nachweis — HMAC-ok direkt ablesbar (statt nur
+      // über Abwesenheit der Fehlerzeile). Gate-Signal für HMAC_MODE 'log'→'enforce'.
+      console.log(`Webhook HMAC ok (ref=${notification.merchantReference || "?"}, event=${notification.eventCode || "?"}, psp=${notification.pspReference || "?"}, mode=${hmacMode})`);
     }
 
     const { eventCode, success, merchantReference, pspReference, additionalData, amount } = notification;
