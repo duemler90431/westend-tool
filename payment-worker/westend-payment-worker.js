@@ -1,11 +1,19 @@
 /**
- * westend-payment-worker v2.5.1
+ * westend-payment-worker v2.5.2
  * Cloudflare Worker für tokenisierte Kreditkartenzahlungen
  * westendhotel Nürnberg – MORE Hospitality GmbH
  *
  * ⚠️ LIVE-VERSION
  *
  * BACKEND: Cloudflare D1 (SQL)
+ *
+ * CHANGELOG v2.5.2 (14.07.2026) – MOTO-Session-Fix (Regression seit v2.5.0):
+ *   - FIX: /session verlangte chargeDate für ALLE Sessions
+ *     (`if (!guestName || !chargeAmount || !chargeDate)`), aber die v2.5-Zweck-
+ *     Trennung sendet für purpose='guarantee' bewusst chargeDate=null → MOTO-
+ *     Garantiekarten liefen auf 400, der Drop-in blieb leer. NEU: Validierung
+ *     zweck-basiert — guarantee braucht nur guestName+chargeAmount; nur
+ *     charge_scheduled (MOTO now/later, Gast-/PayByLink-Flows) braucht chargeDate.
  *
  * CHANGELOG v2.5.1 (11.07.2026) – Härtungen aus dem Staging-Adyen-TEST-Testplan (v2.5.0-Verifikation).
  *   Live-Verhalten unverändert; Deploy fährt den v2.5.0-Code mit diesen Fixes nach.
@@ -399,8 +407,13 @@ async function handleCreateSession(request, env) {
   const finalPurpose = (purpose === 'charge_scheduled' || purpose === 'guarantee') ? purpose : 'guarantee';
   const finalChargeDate = (finalPurpose === 'charge_scheduled') ? (chargeDate || null) : null;
 
-  if (!guestName || !chargeAmount || !chargeDate) {
-    return errorResponse("guestName, chargeAmount und chargeDate sind erforderlich");
+  // v2.5.2: Validierung zweck-basiert statt Feld-Existenz. guarantee hat per Design
+  // KEIN Belastungsdatum (v2.5-Zweck-Trennung); nur charge_scheduled braucht chargeDate.
+  if (!guestName || !chargeAmount) {
+    return errorResponse("guestName und chargeAmount sind erforderlich");
+  }
+  if (finalPurpose === 'charge_scheduled' && !finalChargeDate) {
+    return errorResponse("chargeDate ist bei geplanter Belastung (charge_scheduled) erforderlich");
   }
 
   const finalBookingId = bookingId || generateBookingId();

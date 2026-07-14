@@ -6,13 +6,21 @@
   <title>westendhotel – MOTO Kreditkarte</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Adyen Web Drop-in v5 (loaded dynamically from config.js) -->
+  <!-- Adyen Web Drop-in v5 (CSS via <link>, JS via createElement im Loader unten) -->
   <link id="adyen-css" rel="stylesheet" href="">
-  <script id="adyen-js" src=""></script>
   <script>const CONFIG={env:"live",workerURL:"https://westend-payment-worker.dd-f19.workers.dev",brevoProxyURL:"https://westend-brevo-proxy.dd-f19.workers.dev",adyenEnv:"live",adyenSDK:"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.65.0",payBaseURL:"https://booking-hotelwestend.de/pay"};</script>
   <script>
+    // adyen.css: href am vorhandenen <link> nachsetzen lädt zuverlässig.
     document.getElementById('adyen-css').href = CONFIG.adyenSDK + '/adyen.css';
-    document.getElementById('adyen-js').src = CONFIG.adyenSDK + '/adyen.js';
+    // adyen.js: NICHT über <script src=""> + nachträgliches .src laden — ein beim
+    // Parsen mit (leerem) src gesehenes <script> ist "already started", spätere
+    // .src-Zuweisung löst KEIN Laden mehr aus (HTML-Spec) → SDK fehlt, AdyenCheckout
+    // undefined, Drop-in bleibt leer. Deshalb ein frisches Script-Element einhängen:
+    (function () {
+      var s = document.createElement('script');
+      s.src = CONFIG.adyenSDK + '/adyen.js';
+      document.head.appendChild(s);
+    })();
   </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -722,11 +730,15 @@
         }),
       });
 
-      const session = await res.json();
+      const session = await res.json().catch(() => ({}));
 
-      if (session.error) {
+      // Session-Fehler NIE still schlucken: sichtbar anzeigen (Text aus der Worker-
+      // Response) + in die Konsole. status.display zurücksetzen, da oben ggf. 'none'.
+      if (!res.ok || session.error) {
+        status.style.display = '';
         status.className = 'status show error';
-        status.innerHTML = `<h4>Fehler</h4><p>${session.error}</p>`;
+        status.innerHTML = `<h4>Fehler bei der Session-Erstellung</h4><p>${session.error || (res.status + ' ' + res.statusText)}</p>`;
+        console.error('MOTO /session fehlgeschlagen:', res.status, session);
         return;
       }
 
@@ -849,10 +861,15 @@
         },
       };
 
+      if (typeof AdyenCheckout === 'undefined') {
+        throw new Error('Adyen-SDK (adyen.js) nicht geladen – bitte Seite neu laden.');
+      }
       const checkout = await AdyenCheckout(configuration);
       checkout.create('dropin').mount('#dropin-container');
 
     } catch (err) {
+      console.error('MOTO Drop-in-Init fehlgeschlagen:', err);
+      status.style.display = '';
       status.className = 'status show error';
       status.innerHTML = `<h4>Verbindungsfehler</h4><p>${err.message}</p>`;
     }
