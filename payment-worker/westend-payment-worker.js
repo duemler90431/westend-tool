@@ -304,6 +304,36 @@ function buildMITPayloadWithAmount(merchantAccount, booking, amountCents, curren
   };
 }
 
+// ── Helper: OTA-Kanal → Kürzel + Charge-Reference (v2.6.0 vCC) ─────────
+// vCC-Abrechnungen (source='moto_vcc') tragen die OTA-Buchungsnummer in die
+// Adyen-Reference, damit Zahlungsabgleich + DATEV die Spur bis zur OTA-Buchung
+// zurückverfolgen. Konvention: {KANAL}-{otaRef}-{bookingId} — die bookingId hält
+// die Reference bei Mehrfach-Charges derselben OTA-Buchung eindeutig.
+const OTA_CHANNEL_CODES = {
+  "booking.com": "BDC",
+  "booking": "BDC",
+  "expedia": "EXP",
+  "hrs": "HRS",
+  "conferma": "CNF",
+  "travelperk": "TVP",
+};
+function channelCode(channel) {
+  if (!channel) return "OTA";
+  return OTA_CHANNEL_CODES[String(channel).trim().toLowerCase()] || "OTA";
+}
+// Adyen-Reference erlaubt begrenzten Zeichensatz (alnum . _ -), max 80 Zeichen.
+// Wir säubern die frei erfassbare OTA-Nummer und deckeln sie defensiv.
+function sanitizeRefPart(s) {
+  return String(s || "").replace(/[^A-Za-z0-9._-]/g, "").slice(0, 40);
+}
+function buildChargeReference(booking) {
+  if (booking.ota_ref) {
+    return `${channelCode(booking.ota_channel)}-${sanitizeRefPart(booking.ota_ref)}-${booking.booking_id}`;
+  }
+  // Default-Konvention unverändert (Nicht-vCC-Buchungen).
+  return `${booking.booking_id}-charge`;
+}
+
 // ── Helper: Server-Auth-Check (v2.5.0 vereinheitlicht) ─────────────────
 // Früher: X-PMS-API-Key == PMS_API_KEY. Abgelöst, weil PMS_API_KEY im
 // westendOS-Frontend (pms-common.js) browser-exponiert ist und als Gate
@@ -400,6 +430,10 @@ async function handleCreateSession(request, env) {
     // v2.5.0: Karten-Zweck + westendOS-Referenz
     purpose,
     reservationId,
+    // v2.6.0: vCC-Abrechnung — OTA-Kanal + Kanal-Buchungsnummer + Notiz (moto_vcc)
+    otaChannel,
+    otaRef,
+    otaNote,
   } = body;
 
   // v2.5.0: Zweck explizit; Default konservativ = 'guarantee' (nie Auto-Charge).
@@ -471,9 +505,11 @@ async function handleCreateSession(request, env) {
     await env.DB.prepare(`
       UPDATE bookings SET adyen_session_id = ?, shopper_reference = ?,
         purpose = ?, charge_date = ?, reservation_id = COALESCE(?, reservation_id),
+        ota_channel = COALESCE(?, ota_channel), ota_ref = COALESCE(?, ota_ref),
+        ota_note = COALESCE(?, ota_note),
         status = 'pending_tokenization', updated_at = datetime('now')
       WHERE booking_id = ?
-    `).bind(result.data.id, shopperReference, finalPurpose, finalChargeDate, reservationId || null, finalBookingId).run();
+    `).bind(result.data.id, shopperReference, finalPurpose, finalChargeDate, reservationId || null, otaChannel || null, otaRef || null, otaNote || null, finalBookingId).run();
   } else {
     // Neue Buchung erstellen
     await env.DB.prepare(`
@@ -484,8 +520,8 @@ async function handleCreateSession(request, env) {
         shopper_reference, adyen_session_id,
         rate_type, storno_typ,
         r_name, r_strasse, r_plzort, r_zusatz,
-        purpose, reservation_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        purpose, reservation_id, ota_channel, ota_ref, ota_note
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       finalBookingId,
       guestName,
@@ -510,7 +546,10 @@ async function handleCreateSession(request, env) {
       rPlzort || "",
       rZusatz || "",
       finalPurpose,
-      reservationId || null
+      reservationId || null,
+      otaChannel || null,
+      otaRef || null,
+      otaNote || null
     ).run();
   }
 
@@ -671,7 +710,7 @@ async function handleCharge(request, env) {
   const paymentPayload = buildMITPayload(
     env.ADYEN_MERCHANT_ACCOUNT,
     row,
-    `${row.booking_id}-charge`
+    buildChargeReference(row)
   );
 
   const result = await adyenRequest(
@@ -687,6 +726,9 @@ async function handleCharge(request, env) {
       WHERE booking_id = ?
     `).bind(result.data.pspReference, bookingId).run();
 
+    // v2.6.0: Charge-Ergebnis an info@ (nur MOTO/vCC; fire-and-forget)
+    await notifyChargeResult(env, row, { ok: true, pspReference: result.data.pspReference, trigger: "immediate" });
+
     return jsonResponse({
       success: true, bookingId,
       pspReference: result.data.pspReference,
@@ -698,6 +740,12 @@ async function handleCharge(request, env) {
       UPDATE bookings SET status = 'failed', last_error = ?, updated_at = datetime('now')
       WHERE booking_id = ?
     `).bind(result.data.resultCode, bookingId).run();
+
+    // v2.6.0: Fehlschlag NIE lautlos — Benachrichtigung an info@ (nur MOTO/vCC)
+    await notifyChargeResult(env, row, {
+      ok: false, resultCode: result.data.resultCode,
+      refusalReason: result.data.refusalReason, trigger: "immediate",
+    });
 
     return jsonResponse({
       success: false, bookingId,
@@ -1378,6 +1426,93 @@ async function sendReminderViaBrevo(booking, payURL, isFailed, apiKey) {
   };
 }
 
+// ── Helper: Charge-Ergebnis-Benachrichtigung an info@ (v2.6.0) ─────────
+// Übergangszeit, solange Ibelsa fakturiert: JEDER MOTO-/vCC-Charge (Sofort ODER
+// Cron) meldet sein Ergebnis an info@hotelwestend.de. Fehlschläge NIE lautlos.
+// Gilt NUR für source ∈ {moto, moto_vcc}; PMS-initiierte Charges (invoices-Kette)
+// verbuchen automatisch im PMS und werden dort sichtbar → keine Doppel-Mail.
+// Fire-and-forget: wirft nie, verzögert den Charge-Abschluss nicht messbar.
+// Retry-Vertrag: pro Charge-VERSUCH genau eine Mail. Ein fehlgeschlagener Charge
+// endet terminal auf status='failed' (Cron selektiert nur status='pending') →
+// KEIN automatischer erneuter Versuch, KEINE tägliche Mail-Flut.
+const CHARGE_NOTIFY_TO = "info@hotelwestend.de";
+function chargeNotifyHtml({ title, accent, rows, hint }) {
+  const trs = rows.map(([k, v]) =>
+    `<tr><td style="padding:8px 14px;font-size:12px;color:#888;border-bottom:1px solid #F0EDE8;white-space:nowrap;">${k}</td>
+         <td style="padding:8px 14px;font-size:13px;font-weight:600;color:#3B4547;border-bottom:1px solid #F0EDE8;">${v}</td></tr>`
+  ).join("");
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="font-family:Arial,Helvetica,sans-serif;background:#EEECEA;margin:0;padding:20px;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;">
+  <tr><td style="background:${accent};padding:16px 20px;">
+    <span style="font-size:15px;font-weight:bold;color:#fff;">${title}</span>
+  </td></tr>
+  <tr><td style="padding:8px 6px;">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">${trs}</table>
+  </td></tr>
+  <tr><td style="padding:14px 20px;">
+    <div style="border-left:3px solid ${accent};background:#FAFAF8;border:1px solid #E0DDD6;border-radius:8px;padding:12px 14px;font-size:13px;color:#3B4547;line-height:1.5;">
+      <strong>➜ ${hint}</strong>
+    </div>
+  </td></tr>
+  <tr><td style="padding:10px 20px 18px;font-size:11px;color:#aaa;">westendhotel Payment-Worker · automatische Charge-Benachrichtigung (Übergangszeit)</td></tr>
+</table></body></html>`;
+}
+async function notifyChargeResult(env, booking, outcome) {
+  // outcome: { ok, pspReference?, refusalReason?, resultCode?, trigger: 'immediate'|'cron' }
+  if (!booking || !["moto", "moto_vcc"].includes(booking.source)) return;
+  if (!env.BREVO_API_KEY) { console.warn("notifyChargeResult: kein BREVO_API_KEY – skip"); return; }
+
+  const betrag = ((booking.amount || 0) / 100).toLocaleString("de-DE", { minimumFractionDigits: 2 }) + " €";
+  const guest = booking.guest_name || "–";
+  const otaTag = booking.ota_ref ? `${channelCode(booking.ota_channel)}-${booking.ota_ref}` : booking.booking_id;
+  const otaCell = booking.ota_ref ? `${booking.ota_channel || "–"} · ${booking.ota_ref}` : "– (keine vCC)";
+  const pfad = outcome.trigger === "cron" ? "Cron (geplant am charge_date)" : "Sofort-Belastung";
+  const when = new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC";
+
+  let subject, html;
+  if (outcome.ok) {
+    subject = `Zahlung eingegangen: ${betrag} — ${guest} (${otaTag})`;
+    html = chargeNotifyHtml({
+      title: "✅ Zahlung eingegangen", accent: "#2D7A3E",
+      rows: [
+        ["Betrag", betrag], ["Gast", guest], ["Kanal / OTA-Referenz", otaCell],
+        ["Buchung", booking.booking_id], ["Adyen-Reference", buildChargeReference(booking)],
+        ["pspReference", outcome.pspReference || "–"],
+        ["Belastungsdatum", booking.charge_date || when.slice(0, 10)], ["Pfad", pfad],
+      ],
+      hint: "In Ibelsa als bezahlt verbuchen (Zahlweg Adyen).",
+    });
+  } else {
+    subject = `⚠ Zahlung FEHLGESCHLAGEN: ${betrag} — ${guest} (${otaTag})`;
+    html = chargeNotifyHtml({
+      title: "⚠ Zahlung FEHLGESCHLAGEN", accent: "#A32D2D",
+      rows: [
+        ["Betrag", betrag], ["Gast", guest], ["Kanal / OTA-Referenz", otaCell],
+        ["Buchung", booking.booking_id],
+        ["Ablehnungsgrund", outcome.refusalReason || outcome.resultCode || "Unbekannt"],
+        ["Versuch", when], ["Pfad", pfad],
+      ],
+      hint: "vCC im Extranet/Portal prüfen (Deckung, Aktivierungsdatum, Gültigkeit) und ggf. neue vCC-Abrechnung mit korrigiertem Belastungsdatum planen. Diese Buchung wird NICHT automatisch erneut belastet (Endzustand: failed).",
+    });
+  }
+
+  try {
+    const res = await fetch(BREVO_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "api-key": env.BREVO_API_KEY },
+      body: JSON.stringify({
+        sender: { name: "westendhotel Payment", email: "info@hotelwestend.de" },
+        to: [{ email: CHARGE_NOTIFY_TO, name: "westendhotel Rezeption" }],
+        subject, htmlContent: html,
+      }),
+    });
+    console.log(`notifyChargeResult ${booking.booking_id} (${outcome.ok ? "ok" : "fail"}): Brevo ${res.status}`);
+  } catch (err) {
+    console.warn(`notifyChargeResult ${booking.booking_id} fehlgeschlagen: ${err.message}`);
+  }
+}
+
 // ── Helper: Log Email to PMS email_log (v2.4) ─────────────
 // Fire-and-forget via Service Binding. Fehler blockieren den Mailversand nicht.
 async function logEmailToPMS(env, payload) {
@@ -1471,6 +1606,31 @@ async function handleSendReminder(bookingId, env) {
   }
 }
 
+// ── GET /reservations/lookup (v2.6.0 vCC) ──────────────────────────────
+// Schlanker Passthrough zum PMS-Worker für die vCC-Reservierungssuche.
+// Kette: moto.html → tool-proxy (/api) → hier → env.PMS (Service Binding) → PMS.
+// Auth: der Router hat den Server-Key bereits geprüft (Zugriff nur über den
+// Proxy hinter CF Access, Variante A). Zum PMS reichen wir X-PMS-API-Key durch
+// (dortiges checkAuth); die Query-String-Parameter werden 1:1 weitergeleitet.
+async function handleReservationLookup(request, env, url) {
+  if (!env.PMS || typeof env.PMS.fetch !== "function") {
+    return errorResponse("PMS-Service-Binding nicht konfiguriert", 503);
+  }
+  try {
+    const res = await env.PMS.fetch(
+      `https://pms-internal/api/reservations/lookup${url.search || ""}`,
+      { method: "GET", headers: { "X-PMS-API-Key": env.PMS_API_KEY || "" } }
+    );
+    const bodyText = await res.text();
+    return new Response(bodyText, {
+      status: res.status,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    return errorResponse(`PMS-Lookup fehlgeschlagen: ${err.message}`, 502);
+  }
+}
+
 // ── Cron Trigger ───────────────────────────────────────
 async function handleScheduled(event, env) {
   console.log("Cron: Prüfe fällige Zahlungen...");
@@ -1506,7 +1666,7 @@ async function handleScheduled(event, env) {
 
     console.log(`Cron: Belaste ${booking.booking_id} – ${booking.amount} ${booking.currency}`);
 
-    const reference = `${booking.booking_id}-charge`;
+    const reference = buildChargeReference(booking);
     const paymentPayload = buildMITPayload(env.ADYEN_MERCHANT_ACCOUNT, booking, reference);
     // Deterministischer Idempotency-Key (booking+charge_date) → Adyen dedupliziert
     // selbst, falls trotz Claim je zwei Calls durchkämen (Defense-in-Depth).
@@ -1559,6 +1719,13 @@ async function handleScheduled(event, env) {
       booking.booking_id, booking.amount, booking.currency, reference,
       pspRef, resultCode, refusal, 'cron'
     ).run();
+
+    // v2.6.0: Charge-Ergebnis an info@ (nur MOTO/vCC; fire-and-forget, genau 1 Mail
+    // pro Versuch). Erfolg wie Fehlschlag; failed ist terminal (kein Auto-Retry).
+    await notifyChargeResult(env, booking, {
+      ok: resultCode === "Authorised",
+      pspReference: pspRef, resultCode, refusalReason: refusal, trigger: "cron",
+    });
   }
 
   const expireResult = await env.DB.prepare(`
@@ -1716,6 +1883,7 @@ export default {
       if (method === "POST" && path === "/webhook") return handleWebhook(request, env);
       if (method === "POST" && path === "/bookings/from-offer") return handleCreateFromOffer(request, env);
       if (method === "GET" && path === "/bookings") return handleGetBookings(env, url);
+      if (method === "GET" && path === "/reservations/lookup") return handleReservationLookup(request, env, url);
 
       const tokenMatch = path.match(/^\/booking-token\/([^/]+)$/);
       if (tokenMatch && method === "GET") {
@@ -1745,7 +1913,7 @@ export default {
           service: "westend-payment-worker",
           environment: "LIVE",
           status: "ok",
-          version: "2.5.0",
+          version: "2.6.0",
           backend: "D1",
           adyen: "LIVE",
           timestamp: new Date().toISOString(),

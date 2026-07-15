@@ -269,6 +269,57 @@
       line-height: 1.4;
     }
 
+    /* ── Mode Switch (v2.6 vCC) ─────────────── */
+    .mode-switch {
+      display: inline-flex;
+      background: #EDEBE6;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+    .mode-switch button {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 22px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-switch button.active {
+      background: var(--white);
+      color: var(--petrol);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* ── vCC Lookup Results ─────────────────── */
+    .lookup-result {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .lookup-result:hover { border-color: var(--petrol); background: var(--petrol-pale); }
+    .lookup-result.out { opacity: 0.55; background: #F7F6F3; }
+    .lookup-result.out:hover { opacity: 0.8; border-color: var(--border); background: #F7F6F3; }
+    .lookup-result .lr-outtag { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--warning); background:var(--warning-bg); padding:1px 6px; border-radius:4px; margin-right:6px; }
+    .lookup-result .lr-main { font-size: 13px; font-weight: 600; color: var(--text); }
+    .lookup-result .lr-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .lookup-result .lr-amount { font-size: 11px; color: var(--text-muted); white-space: nowrap; text-align: right; }
+    .lookup-empty { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+    .vcc-badge { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6B4FA0; background:#efeaf7; padding:2px 8px; border-radius:4px; vertical-align:middle; margin-left:6px; }
+
     /* ── MOTO Section ───────────────────────── */
     #moto-section, #email-section {
       display: none;
@@ -408,6 +459,15 @@
 
 <div class="main">
 
+  <!-- ── Modus-Umschalter (v2.6 vCC) ─────────── -->
+  <div class="mode-switch">
+    <button id="mode-btn-guest" class="active" onclick="switchMode('guest')">Gast-Buchung</button>
+    <button id="mode-btn-vcc" onclick="switchMode('vcc')">vCC-Abrechnung</button>
+  </div>
+
+  <!-- ══ MODUS: GAST-BUCHUNG (unverändert) ══════════════════════════ -->
+  <div id="mode-guest">
+
   <!-- ── Buchungsdaten ──────────────────────── -->
   <div class="card">
     <div class="card-header">
@@ -530,7 +590,88 @@
     </div>
   </div>
 
-  <!-- ── MOTO: Adyen Drop-in ────────────────── -->
+  </div><!-- /#mode-guest -->
+
+  <!-- ══ MODUS: vCC-ABRECHNUNG (v2.6) ═══════════════════════════════ -->
+  <div id="mode-vcc" style="display:none;">
+
+    <!-- ── Reservierung suchen (optional) ────── -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Reservierung suchen <span style="font-weight:400;color:var(--text-muted);font-size:12px;">(optional)</span></h2>
+        <p>Gastname, Firma/Besteller oder interne Nummer — übernimmt Gastname &amp; Zeitraum. Betrag bitte von der vCC abtippen.</p>
+      </div>
+      <div class="card-body">
+        <div class="form-row" style="grid-template-columns: 2fr 1fr auto; margin-bottom:0; align-items:end;">
+          <div class="field">
+            <label>Suche</label>
+            <input type="text" id="vccSearch" placeholder="z. B. Gunkel · ERGO Group · WH-IBE-… · IBE-12521" onkeydown="if(event.key==='Enter'){event.preventDefault();vccDoLookup();}">
+          </div>
+          <div class="field">
+            <label>Anreise am (optional, ±Fenster)</label>
+            <input type="date" id="vccSearchFrom">
+          </div>
+          <div class="field">
+            <button class="btn" style="background:var(--petrol);color:#fff;height:38px;" onclick="vccDoLookup()">Suchen</button>
+          </div>
+        </div>
+        <div id="vccLookupResults"></div>
+      </div>
+    </div>
+
+    <!-- ── vCC-Daten ─────────────────────────── -->
+    <div class="card">
+      <div class="card-header">
+        <h2>1 · vCC-Daten <span class="vcc-badge">virtuelle Kreditkarte</span></h2>
+        <p>Betrag von der vCC abtippen — er weicht wegen Kommission vom Reservierungs-Total ab.</p>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="field">
+            <label>Kanal <span class="req">*</span></label>
+            <select id="vccChannel" onchange="vccToggleChannelOther()"></select>
+          </div>
+          <div class="field" id="vccChannelOtherWrap" style="display:none;">
+            <label>Kanal (Freitext) <span class="req">*</span></label>
+            <input type="text" id="vccChannelOther" placeholder="Kanalname">
+          </div>
+          <div class="field">
+            <label>Kanal-/OTA-Buchungsnummer <span class="req">*</span></label>
+            <input type="text" id="vccRef" placeholder="z. B. 1234567890">
+          </div>
+        </div>
+
+        <div class="form-row three">
+          <div class="field">
+            <label>Gastname <span class="req">*</span></label>
+            <input type="text" id="vccGuestName" placeholder="Vor- und Nachname">
+          </div>
+          <div class="field">
+            <label>Betrag (EUR) <span class="req">*</span></label>
+            <input type="text" inputmode="decimal" id="vccAmount" placeholder="0,00" onblur="vccFormatAmount()">
+          </div>
+          <div class="field">
+            <label>Belastungsdatum <span class="req">*</span></label>
+            <input type="date" id="vccChargeDate">
+          </div>
+        </div>
+
+        <div class="form-row single">
+          <div class="field">
+            <label>Notiz (optional)</label>
+            <input type="text" id="vccNote" placeholder="interne Notiz">
+          </div>
+        </div>
+
+        <div id="vccResInfo" style="display:none;font-size:12px;color:var(--text-muted);background:#FAFAF8;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:2px 0 16px;"></div>
+
+        <button class="btn-action btn-moto" onclick="initVccSession()">💳 vCC-Karte aufnehmen &amp; Belastung planen</button>
+      </div>
+    </div>
+
+  </div><!-- /#mode-vcc -->
+
+  <!-- ── MOTO: Adyen Drop-in (geteilt: Gast + vCC) ── -->
   <div class="card" id="moto-section">
     <div class="card-header">
       <h2>3 · Kreditkarte eingeben</h2>
@@ -588,6 +729,12 @@
   let selectedStorno = "regulaer";
   let currentBookingId = null;
   let chargeImmediately = false;
+
+  // ── v2.6 vCC-Abrechnung ─────────────────────
+  let currentMode = 'guest';               // 'guest' | 'vcc'
+  let vccReservationId = null;             // gesetzt bei Treffer-Übernahme (sonst null)
+  // v1: Kanalliste als Konstante (Settings-Nachzug siehe docs/05). „Sonstige" → Freitext.
+  const VCC_CHANNELS = ['Booking.com', 'Expedia', 'HRS', 'Conferma', 'TravelPerk', 'Sonstige'];
 
   // ── Storno Selection ────────────────────────
   function selectStorno(el, value) {
@@ -1112,6 +1259,308 @@
 </body></html>`;
   }
 
+  // ══ v2.6 vCC-Abrechnung ═══════════════════════════════════════════
+  // ── Modus-Umschalter ────────────────────────
+  function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode-btn-guest').classList.toggle('active', mode === 'guest');
+    document.getElementById('mode-btn-vcc').classList.toggle('active', mode === 'vcc');
+    document.getElementById('mode-guest').style.display = mode === 'guest' ? 'block' : 'none';
+    document.getElementById('mode-vcc').style.display = mode === 'vcc' ? 'block' : 'none';
+
+    // Geteilte/gast-spezifische Abschnitte beim Wechsel zurücksetzen
+    document.getElementById('moto-section').style.display = 'none';
+    document.getElementById('email-section').style.display = 'none';
+    document.getElementById('dropin-container').innerHTML = '';
+    const ms = document.getElementById('moto-status');
+    ms.className = 'status'; ms.innerHTML = '';
+    // Aktions-Auswahl (Gast-Modus) neutralisieren, damit ein späterer Rückwechsel sauber ist
+    document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
+    selectedAction = null;
+
+    if (mode === 'vcc' && !document.getElementById('vccChargeDate').value) {
+      document.getElementById('vccChargeDate').value = new Date().toISOString().split('T')[0];
+    }
+  }
+
+  // ── Kanal-Dropdown ──────────────────────────
+  function vccPopulateChannels() {
+    const sel = document.getElementById('vccChannel');
+    sel.innerHTML = VCC_CHANNELS.map(c => `<option value="${c}">${c}</option>`).join('');
+    vccToggleChannelOther();
+  }
+  function vccToggleChannelOther() {
+    const isOther = document.getElementById('vccChannel').value === 'Sonstige';
+    document.getElementById('vccChannelOtherWrap').style.display = isOther ? 'flex' : 'none';
+  }
+  function vccResolvedChannel() {
+    const v = document.getElementById('vccChannel').value;
+    if (v === 'Sonstige') return document.getElementById('vccChannelOther').value.trim();
+    return v;
+  }
+
+  // ── Reservierungs-Lookup ────────────────────
+  let vccResults = [];
+  async function vccDoLookup() {
+    const q = document.getElementById('vccSearch').value.trim();
+    const arrival = document.getElementById('vccSearchFrom').value;
+    const box = document.getElementById('vccLookupResults');
+    if (!q && !arrival) { showToast('error', 'Bitte Suchbegriff oder Anreisedatum eingeben'); return; }
+
+    box.innerHTML = '<div class="lookup-empty">⏳ Suche läuft…</div>';
+    try {
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      // „Anreise am" → Fenster ±1 / +2 Tage. vCC-Mails nennen das Anreisedatum;
+      // die frühere „ab"-Semantik führte zu verwirrenden 0-Treffern bei Alt-Buchungen.
+      // Treffer außerhalb des Fensters kommen weiterhin (ausgegraut) mit zurück.
+      if (arrival) {
+        const d = new Date(arrival + 'T00:00:00');
+        const from = new Date(d); from.setDate(from.getDate() - 1);
+        const to = new Date(d); to.setDate(to.getDate() + 2);
+        params.set('from', isoLocal(from));
+        params.set('to', isoLocal(to));
+      }
+      const res = await fetch(`${WORKER_URL}/reservations/lookup?${params.toString()}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        box.innerHTML = `<div class="lookup-empty">Fehler bei der Suche: ${data.error || res.status}</div>`;
+        return;
+      }
+      vccResults = data.results || [];
+      vccRenderResults();
+    } catch (err) {
+      box.innerHTML = `<div class="lookup-empty">Verbindungsfehler: ${err.message}</div>`;
+    }
+  }
+
+  function vccRenderResults() {
+    const box = document.getElementById('vccLookupResults');
+    if (!vccResults.length) {
+      box.innerHTML = '<div class="lookup-empty">Keine Treffer — Freitext-Erfassung unten bleibt möglich.</div>';
+      return;
+    }
+    const arrival = document.getElementById('vccSearchFrom').value;
+    const dateUsed = !!arrival;
+
+    // Mit Datum: NUR In-Fenster-Treffer (±1/+2 Tage) als Zeile. Außerhalb-Treffer
+    // (z. B. saisonfremde Alt-Buchung, deren Firma nicht am Aufenthalt hängt) werden
+    // NICHT gerendert — sonst Rauschen —, sondern nur als Zähler-Hinweis genannt.
+    // Ohne Datum: alle Namens-/Firmen-Treffer normal (kein Fenster gesetzt).
+    let outCount = 0;
+    let rows = '';
+    vccResults.forEach((r, i) => {
+      if (dateUsed && r.in_window === false) { outCount++; return; }
+      const guest = `${r.guest_first_name || ''} ${r.guest_last_name || ''}`.trim();
+      // v005: Firma = verknüpfte company ODER Ibelsa-Freitext (ota_company_text);
+      // letzterer bekommt den Hinweis „lt. Ibelsa", da (noch) nicht verknüpft.
+      const companyLabel = r.company_name
+        || (r.ota_company_text ? `${r.ota_company_text} (lt. Ibelsa)` : null);
+      const primary = guest || companyLabel || '(ohne Name)';
+      // OTA-Kanal + Portalbuchungs-Nr. (zum Abgleich mit der vCC-Mail)
+      const otaTag = r.ota_channel
+        ? `${r.ota_channel}${r.ota_ref ? ' · ' + r.ota_ref : ''}`
+        : null;
+      const sub = [
+        companyLabel && guest ? companyLabel : null,
+        `${formatDateDE(r.check_in)} – ${formatDateDE(r.check_out)}`,
+        r.booking_id,
+        otaTag,
+      ].filter(Boolean).join(' · ');
+      const net = (r.total_amount != null)
+        ? `Logis netto ${formatEur(r.total_amount)}<br>zzgl. Frühstück lt. Folio`
+        : '';
+      rows += `<div class="lookup-result" onclick="vccPickResult(${i})">
+        <div><div class="lr-main">${escapeHtml(primary)}</div><div class="lr-sub">${escapeHtml(sub)}</div></div>
+        <div class="lr-amount">${net}</div>
+      </div>`;
+    });
+
+    let html = rows;
+    if (dateUsed && outCount) {
+      const shownCount = vccResults.length - outCount;
+      const lead = shownCount ? '' : `Keine Reservierung mit Anreise um ${formatDateDE(arrival)} (±1/+2 Tage). `;
+      html += `<div class="lookup-empty">${lead}${outCount} Namens-/Firmen-Treffer außerhalb des Zeitraums — <a href="#" onclick="vccClearDateAndSearch();return false;" style="color:var(--petrol);font-weight:600;">Datum entfernen</a> zum Anzeigen.</div>`;
+    }
+    box.innerHTML = html;
+  }
+
+  function vccClearDateAndSearch() {
+    document.getElementById('vccSearchFrom').value = '';
+    vccDoLookup();
+  }
+
+  function vccPickResult(i) {
+    const r = vccResults[i];
+    if (!r) return;
+    const guest = `${r.guest_first_name || ''} ${r.guest_last_name || ''}`.trim();
+    document.getElementById('vccGuestName').value = guest || r.company_name || '';
+    vccReservationId = r.reservation_id || null;
+    // Betrag NICHT vorbefüllen (total_amount = Logis-netto). Nur informativ zeigen.
+    const info = document.getElementById('vccResInfo');
+    const netTxt = (r.total_amount != null)
+      ? `Logis netto <strong>${formatEur(r.total_amount)}</strong> · zzgl. Frühstück lt. Folio`
+      : 'kein Reservierungs-Total hinterlegt';
+    info.innerHTML = `✓ Reservierung übernommen (${r.booking_id}) · ${formatDateDE(r.check_in)}–${formatDateDE(r.check_out)}<br>${netTxt} — <em>Betrag von der vCC abtippen (weicht wegen Kommission ab).</em>`;
+    info.style.display = 'block';
+    showToast('success', 'Reservierung übernommen — Betrag bitte von der vCC abtippen');
+    document.getElementById('vccAmount').focus();
+  }
+
+  // ── vCC-Session (immer charge_scheduled) ────
+  async function initVccSession() {
+    const channel = vccResolvedChannel();
+    const ref = document.getElementById('vccRef').value.trim();
+    const guestName = document.getElementById('vccGuestName').value.trim();
+    const amountCents = parseAmountToCents(document.getElementById('vccAmount').value);
+    const chargeDate = document.getElementById('vccChargeDate').value;
+    const note = document.getElementById('vccNote').value.trim();
+
+    if (!channel) { showToast('error', 'Bitte Kanal wählen/eingeben'); return; }
+    if (!ref) { showToast('error', 'Bitte Kanal-Buchungsnummer eingeben'); return; }
+    if (!guestName) { showToast('error', 'Bitte Gastname eingeben'); return; }
+    if (!amountCents || amountCents <= 0) { showToast('error', 'Bitte gültigen Betrag eingeben (z. B. 304,00)'); return; }
+    if (!chargeDate) { showToast('error', 'Bitte Belastungsdatum wählen'); return; }
+
+    const section = document.getElementById('moto-section');
+    section.style.display = 'block';
+    const status = document.getElementById('moto-status');
+    status.className = 'status show loading';
+    status.innerHTML = '<h4>⏳ Adyen-Session wird erstellt...</h4>';
+    document.getElementById('dropin-container').innerHTML = '';
+    setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    try {
+      const res = await fetch(`${WORKER_URL}/session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guestName,
+          chargeAmount: amountCents,
+          gesamtBetrag: amountCents,
+          chargeDate,
+          purpose: 'charge_scheduled',
+          source: 'moto_vcc',
+          otaChannel: channel,
+          otaRef: ref,
+          otaNote: note || null,
+          reservationId: vccReservationId || null,
+        }),
+      });
+
+      const session = await res.json().catch(() => ({}));
+      if (!res.ok || session.error) {
+        status.style.display = '';
+        status.className = 'status show error';
+        status.innerHTML = `<h4>Fehler bei der Session-Erstellung</h4><p>${session.error || (res.status + ' ' + res.statusText)}</p>`;
+        console.error('vCC /session fehlgeschlagen:', res.status, session);
+        return;
+      }
+
+      currentBookingId = session.bookingId;
+      status.style.display = 'none';
+
+      const configuration = {
+        environment: CONFIG.adyenEnv,
+        clientKey: session.clientKey,
+        session: { id: session.sessionId, sessionData: session.sessionData },
+        analytics: { enabled: false },
+        locale: 'de-DE',
+        onPaymentCompleted: (result) => {
+          if (result.resultCode === 'Authorised') {
+            document.getElementById('dropin-container').innerHTML = '';
+            const cd = formatDateDE(chargeDate);
+            status.className = 'status show success';
+            status.innerHTML = `
+              <h4>✅ vCC tokenisiert</h4>
+              <p>Buchung <strong>${currentBookingId}</strong> (${escapeHtml(channel)} · ${escapeHtml(ref)}) wurde erstellt. Die Karte wird automatisch am <strong>${cd}</strong> belastet.</p>
+              <p style="margin-top:8px;"><a href="payment-dashboard.html" style="color:var(--success);font-weight:600;">→ Zum Dashboard</a></p>`;
+            showToast('success', `${currentBookingId} – vCC tokenisiert, Belastung am ${cd}`);
+          } else {
+            status.className = 'status show error';
+            status.innerHTML = `<h4>Tokenisierung fehlgeschlagen</h4><p>Ergebnis: ${result.resultCode}</p>`;
+          }
+        },
+        onError: (error) => {
+          status.className = 'status show error';
+          status.innerHTML = `<h4>Fehler</h4><p>${error.message}</p>`;
+        },
+        paymentMethodsConfiguration: {
+          card: { hasHolderName: true, holderNameRequired: true, name: 'Kreditkarte' },
+        },
+      };
+
+      if (typeof AdyenCheckout === 'undefined') {
+        throw new Error('Adyen-SDK (adyen.js) nicht geladen – bitte Seite neu laden.');
+      }
+      const checkout = await AdyenCheckout(configuration);
+      checkout.create('dropin').mount('#dropin-container');
+    } catch (err) {
+      console.error('vCC Drop-in-Init fehlgeschlagen:', err);
+      status.style.display = '';
+      status.className = 'status show error';
+      status.innerHTML = `<h4>Verbindungsfehler</h4><p>${err.message}</p>`;
+    }
+  }
+
+  // ── URL-Parameter-Vorbefüllung (Muster Angebotsannahme-Mail) ──
+  // /moto?mode=vcc&channel=…&ref=…&guest=…&amount=…&charge_date=…
+  // Nur vorbefüllen, nichts auto-absenden.
+  function vccPrefillFromURL() {
+    const p = new URLSearchParams(location.search);
+    if ((p.get('mode') || '').toLowerCase() !== 'vcc') return;
+    switchMode('vcc');
+    const ch = p.get('channel');
+    if (ch) {
+      const sel = document.getElementById('vccChannel');
+      const match = VCC_CHANNELS.find(c => c.toLowerCase() === ch.toLowerCase());
+      if (match && match !== 'Sonstige') {
+        sel.value = match;
+      } else {
+        sel.value = 'Sonstige';
+        document.getElementById('vccChannelOther').value = ch;
+      }
+      vccToggleChannelOther();
+    }
+    if (p.get('ref')) document.getElementById('vccRef').value = p.get('ref');
+    if (p.get('guest')) document.getElementById('vccGuestName').value = p.get('guest');
+    // amount-Parameter ist in EURO, nicht Cent (im Klicktest bestätigt) — z. B. amount=304
+    // oder amount=304,00. Beim Speichern rechnet parseAmountToCents nach Cent; hier nur
+    // deutsch normalisieren (Anzeige mit ,00).
+    if (p.get('amount')) { document.getElementById('vccAmount').value = p.get('amount'); vccFormatAmount(); }
+    if (p.get('charge_date')) document.getElementById('vccChargeDate').value = p.get('charge_date');
+  }
+
+  // Lokales ISO-Datum (kein toISOString — das verschiebt in CET über die Tagesgrenze)
+  function isoLocal(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  // Deutsche Betragseingabe → Cent. Mit Komma: Punkte = Tausender, Komma = Dezimal
+  // ("1.234,56" → 123456). Ohne Komma: Punkt/Ziffern als Dezimal (englische Fallback-
+  // Eingabe "304.00" bzw. "304"). Intern rechnen wir wie gehabt in Cent weiter.
+  function parseAmountToCents(raw) {
+    let s = String(raw == null ? '' : raw).trim().replace(/[\s€]/g, '');
+    if (!s) return NaN;
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    const v = parseFloat(s);
+    return isNaN(v) ? NaN : Math.round(v * 100);
+  }
+  // Feld beim Verlassen deutsch normalisieren ("304" → "304,00", "1234,5" → "1.234,50")
+  function vccFormatAmount() {
+    const el = document.getElementById('vccAmount');
+    const cents = parseAmountToCents(el.value);
+    if (!isNaN(cents) && cents > 0) {
+      el.value = (cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, m => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]
+    ));
+  }
+
   // ── Helpers ──────────────────────────────────
   function formatDateDE(str) {
     if (!str) return '–';
@@ -1141,6 +1590,11 @@
     const fmt = d => d.toISOString().split('T')[0];
     document.getElementById('checkinDate').value = fmt(today);
     document.getElementById('checkoutDate').value = fmt(tomorrow);
+
+    // v2.6 vCC: Kanal-Dropdown füllen, Belastungsdatum default heute, URL-Prefill
+    vccPopulateChannels();
+    document.getElementById('vccChargeDate').value = fmt(today);
+    vccPrefillFromURL();
   })();
 </script>
 

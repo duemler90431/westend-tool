@@ -46,7 +46,7 @@ crons = ["0 1 * * *"]
 
 # ── Nicht-geheime Variablen ─────────────────────────────────────────
 [vars]
-HMAC_MODE = "log"                                          # nach 2–3 Tagen sauberem Log → "enforce"
+HMAC_MODE = "enforce"                                      # 15.07.2026: log→enforce (sauberes HMAC-ok verifiziert). Unsignierte/falsche Webhooks → 401.
 # Adyen Checkout-Base explizit (Selbstdoku). Identisch zum Code-Default → Live-
 # Verhalten unverändert. Nachziehen beim nächsten Live-Deploy (mit HMAC-enforce).
 ADYEN_BASE_URL = "https://55f5f21b555bf6d7-HotelWestendNuernberg-checkout-live.adyenpayments.com/checkout/v71"
