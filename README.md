@@ -130,6 +130,22 @@ Weitere E-Mails können jederzeit ergänzt werden: Cloudflare Dashboard → Zero
 | `wh-logo_weiss_transparent.png` | – | Logo (weiß/transparent) |
 | `AGB_westendhotel2025.pdf` | – | AGB-Dokument |
 
+### Bild-Hosting in E-Mails (WICHTIG)
+
+Bilder in **versendeten** Mails (Zimmerfotos in `index.html` → `ROOM_CONFIG`, Logo) liegen in
+`public/` (seit v2.5.0) und werden **absolut über GitHub Pages** referenziert:
+`https://duemler90431.github.io/westend-tool/public/*`.
+
+- **NICHT `raw.githubusercontent.com`** — kein CDN, wird gedrosselt/in Firmennetzen geblockt.
+- **NICHT relativ** (`/basic-room.jpg`) — eine versendete E-Mail hat keine Basis-Domain,
+  relative Pfade laden im Postfach nicht.
+- **NICHT `booking-hotelwestend.de`** — Access-gated, liefert Login-HTML statt Bild.
+
+Das Logo läuft seit jeher über denselben github.io-Host in echten Kunden-Mails (Bestandsbeweis).
+Neue Bilder: in `public/` ablegen → per `github.io/.../public/<name>` referenzieren → **`wrangler
+deploy`** (Git-Push allein deployt das Tool NICHT). Historie: Zimmerbilder zeigten bis 17.07.2026
+irrtümlich auf `raw.../main/*.jpg` (Repo-Root) → seit dem `public/`-Move 404 → gefixt.
+
 ---
 
 ## 5. Angebotstool (index.html)
