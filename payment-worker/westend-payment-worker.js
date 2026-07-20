@@ -1,11 +1,20 @@
 /**
- * westend-payment-worker v2.5.2
+ * westend-payment-worker v2.6.1
  * Cloudflare Worker für tokenisierte Kreditkartenzahlungen
  * westendhotel Nürnberg – MORE Hospitality GmbH
  *
  * ⚠️ LIVE-VERSION
  *
  * BACKEND: Cloudflare D1 (SQL)
+ *
+ * CHANGELOG v2.6.1 (20.07.2026) – K2b 6.1e Schema-Brücke confirm.html:
+ *   - FIX: confirmUrl aus /bookings/from-offer trug nur die neuen Param-Namen
+ *     (checkin/checkout/room/amount), confirm.html liest aber die Legacy-Namen —
+ *     Aufenthalt/Betrag blieben auf der Gastseite leer ("–" / € NaN).
+ *     NEU: payParams zusätzlich mit anreise/abreise/zimmer/gesamt + storno
+ *     (stornoTyp-Key; expliziter cancellationText überschreibt weiterhin).
+ *     Charge-/purpose-Modell unangetastet. (PMS-seitig: K2b Part 6.1 Deploys
+ *     93f212a0/049dc8dd/e6e3aea7 — Wrapper-Fix, Service Binding, X-API-Key.)
  *
  * CHANGELOG v2.5.2 (14.07.2026) – MOTO-Session-Fix (Regression seit v2.5.0):
  *   - FIX: /session verlangte chargeDate für ALLE Sessions
@@ -666,6 +675,13 @@ async function handleCreateFromOffer(request, env) {
       // v2.4: /confirm page (AGB + Zusammenfassung + Karte) — S3 landing page
       // For now: same as pay.html but with confirm=1 flag
       payParams.set('confirm', '1');
+      // K2b 6.1e: Legacy-Params für confirm.html (Schema-Brücke) — confirm.html
+      // liest anreise/abreise/zimmer/gesamt; die neuen Namen bleiben zusätzlich.
+      payParams.set('anreise', checkinDate);
+      payParams.set('abreise', checkoutDate);
+      payParams.set('zimmer', zimmer || '');
+      payParams.set('gesamt', ((totalAmount || amountCents) / 100).toFixed(2));
+      if (stornoTyp) payParams.set('storno', stornoTyp);
       if (requireAgb) payParams.set('agb', '1');
       if (cancellationText) payParams.set('storno', encodeURIComponent(cancellationText.substring(0, 200)));
       if (nights) payParams.set('nights', nights);
@@ -1913,7 +1929,7 @@ export default {
           service: "westend-payment-worker",
           environment: "LIVE",
           status: "ok",
-          version: "2.6.0",
+          version: "2.6.1",
           backend: "D1",
           adyen: "LIVE",
           timestamp: new Date().toISOString(),

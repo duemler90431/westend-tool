@@ -611,6 +611,14 @@ async function confirmBooking() {
     document.getElementById('summaryCard').style.display = 'none';
 
     if (res.ok) {
+      // K2b 6.1e: Payment-Worker-Links (PMS-CC-Strecke) tragen eine Buchungs-ID
+      // (id=WH-…) → nach der Annahme weiter zum Karten-Schritt (pay.html,
+      // Adyen-Tokenisierung). Legacy-Tool-Links (?d=…) haben kein id →
+      // Danke-Seite wie bisher.
+      if (params.get('id')) {
+        window.location.href = CONFIG.payBaseURL + '?' + params.toString();
+        return;
+      }
       document.getElementById('successCard').style.display = 'block';
     } else {
       document.getElementById('errorCard').style.display = 'block';
