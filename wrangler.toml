@@ -47,3 +47,9 @@ enabled = true
 
 # SECRET (NICHT in die toml): PAYMENT_WORKER_API_KEY
 #   → wrangler secret put PAYMENT_WORKER_API_KEY --name westend-tool   (gleicher Wert wie am Payment-Worker)
+# ⚠️ Bei Server-Key-Rotation MIT rotieren! Der Key lebt an VIER Standorten:
+#   Payment-Worker-Secret (Validator) · PMS-Worker-Secret · westend-tool-Secret
+#   (dieser Worker — der tool-proxy ist der GEWOLLTE Auth-Injektor für
+#   payment-dashboard/moto/index via /api) · pms-staging/.dev.vars.
+#   Lesson 20.07.2026: Secret hier beim Aufräumen als vermeintliche
+#   Fehlplatzierung gelöscht → Dashboard/moto-Charge/from-offer liefen in 401.
