@@ -74,6 +74,27 @@ export default {
       }
     }
 
+    // ── K2b 6.3: /annahme.html* → PMS-Pages proxien (Übergang bis Domain-Wiring) ──
+    // Die Gast-Annahme-Seite (PMS-Angebots-Flow, Part 5) liegt im PMS-Pages-
+    // Projekt, nicht in den Tool-Assets — Mail-Links auf
+    // booking-hotelwestend.de/annahme.html?t=… liefen hier sonst auf 404.
+    // annahme.html ist self-contained (Inline-CSS/JS; externe Referenzen nur
+    // absolut: Google Fonts + PMS-Worker-API) → keine weiteren Pfade nötig.
+    // CF-Access-Bypass annahme* existiert auf beiden Hostnames. NUR annahme.html —
+    // confirm/pay/404 bleiben Tool-Assets.
+    if (url.pathname === "/annahme.html" || url.pathname.startsWith("/annahme.html")) {
+      const headers = new Headers(request.headers);
+      headers.delete("host");
+      const init = { method: request.method, headers };
+      if (request.method !== "GET" && request.method !== "HEAD") init.body = request.body;
+      try {
+        // Pages normalisiert /annahme.html per 308 auf /annahme — fetch folgt (redirect: follow).
+        return await fetch(`https://westend-pms.pages.dev${url.pathname}${url.search}`, init);
+      } catch (err) {
+        return new Response("Annahme-Seite derzeit nicht erreichbar. Bitte versuchen Sie es später erneut.", { status: 502, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      }
+    }
+
     // ── alles andere → Static Assets (inkl. /pay → pay.html via html_handling) ──
     return env.ASSETS.fetch(request);
   },
