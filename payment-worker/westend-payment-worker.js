@@ -76,7 +76,11 @@
  *     • Adyen-gehostete Zahlseite (PCI SAQ A)
  *   - NEU: GET /booking-token/:bookingId → Token-Status für PMS-Lookup
  *     • Live-Lookup-Architektur: PMS speichert Token NICHT lokal
- *     • Liefert: hasToken, cardSummary, cardExpiry, status
+ *     • Liefert: hasToken, status + Booking-Metadaten (guestName/-Email,
+ *       amount, currency, shopperReference, chargedAt).
+ *       KEIN cardExpiry/cardSummary — die Felder werden bei der
+ *       Tokenisierung derzeit nicht gespeichert (Doku-Drift aufgelöst
+ *       22.07.2026; Karten-Expiry-Sichtbarkeit = Payment-Pflege Teil 1).
  *   - NEU: Webhook-Erweiterung für PAYMENT_RECEIVED (PayByLink-Zahlungen)
  *   - NEU: API-Key-Auth für PMS-Endpoints (X-PMS-API-Key Header)
  *   - NEU: D1-Tabellen charge_log + payment_links
